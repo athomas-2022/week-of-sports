@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Week of Sports 2026 · Andrew Walker Memorial Scholarship</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/config.js"></script>
+<script>
+  (function(){ var c=(window.WOS||{}).colors||{}, r=document.documentElement.style;
+    for(var k in c){ r.setProperty('--'+k, c[k]); } })();
+</script>
+</head>
+<body>
+
+<header id="hdr">
+  <div class="wrap nav">
+    <a class="brand" href="#top"><img id="nav-logo" alt="Week of Sports logo" /> Week of Sports</a>
+    <nav class="nav-links">
+      <a href="#top">Home</a>
+      <a href="#about">About</a>
+      <a href="#donate">Donate</a>
+      <a href="#contact">Contact</a>
+      <a href="#volunteer">Volunteer</a>
+    </nav>
+    <button class="btn btn-primary" onclick="openVenmo()">Donate</button>
+  </div>
+</header>
+<div class="ticker"><div class="ticker-track" id="ticker"></div></div>
+
+<section class="hero" id="top">
+  <div class="hero-bg" id="hero-bg">
+    <div class="yt-bg" id="yt-bg"></div>
+    <video id="hero-vid" autoplay muted loop playsinline></video>
+  </div>
+  <div class="wrap hero-inner">
+    <div class="eyebrow rise d1">Liberty-Benton High School &nbsp;·&nbsp; Andrew Walker Memorial Scholarship</div>
+    <h1 class="rise d2">Week of<br>Sports <span class="yr" id="hero-year">2026</span></h1>
+    <p class="tag rise d3"><em>Continuing a legacy.</em> One week. Every sport. One cause.</p>
+    <div class="cd-label rise d4"><span class="pulse"></span> Counting down to game day</div>
+    <div class="cd rise d4">
+      <div class="cell"><div class="num" id="d-days">000</div><div class="lab">Days</div></div>
+      <div class="cell"><div class="num" id="d-hrs">00</div><div class="lab">Hrs</div></div>
+      <div class="cell"><div class="num" id="d-min">00</div><div class="lab">Min</div></div>
+      <div class="cell"><div class="num" id="d-sec">00</div><div class="lab">Sec</div></div>
+    </div>
+    <div class="cta rise d5">
+      <button class="btn btn-white" onclick="openVenmo()">Donate now</button>
+      <button class="btn btn-ghost" onclick="openVideo()"><span class="play-ico">&#9658;</span> Watch our story</button>
+    </div>
+  </div>
+</section>
+
+<section class="cause on-light" id="about">
+  <div class="wrap cause-grid">
+    <div class="reveal">
+      <div class="eyebrow" style="color:var(--royal)">About — why we play</div>
+      <h2 id="cause-title"></h2>
+      <p id="cause-body"></p>
+      <div class="values" id="cause-values"></div>
+    </div>
+    <div class="crest-card reveal"><img id="cause-crest" alt="Andrew Walker Memorial Scholarship crest" /></div>
+  </div>
+</section>
+
+<section class="give on-light" id="donate">
+  <div class="wrap">
+    <div class="sec-eyebrow">Donate — where your money goes</div>
+    <h2 class="sec-h">Every dollar, the scholarship</h2>
+    <p class="sec-sub">Every dollar of profit goes directly to the Andrew Walker Memorial Scholarship Fund. Here's how it adds up.</p>
+    <div class="ways" id="ways"></div>
+    <div class="center-cta" style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:0">
+      <button class="btn btn-primary" onclick="openVenmo()">Donate via Venmo</button>
+      <a class="btn btn-outline" id="donation-form-link" target="_blank">Donation form</a>
+      <a class="btn btn-outline" id="scholarship-link" target="_blank">Scholarship info</a>
+      <a class="btn btn-outline" href="/raffle-baskets/">Raffle baskets</a>
+    </div>
+  </div>
+</section>
+
+<section class="gameday on-dark" id="gameday">
+  <div class="wrap">
+    <div class="sec-eyebrow" id="gd-eyebrow">Saturday · game day</div>
+    <h2 class="sec-h">Three games. One gym. All heart.</h2>
+    <p class="sec-sub">Come for the Student vs Staff showdown, stay for the Eagles. Free to attend — every dollar comes from gear, raffles, and the donation challenge.</p>
+    <div class="games" id="games"></div>
+    <div class="gd-meta">
+      <span class="gd-where" id="gd-where"></span>
+      <a class="btn btn-primary" id="cal-link" target="_blank">Add to calendar</a>
+      <a class="btn btn-ghost" id="dir-link" target="_blank">Directions</a>
+    </div>
+  </div>
+</section>
+
+<section class="challenge on-light" id="challenge">
+  <div class="wrap">
+    <div class="sec-eyebrow">The donation challenge</div>
+    <h2 class="sec-h">Which class rules the school?</h2>
+    <p class="sec-sub">Elementary, middle, and high school go head-to-head all week. Every dollar fuels the scholarship — and the bragging rights.</p>
+    <div class="thermo">
+      <div class="thermo-top"><div class="thermo-raised"><b id="raised">$0</b> raised</div><div class="thermo-goal" id="goal"></div></div>
+      <div class="thermo-track"><div class="thermo-fill" id="thermo"></div></div>
+    </div>
+    <div class="board" id="board"></div>
+    <div class="center-cta"><button class="btn btn-primary" onclick="openVenmo()">Donate to your class</button></div>
+  </div>
+</section>
+
+<section class="spirit on-light" id="spirit">
+  <div class="wrap">
+    <div class="sec-eyebrow">Dec 8–12</div>
+    <h2 class="sec-h">Spirit week</h2>
+    <p class="sec-sub">A new theme every day leading up to game day. Today's theme lights up automatically.</p>
+    <div class="days" id="days"></div>
+    <div class="center-cta"><a class="btn btn-primary" href="/spirit-week-themes/">See all themes</a></div>
+  </div>
+</section>
+
+<section class="gear on-dark" id="gear">
+  <div class="wrap gear-grid">
+    <div class="reveal"><img id="shirt-img" alt="This year's Week of Sports shirt design" /></div>
+    <div class="gear-copy reveal">
+      <div class="eyebrow">This year's gear</div>
+      <h2>Wear the legacy</h2>
+      <p>Every shirt and hoodie puts money straight toward the scholarship — and turns the whole community into a walking billboard for game day.</p>
+      <div class="price-chips">
+        <div class="pchip">T-shirt <b id="shirt-price"></b></div>
+        <div class="pchip">Hoodie <b id="hoodie-price"></b></div>
+      </div>
+      <div class="cta">
+        <a class="btn btn-white" id="gear-link" target="_blank">Order gear</a>
+        <a class="btn btn-ghost" href="/gear/">See the collection</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="gallery on-light" id="gallery">
+  <div class="wrap">
+    <div class="sec-eyebrow">Game day</div>
+    <h2 class="sec-h">The energy</h2>
+    <p class="sec-sub">A look back at the community that shows up — and why it's worth every minute.</p>
+    <div class="grid" id="grid"></div>
+  </div>
+</section>
+
+<section class="sponsors on-dark" id="sponsors">
+  <div class="wrap">
+    <div class="sec-eyebrow">With thanks</div>
+    <h2 class="sec-h">Our sponsors</h2>
+    <p class="sec-sub">Local businesses make this possible. Want your logo here next to the Eagles?</p>
+    <div class="sgrid" id="sgrid"></div>
+    <div class="center-cta"><a class="btn btn-primary" id="sponsor-cta">Become a sponsor</a></div>
+  </div>
+</section>
+
+<section class="volunteer" id="volunteer">
+  <div class="wrap">
+    <h2>We need your help</h2>
+    <p id="vol-text"></p>
+    <a class="btn btn-white" id="vol-link" target="_blank">Sign up to volunteer</a>
+  </div>
+</section>
+
+<section class="contact on-light" id="contact">
+  <div class="wrap" style="text-align:center">
+    <div class="sec-eyebrow">Get in touch</div>
+    <h2 class="sec-h">Questions?</h2>
+    <p class="sec-sub">Reach out any time — we'd love to hear from you.</p>
+    <a class="btn btn-primary" id="contact-mail">Email us</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <img id="foot-logo" alt="Week of Sports" />
+    <div class="f-links">
+      <a href="https://www.instagram.com/weekofsports" target="_blank">Instagram</a>
+      <a href="https://www.facebook.com/week.of.sports/" target="_blank">Facebook</a>
+      <a href="#donate">Donate</a>
+      <a href="/gear/">Gear</a>
+      <a href="/spirit-week-themes/">Spirit week</a>
+      <a href="/raffle-baskets/">Raffle baskets</a>
+      <a href="/fundraising-video/">Our story</a>
+      <a id="foot-mail">Contact</a>
+    </div>
+    <p class="f-note">Concept preview. Dates, totals, Venmo handle, logo, shirt &amp; sponsors are placeholders — all editable in <code>config.js</code>.</p>
+  </div>
+</footer>
+
+<div class="modal" id="modal" onclick="if(event.target===this)closeVideo()">
+  <div class="modal-box"><button class="modal-x" onclick="closeVideo()" aria-label="Close">&times;</button><div id="modal-content"></div></div>
+</div>
+<div class="lb" id="lb">
+  <button class="lb-x" onclick="closeLB()" aria-label="Close">&times;</button>
+  <button class="lb-nav lb-prev" onclick="stepLB(-1)" aria-label="Previous">&#8249;</button>
+  <img id="lb-img" alt="" />
+  <button class="lb-nav lb-next" onclick="stepLB(1)" aria-label="Next">&#8250;</button>
+</div>
+
+<script>
+  var C = window.WOS || {};
+  function S(id){ return document.getElementById(id); }
+  function money(n){ return '$'+Math.round(n).toLocaleString('en-US'); }
+
+  /* ---- hero background: YouTube fundraising video (muted loop), or mp4 fallback ---- */
+  var v = S('hero-vid');
+  S('hero-bg').style.backgroundImage = 'url('+C.heroPoster+')';
+  if(C.heroYouTubeId){
+    v.style.display = 'none';
+    var yt = document.createElement('iframe');
+    yt.src = 'https://www.youtube.com/embed/'+C.heroYouTubeId+'?autoplay=1&mute=1&controls=0&loop=1&playlist='+C.heroYouTubeId+'&playsinline=1&rel=0&modestbranding=1&showinfo=0&iv_load_policy=3&disablekb=1';
+    yt.setAttribute('allow','autoplay; encrypted-media; picture-in-picture');
+    yt.setAttribute('tabindex','-1');
+    yt.title = 'Week of Sports fundraising video';
+    S('yt-bg').appendChild(yt);
+  } else {
+    v.poster = C.heroPoster; v.src = C.heroVideo;
+    v.play && v.play().catch(function(){});
+  }
+
+  /* ---- assets & text ---- */
+  S('nav-logo').src = C.logo; S('foot-logo').src = C.logo;
+  S('hero-year').textContent = C.year;
+  S('cause-title').textContent = C.cause.title;
+  S('cause-body').textContent = C.cause.body;
+  S('cause-crest').src = C.crest;
+  S('cause-values').innerHTML = C.cause.values.map(function(x){return '<span class="value">'+x+'</span>';}).join('');
+  S('shirt-img').src = C.shirt;
+  S('shirt-price').textContent = '$'+C.shirtPrice;
+  S('hoodie-price').textContent = '$'+C.hoodiePrice;
+  S('gear-link').href = C.gearFormUrl;
+  S('goal').textContent = 'Goal  ' + money(C.fundraisingGoal);
+  S('gd-where').textContent = C.location;
+  S('vol-link').href = C.volunteerUrl;
+  S('vol-text').textContent = C.volunteerText || '';
+  S('donation-form-link').href = C.donationFormUrl || '#';
+  S('scholarship-link').href = C.scholarshipUrl || '#';
+  S('contact-mail').href = 'mailto:'+C.contactEmail;
+  S('ways').innerHTML = (C.giveWays||[]).map(function(w){return '<div class="way"><h4>'+w.title+'</h4><p>'+w.text+'</p></div>';}).join('');
+  S('foot-mail').href = 'mailto:'+C.contactEmail;
+  S('sponsor-cta').href = 'mailto:'+C.contactEmail+'?subject=Week of Sports sponsorship';
+
+  /* ---- ticker ---- */
+  var tk = (C.ticker||[]).map(function(s){return '<span>'+s+'</span>';}).join('');
+  S('ticker').innerHTML = tk + tk;
+
+  /* ---- game-day cards ---- */
+  S('games').innerHTML = (C.gameDayEvents||[]).map(function(g){
+    return '<div class="game"><div class="time">'+g.time+'</div><div class="gt">'+g.title+'</div><div class="gs">'+(g.sub||'')+'</div></div>';
+  }).join('');
+
+  /* ---- add to calendar + directions ---- */
+  (function(){
+    var d = new Date(C.gameDay), end = new Date(d.getTime()+7*3600*1000);
+    function z(n){return (n<10?'0':'')+n;}
+    function f(x){return x.getFullYear()+z(x.getMonth()+1)+z(x.getDate())+'T'+z(x.getHours())+z(x.getMinutes())+'00';}
+    var text = encodeURIComponent('Week of Sports '+C.year+' — Game Day');
+    var loc = encodeURIComponent(C.location);
+    S('cal-link').href = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='+text+'&dates='+f(d)+'/'+f(end)+'&location='+loc;
+    S('dir-link').href = 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(C.mapsQuery||C.location);
+    S('gd-eyebrow').textContent = d.toLocaleDateString('en-US',{weekday:'long', month:'long', day:'numeric'}) + ' · game day';
+  })();
+
+  /* ---- leaderboard ---- */
+  var sorted = (C.divisions||[]).slice().sort(function(a,b){return b.amount-a.amount;});
+  var max = sorted.length ? sorted[0].amount : 1;
+  S('board').innerHTML = sorted.map(function(d,i){
+    var pct = Math.round(d.amount/max*100);
+    return '<div class="row"><div class="rank">'+(i+1)+'</div><div class="team"><div class="name">'+d.name+'</div><div class="meta">'+(d.tagline||'')+'</div></div><div class="bar-wrap"><div class="bar" data-pct="'+pct+'" style="background:var(--'+(d.color||'royal')+')"></div></div><div class="amt" data-val="'+d.amount+'">$0</div></div>';
+  }).join('');
+
+  /* ---- spirit week (highlight today) ---- */
+  var todayStr = new Date().toISOString().slice(0,10);
+  S('days').innerHTML = (C.spiritWeek||[]).map(function(s,i){
+    var isToday = s.date===todayStr;
+    var badge = isToday ? 'Today' : new Date(s.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    return '<div class="day'+(isToday?' today':'')+'"><div class="dnum">'+(i+1)+'</div><div class="dname">'+s.day+'</div><div class="dtheme">'+s.theme+'</div><div class="badge">'+badge+'</div></div>';
+  }).join('');
+
+  /* ---- gallery ---- */
+  var imgs = [];
+  for(var i=1;i<=(C.galleryCount||0);i++){ imgs.push('/assets/gallery/'+(i<10?'0'+i:i)+'.jpg'); }
+  S('grid').innerHTML = imgs.map(function(src,idx){
+    return '<img loading="lazy" src="'+src+'" alt="Week of Sports photo" onclick="openLB('+idx+')">';
+  }).join('');
+
+  /* ---- sponsors (placeholders if empty) ---- */
+  var sp = C.sponsors && C.sponsors.length ? C.sponsors.map(function(s){
+    return '<a class="sponsor" href="'+(s.url||'#')+'" target="_blank">'+(s.logo?'<img src="'+s.logo+'" alt="'+s.name+'">':s.name)+'</a>';
+  }) : Array.apply(null,{length:8}).map(function(){ return '<div class="sponsor">Your logo here</div>'; });
+  S('sgrid').innerHTML = sp.join('');
+
+  /* ---- sticky nav ---- */
+  var hdr = S('hdr');
+  window.addEventListener('scroll', function(){ hdr.classList.toggle('scrolled', window.scrollY>40); });
+
+  /* ---- countdown ---- */
+  var target = new Date(C.gameDay);
+  function pad(n,l){ n=String(n); while(n.length<l) n='0'+n; return n; }
+  function tick(){
+    var diff = target - new Date(); if(diff<0) diff=0;
+    var s = Math.floor(diff/1000);
+    S('d-days').textContent = pad(Math.floor(s/86400),3);
+    S('d-hrs').textContent  = pad(Math.floor(s%86400/3600),2);
+    S('d-min').textContent  = pad(Math.floor(s%3600/60),2);
+    S('d-sec').textContent  = pad(s%60,2);
+  }
+  tick(); setInterval(tick,1000);
+
+  /* ---- Venmo ---- */
+  function openVenmo(){
+    var note = encodeURIComponent('Week of Sports — Andrew Walker Memorial Scholarship');
+    window.open('https://venmo.com/u/'+C.venmoHandle+'?txn=pay&note='+note, '_blank');
+  }
+
+  /* ---- count-up + reveal on scroll ---- */
+  function countUp(el, t, dur){ var s=performance.now(); (function step(p){var k=Math.min(1,(p-s)/dur); el.textContent=money(t*k); if(k<1) requestAnimationFrame(step);})(s); }
+  var boardDone=false;
+  function animateBoard(){
+    if(boardDone) return; boardDone=true;
+    S('thermo').style.width = Math.min(100, C.raisedTotal/C.fundraisingGoal*100)+'%';
+    countUp(S('raised'), C.raisedTotal, 1500);
+    document.querySelectorAll('.bar').forEach(function(b){ b.style.width=b.dataset.pct+'%'; });
+    document.querySelectorAll('.amt').forEach(function(a){ countUp(a, +a.dataset.val, 1500); });
+  }
+  new IntersectionObserver(function(en){ en.forEach(function(e){ if(e.isIntersecting) animateBoard(); }); },{threshold:.3}).observe(S('board'));
+  var revObs = new IntersectionObserver(function(en){ en.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); revObs.unobserve(e.target);} }); },{threshold:.15});
+  document.querySelectorAll('.reveal').forEach(function(el){ revObs.observe(el); });
+
+  /* ---- video modal ---- */
+  function embedUrl(u){
+    if(!u) return '';
+    var yt = u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{11})/);
+    if(yt) return 'https://www.youtube.com/embed/'+yt[1]+'?autoplay=1&rel=0';
+    var vm = u.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+    if(vm) return 'https://player.vimeo.com/video/'+vm[1]+'?autoplay=1';
+    return u;
+  }
+  function openVideo(){
+    var url = embedUrl(C.heroVideoUrl);
+    S('modal-content').innerHTML = url ? '<iframe src="'+url+'" allow="autoplay; fullscreen" allowfullscreen></iframe>'
+      : '<div class="modal-msg">Your fundraising video will play here.<br>Upload it to YouTube or Vimeo and paste the link into <b>heroVideoUrl</b> in config.js.</div>';
+    S('modal').classList.add('open');
+  }
+  function closeVideo(){ S('modal').classList.remove('open'); S('modal-content').innerHTML=''; }
+
+  /* ---- gallery lightbox ---- */
+  var lbi = 0;
+  function openLB(i){ lbi=i; S('lb-img').src=imgs[i]; S('lb').classList.add('open'); }
+  function stepLB(d){ lbi=(lbi+d+imgs.length)%imgs.length; S('lb-img').src=imgs[lbi]; }
+  function closeLB(){ S('lb').classList.remove('open'); }
+  document.addEventListener('keydown', function(e){
+    if(e.key==='Escape'){ closeVideo(); closeLB(); }
+    if(S('lb').classList.contains('open')){ if(e.key==='ArrowLeft') stepLB(-1); if(e.key==='ArrowRight') stepLB(1); }
+  });
+</script>
+</body>
+</html>

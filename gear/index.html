@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gear · Week of Sports 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/config.js"></script>
+</head>
+<body>
+<main>
+  <section class="page-head"><div class="wrap inner">
+    <div class="eyebrow">Shop</div>
+    <h1>Gear</h1>
+    <p>Wear the legacy. Every shirt and hoodie turns profit straight into the Andrew Walker Memorial Scholarship Fund.</p>
+  </div></section>
+
+  <section class="gear">
+    <div class="wrap gear-grid">
+      <div class="reveal"><img id="shirt-img" alt="This year's Week of Sports shirt design" /></div>
+      <div class="gear-copy reveal">
+        <div class="eyebrow">This year's design</div>
+        <h2>Eagles, all in.</h2>
+        <p>Soft, comfortable, and built to be worn all season long — not just on game day. Order online, then pay by Venmo.</p>
+        <div class="price-chips">
+          <div class="pchip">T-shirt <b id="shirt-price"></b></div>
+          <div class="pchip">Hoodie <b id="hoodie-price"></b></div>
+        </div>
+        <div class="cta">
+          <a class="btn btn-white" id="gear-link" target="_blank">Order gear</a>
+          <button class="btn btn-ghost" onclick="openVenmo()">Pay with Venmo</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="gallery on-light">
+    <div class="wrap">
+      <div class="sec-eyebrow">See it worn</div>
+      <h2 class="sec-h">On the court &amp; in the crowd</h2>
+      <div class="grid" id="grid" style="margin-top:30px"></div>
+    </div>
+  </section>
+</main>
+
+<script>
+  window.renderPage = function(C){
+    var S = function(id){ return document.getElementById(id); };
+    S('shirt-img').src = C.shirt;
+    S('shirt-price').textContent = '$'+C.shirtPrice;
+    S('hoodie-price').textContent = '$'+C.hoodiePrice;
+    S('gear-link').href = C.gearFormUrl;
+    var imgs = [], n = Math.min(12, C.galleryCount||0);
+    for(var i=1;i<=n;i++) imgs.push('/assets/gallery/'+(i<10?'0'+i:i)+'.jpg');
+    window.LBIMAGES = imgs;
+    S('grid').innerHTML = imgs.map(function(src,idx){ return '<img loading="lazy" src="'+src+'" onclick="openLB('+idx+')" alt="Week of Sports gear">'; }).join('');
+  };
+</script>
+<script src="/assets/page.js"></script>
+</body>
+</html>

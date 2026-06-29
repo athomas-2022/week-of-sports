@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Spirit Week Themes · Week of Sports 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/config.js"></script>
+</head>
+<body>
+<main>
+  <section class="page-head"><div class="wrap inner">
+    <div class="eyebrow">Dec 8–12</div>
+    <h1>Spirit Week Themes</h1>
+    <p>Dress the part every day of the week. Today's theme lights up automatically — show your spirit and tag @weekofsports.</p>
+  </div></section>
+
+  <section class="section light">
+    <div class="wrap">
+      <div class="days" id="days"></div>
+      <div class="center-cta"><button class="btn btn-primary" onclick="openVenmo()">Donate to your class</button></div>
+    </div>
+  </section>
+</main>
+
+<script>
+  window.renderPage = function(C){
+    var todayStr = new Date().toISOString().slice(0,10);
+    document.getElementById('days').innerHTML = (C.spiritWeek||[]).map(function(s,i){
+      var isToday = s.date===todayStr;
+      var badge = isToday ? 'Today' : new Date(s.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
+      return '<div class="day'+(isToday?' today':'')+'"><div class="dnum">'+(i+1)+'</div><div class="dname">'+s.day+'</div><div class="dtheme">'+s.theme+'</div><div class="badge">'+badge+'</div></div>';
+    }).join('');
+  };
+</script>
+<script src="/assets/page.js"></script>
+</body>
+</html>

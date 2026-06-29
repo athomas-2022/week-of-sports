@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Raffle Baskets · Week of Sports 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/config.js"></script>
+</head>
+<body>
+<main>
+  <section class="page-head"><div class="wrap inner">
+    <div class="eyebrow">Win big, give back</div>
+    <h1>Raffle Baskets</h1>
+    <p>Baskets donated by local families and businesses — every ticket you buy supports the scholarship.</p>
+  </div></section>
+
+  <section class="section light">
+    <div class="wrap">
+      <div class="baskets" id="baskets"></div>
+      <p class="note" id="raffle-note"></p>
+      <div class="center-cta"><button class="btn btn-primary" onclick="openVenmo()">Buy tickets via Venmo</button></div>
+    </div>
+  </section>
+</main>
+
+<script>
+  window.renderPage = function(C){
+    document.getElementById('baskets').innerHTML = (C.raffleBaskets||[]).map(function(b){
+      return '<div class="basket reveal"><div class="bval">'+(b.value||'')+' value</div><h3>'+b.name+'</h3><p>'+(b.items||'')+'</p></div>';
+    }).join('');
+    document.getElementById('raffle-note').textContent = C.raffleNote || '';
+  };
+</script>
+<script src="/assets/page.js"></script>
+</body>
+</html>
