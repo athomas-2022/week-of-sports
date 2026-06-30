@@ -29,11 +29,11 @@
 <script>
   window.renderPage = function(C){
     var todayStr = new Date().toISOString().slice(0,10);
-    document.getElementById('days').innerHTML = (C.spiritWeek||[]).map(function(s,i){
+    document.getElementById('days').innerHTML = (C.spiritWeek||[]).length ? (C.spiritWeek).map(function(s,i){
       var isToday = s.date===todayStr;
       var badge = isToday ? 'Today' : new Date(s.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
       return '<div class="day'+(isToday?' today':'')+'"><div class="dnum">'+(i+1)+'</div><div class="dname">'+s.day+'</div><div class="dtheme">'+s.theme+'</div><div class="badge">'+badge+'</div></div>';
-    }).join('');
+    }).join('') : '<p style="grid-column:1/-1;text-align:center;color:#6a7a8f;font-size:16px">Spirit week themes are coming soon — check back closer to the event!</p>';
   };
 </script>
 <script src="/assets/page.js"></script>

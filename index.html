@@ -270,10 +270,15 @@
     S('aboutev-hl').innerHTML = (C.aboutEvent.highlights||[]).map(function(h){return '<div class="hlc"><div class="hk">'+h.k+'</div><div class="hv">'+h.v+'</div></div>';}).join('');
   }
   S('shirt-img').src = C.shirt;
-  S('shirt-price').textContent = '$'+C.shirtPrice;
-  S('hoodie-price').textContent = '$'+C.hoodiePrice;
-  S('gear-link').href = '/gear/';
-  S('goal').textContent = 'Goal  ' + money(C.fundraisingGoal);
+  if(C.gearReady){
+    S('shirt-price').textContent = '$'+C.shirtPrice;
+    S('hoodie-price').textContent = '$'+C.hoodiePrice;
+    S('gear-link').href = '/gear/';
+  } else {
+    S('shirt-price').textContent = 'Soon'; S('hoodie-price').textContent = 'Soon';
+    S('gear-link').textContent = 'Coming soon'; S('gear-link').removeAttribute('href'); S('gear-link').style.cursor = 'default';
+  }
+  if(C.fundraisingGoal>0) S('goal').textContent = 'Goal  ' + money(C.fundraisingGoal);
   S('gd-where').textContent = C.location;
   S('vol-link').href = C.volunteerUrl;
   S('vol-text').textContent = C.volunteerText || '';
@@ -288,38 +293,47 @@
   var tk = (C.ticker||[]).map(function(s){return '<span>'+s+'</span>';}).join('');
   S('ticker').innerHTML = tk + tk;
 
-  /* ---- game-day cards ---- */
-  S('games').innerHTML = (C.gameDayEvents||[]).map(function(g){
+  /* ---- game-day cards (or coming soon) ---- */
+  S('games').innerHTML = (C.gameDayEvents||[]).length ? (C.gameDayEvents).map(function(g){
     return '<div class="game"><div class="time">'+g.time+'</div><div class="gt">'+g.title+'</div><div class="gs">'+(g.sub||'')+'</div></div>';
-  }).join('');
+  }).join('') : '<div class="game" style="grid-column:1/-1;text-align:center"><div class="gt">Schedule coming soon</div><div class="gs">Game-day times will be announced closer to the event.</div></div>';
 
   /* ---- add to calendar + directions ---- */
   (function(){
-    var d = new Date(C.gameDay), end = new Date(d.getTime()+7*3600*1000);
-    function z(n){return (n<10?'0':'')+n;}
-    function f(x){return x.getFullYear()+z(x.getMonth()+1)+z(x.getDate())+'T'+z(x.getHours())+z(x.getMinutes())+'00';}
-    var text = encodeURIComponent('Week of Sports '+C.year+' — Game Day');
-    var loc = encodeURIComponent(C.location);
-    S('cal-link').href = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='+text+'&dates='+f(d)+'/'+f(end)+'&location='+loc;
     S('dir-link').href = 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(C.mapsQuery||C.location);
-    S('gd-eyebrow').textContent = d.toLocaleDateString('en-US',{weekday:'long', month:'long', day:'numeric'}) + ' · game day';
+    if(C.gameDay){
+      var d = new Date(C.gameDay), end = new Date(d.getTime()+7*3600*1000);
+      function z(n){return (n<10?'0':'')+n;}
+      function f(x){return x.getFullYear()+z(x.getMonth()+1)+z(x.getDate())+'T'+z(x.getHours())+z(x.getMinutes())+'00';}
+      var text = encodeURIComponent('Week of Sports '+C.year+' — Game Day');
+      S('cal-link').href = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='+text+'&dates='+f(d)+'/'+f(end)+'&location='+encodeURIComponent(C.location);
+      S('gd-eyebrow').textContent = d.toLocaleDateString('en-US',{weekday:'long', month:'long', day:'numeric'}) + ' · game day';
+    } else {
+      S('gd-eyebrow').textContent = 'Game day · date coming soon';
+      S('cal-link').style.display = 'none';
+    }
   })();
 
-  /* ---- leaderboard ---- */
-  var sorted = (C.divisions||[]).slice().sort(function(a,b){return b.amount-a.amount;});
-  var max = sorted.length ? sorted[0].amount : 1;
-  S('board').innerHTML = sorted.map(function(d,i){
-    var pct = Math.round(d.amount/max*100);
-    return '<div class="row"><div class="rank">'+(i+1)+'</div><div class="team"><div class="name">'+d.name+'</div><div class="meta">'+(d.tagline||'')+'</div></div><div class="bar-wrap"><div class="bar" data-pct="'+pct+'" style="background:var(--'+(d.color||'royal')+')"></div></div><div class="amt" data-val="'+d.amount+'">$0</div></div>';
-  }).join('');
+  /* ---- leaderboard (or coming soon) ---- */
+  if(C.fundraisingGoal>0){
+    var sorted = (C.divisions||[]).slice().sort(function(a,b){return b.amount-a.amount;});
+    var max = sorted.length ? sorted[0].amount : 1;
+    S('board').innerHTML = sorted.map(function(d,i){
+      var pct = Math.round(d.amount/max*100);
+      return '<div class="row"><div class="rank">'+(i+1)+'</div><div class="team"><div class="name">'+d.name+'</div><div class="meta">'+(d.tagline||'')+'</div></div><div class="bar-wrap"><div class="bar" data-pct="'+pct+'" style="background:var(--'+(d.color||'royal')+')"></div></div><div class="amt" data-val="'+d.amount+'">$0</div></div>';
+    }).join('');
+  } else {
+    var th = document.querySelector('.thermo'); if(th) th.style.display = 'none';
+    S('board').innerHTML = '<p style="text-align:center;color:#6a7a8f;font-size:16px;max-width:600px;margin:0 auto">The class-vs-class donation challenge returns this winter — live totals will appear here once it kicks off.</p>';
+  }
 
-  /* ---- spirit week (highlight today) ---- */
+  /* ---- spirit week (highlight today) or coming soon ---- */
   var todayStr = new Date().toISOString().slice(0,10);
-  S('days').innerHTML = (C.spiritWeek||[]).map(function(s,i){
+  S('days').innerHTML = (C.spiritWeek||[]).length ? (C.spiritWeek).map(function(s,i){
     var isToday = s.date===todayStr;
     var badge = isToday ? 'Today' : new Date(s.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
     return '<div class="day'+(isToday?' today':'')+'"><div class="dnum">'+(i+1)+'</div><div class="dname">'+s.day+'</div><div class="dtheme">'+s.theme+'</div><div class="badge">'+badge+'</div></div>';
-  }).join('');
+  }).join('') : '<p style="grid-column:1/-1;text-align:center;color:#6a7a8f;font-size:16px">This year’s spirit week themes are coming soon!</p>';
 
   /* ---- previous years gallery (dynamic mosaic, shapes adapt to each photo) ---- */
   var imgs = [];
@@ -348,8 +362,8 @@
   var hdr = S('hdr');
   window.addEventListener('scroll', function(){ hdr.classList.toggle('scrolled', window.scrollY>40); });
 
-  /* ---- countdown ---- */
-  var target = new Date(C.gameDay);
+  /* ---- countdown (or coming soon) ---- */
+  var target = C.gameDay ? new Date(C.gameDay) : null;
   function pad(n,l){ n=String(n); while(n.length<l) n='0'+n; return n; }
   function tick(){
     var diff = target - new Date(); if(diff<0) diff=0;
@@ -359,7 +373,12 @@
     S('d-min').textContent  = pad(Math.floor(s%3600/60),2);
     S('d-sec').textContent  = pad(s%60,2);
   }
-  tick(); setInterval(tick,1000);
+  if(target && !isNaN(target.getTime())){ tick(); setInterval(tick,1000); }
+  else {
+    var cs = S('countdown');
+    cs.querySelector('.cd-label').innerHTML = '<span class="pulse"></span> Game day';
+    cs.querySelector('.cd').innerHTML = '<div class="cell" style="min-width:260px"><div class="num" style="font-size:30px;letter-spacing:.01em">Coming soon</div></div>';
+  }
 
   /* ---- Venmo ---- */
   function openVenmo(){
@@ -371,7 +390,7 @@
   function countUp(el, t, dur){ var s=performance.now(); (function step(p){var k=Math.min(1,(p-s)/dur); el.textContent=money(t*k); if(k<1) requestAnimationFrame(step);})(s); }
   var boardDone=false;
   function animateBoard(){
-    if(boardDone) return; boardDone=true;
+    if(boardDone || !C.fundraisingGoal) return; boardDone=true;
     S('thermo').style.width = Math.min(100, C.raisedTotal/C.fundraisingGoal*100)+'%';
     countUp(S('raised'), C.raisedTotal, 1500);
     document.querySelectorAll('.bar').forEach(function(b){ b.style.width=b.dataset.pct+'%'; });
@@ -413,7 +432,7 @@
 
   /* ---- gear promo popup (shows once per browser session) ---- */
   (function(){
-    var p=S('gear-promo'); if(!p) return;
+    var p=S('gear-promo'); if(!p || !C.gearReady) return;
     try{ if(sessionStorage.getItem('wos_gear_promo')) return; }catch(e){}
     var img=(C.gearOrder && C.gearOrder.shirtPhoto) || C.shirt;
     if(img) S('promo-img').src=img;

@@ -13,7 +13,7 @@ window.WOS = {
 
   /* ---------- the event ---------- */
   year:      "2026",
-  gameDay:   "2026-12-12T14:00:00",       /* PLACEHOLDER — game-day date & time */
+  gameDay:   "",                          /* set e.g. "2026-12-12T14:00:00" when confirmed (blank = "coming soon") */
   location:  "Liberty-Benton High School",
   mapsQuery: "Liberty-Benton High School, Findlay, OH",
   contactEmail: "info@weekofsports.com",
@@ -28,8 +28,8 @@ window.WOS = {
 
   /* ---------- giving ---------- */
   venmoHandle:     "AndrewThomas24",      /* real — venmo.com/u/AndrewThomas24 */
-  fundraisingGoal: 10000,                 /* PLACEHOLDER — $ goal */
-  raisedTotal:     5580,                  /* PLACEHOLDER — $ raised so far */
+  fundraisingGoal: 0,                     /* set the $ goal when known (0 = challenge "coming soon") */
+  raisedTotal:     0,                     /* update during the campaign */
   donationFormUrl: "https://docs.google.com/document/d/1i5dRrSKtfrdR7aWloMK7MWNfTNFrIzXb/edit?usp=sharing",  /* real donation form */
   scholarshipUrl:  "https://www.community-foundation.com/scholarships/andrew-walker-memorial-scholarship",   /* real scholarship page */
   giveWays: [
@@ -46,21 +46,11 @@ window.WOS = {
     { name: "Elementary",    tagline: "Tiny but mighty",  amount: 1310, color: "sky"   }
   ],
 
-  /* ---------- game-day schedule ---------- */
-  gameDayEvents: [
-    { time: "2:00", title: "Student vs Staff", sub: "The grudge match" },
-    { time: "5:00", title: "JV boys",          sub: "Eagles basketball" },
-    { time: "7:00", title: "Varsity boys",     sub: "Main event under the lights" }
-  ],
+  /* ---------- game-day schedule (fill in when the lineup is set; empty = "coming soon") ---------- */
+  gameDayEvents: [],
 
-  /* ---------- spirit week (themes auto-highlight on their day) ---------- */
-  spiritWeek: [
-    { date: "2026-12-07", day: "Monday",    theme: "Gear day" },
-    { date: "2026-12-08", day: "Tuesday",   theme: "Jersey day" },
-    { date: "2026-12-09", day: "Wednesday", theme: "Hat day" },
-    { date: "2026-12-10", day: "Thursday",  theme: "Pajama day" },
-    { date: "2026-12-11", day: "Friday",    theme: "LB spirit day" }
-  ],
+  /* ---------- spirit week (add this year's dates + themes when set; empty = "coming soon") ---------- */
+  spiritWeek: [],
 
   /* ---------- the cause ---------- */
   cause: {
@@ -89,16 +79,9 @@ window.WOS = {
   /* ---------- sponsors (add { name, logo, url }; empty shows placeholders) ---------- */
   sponsors: [],
 
-  /* ---------- raffle baskets (the /raffle-baskets page) ---------- */
-  raffleBaskets: [
-    { name: "Eagles fan pack",   items: "Hoodie, blanket, tumbler & team swag", value: "$120" },
-    { name: "Family game night", items: "Board games, snacks & a gift card",    value: "$90"  },
-    { name: "Date night out",    items: "Dinner gift card & movie passes",       value: "$100" },
-    { name: "Coffee lover",      items: "Local beans, mug & café gift card",     value: "$60"  },
-    { name: "Sports fanatic",    items: "Tickets, gear & an autographed ball",   value: "$150" },
-    { name: "Self-care basket",  items: "Candles, lotions & a spa voucher",      value: "$80"  }
-  ],
-  raffleNote: "Tickets are $5 each or 5 for $20 — buy at the game-day tables or by Venmo. Winners are drawn live during the varsity game; you don't need to be present to win.",
+  /* ---------- raffle baskets (add this year's baskets when announced; empty = "coming soon") ---------- */
+  raffleBaskets: [],
+  raffleNote: "",
 
   /* ---------- volunteer ---------- */
   volunteerUrl:  "https://docs.google.com/spreadsheets/d/1GHON5g2QmFFZ7DXIFw4bid8InBzlzmE4Jw2GdTTLgUg/edit?usp=sharing",  /* real volunteer sign-up sheet */
@@ -114,6 +97,7 @@ window.WOS = {
   heroVideoUrl:  "https://youtu.be/-3iifoMWy7U",  /* "Watch our story" popup — plays with sound */
 
   /* ---------- gear ---------- */
+  gearReady:   false,                      /* set true when this year's gear + order form are ready (false = "coming soon") */
   shirtPrice:  15,
   hoodiePrice: 30,
   gearFormUrl: "https://forms.gle/oFYzKQ3KhHJikV2Y6",
@@ -164,13 +148,12 @@ window.WOS = {
 
   /* ---------- scrolling ticker ---------- */
   ticker: [
-    "Dec 8–12 · Spirit week",
-    "Saturday Dec 12 · Game day",
-    "2:00 · Student vs Staff",
-    "5:00 · JV boys",
-    "7:00 · Varsity boys",
-    "Buy your 2026 gear",
-    "Donate to your class"
+    "Week of Sports 2026",
+    "Andrew Walker Memorial Scholarship",
+    "Dates coming soon",
+    "Gear dropping soon",
+    "Donate to the scholarship",
+    "Follow @weekofsports"
   ],
 
   /* ---------- brand colors (blue & white) ---------- */

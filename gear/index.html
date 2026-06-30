@@ -125,6 +125,11 @@
 <script>
   window.renderPage = function(C){
     var G = C.gearOrder, S = function(id){return document.getElementById(id);};
+    if(!C.gearReady){
+      S('order-sub').textContent = 'This year’s gear is being finalized — check back soon.';
+      document.querySelector('.order').innerHTML = '<div style="text-align:center;padding:40px 0"><div class="sec-eyebrow" style="color:var(--royal)">Coming soon</div><h2 class="sec-h" style="color:var(--navy)">Ordering opens soon</h2><p class="lede">This year’s shirts and hoodies are being finalized. Check back soon, or follow <a href="https://www.instagram.com/weekofsports" target="_blank">@weekofsports</a> for the drop.</p><div class="center-cta" style="margin-top:8px"><a class="btn btn-primary" href="/">Back to home</a></div></div>';
+      return;
+    }
     var items = [], uid = 0;
 
     S('p-shirt').textContent = '$'+C.shirtPrice;
