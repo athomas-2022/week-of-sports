@@ -74,10 +74,10 @@ window.WOS = {
   galleryCount: 36,                        /* photos in /assets/gallery as 01.jpg … */
 
   /* ---------- previous years (homepage "Previous years" section) ---------- */
-  pastCount: 27,                           /* photos in /assets/past as 01.jpg, 02.jpg … (add/replace yours here) */
+  pastCount: 28,                           /* photos in /assets/past as 01.jpg, 02.jpg … (add/replace yours here) */
   /* which past photos fill the static "More moments" grid (1-based file #s).
      order: [feature, 4 squares, 2 wide]. empty = auto spread. */
-  momentsPics: [23, 24, 25, 26, 27, 21, 22],
+  momentsPics: [28, 23, 24, 25, 26, 21, 22],
 
   /* ---------- sponsors (add { name, logo, url }; empty shows placeholders) ---------- */
   sponsors: [],
