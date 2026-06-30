@@ -353,7 +353,7 @@
     var stage = S('cfStage'), dotsEl = S('cfDots'), n = imgs.length;
     if(!stage || !n) return;
     stage.innerHTML = imgs.map(function(src,idx){
-      return '<div class="cf-card" data-i="'+idx+'"><img loading="'+(idx<3?'eager':'lazy')+'" src="'+src+'" alt="Week of Sports — past event photo"></div>';
+      return '<div class="cf-card" data-i="'+idx+'"><div class="cf-bg" style="background-image:url('+src+')"></div><img loading="'+(idx<3?'eager':'lazy')+'" src="'+src+'" alt="Week of Sports — past event photo"></div>';
     }).join('');
     dotsEl.innerHTML = imgs.map(function(_,idx){ return '<button class="cf-dot'+(idx===0?' on':'')+'" data-i="'+idx+'" aria-label="Go to photo '+(idx+1)+'"></button>'; }).join('');
     var cards = stage.children, dots = dotsEl.children, cur = 0, timer = null;
