@@ -166,12 +166,15 @@
     <div class="sec-eyebrow">Looking back</div>
     <h2 class="sec-h">Previous years</h2>
     <p class="sec-sub">Highlights from past Week of Sports events — the games, the crowds, and the community that makes it happen.</p>
-    <div class="carousel" id="carousel">
-      <div class="slides" id="slides"></div>
-      <button class="cbtn cprev" id="cprev" aria-label="Previous photo">&#8249;</button>
-      <button class="cbtn cnext" id="cnext" aria-label="Next photo">&#8250;</button>
-      <div class="dots" id="dots"></div>
+    <div class="cf" id="cf">
+      <div class="cf-stage" id="cfStage"></div>
+      <button class="cf-btn cf-prev" id="cfPrev" aria-label="Previous photo">&#8249;</button>
+      <button class="cf-btn cf-next" id="cfNext" aria-label="Next photo">&#8250;</button>
+      <div class="cf-dots" id="cfDots"></div>
     </div>
+
+    <div class="moments-head"><span class="ml-line"></span><span class="ml-txt">More moments</span><span class="ml-line"></span></div>
+    <div class="moments" id="moments"></div>
   </div>
 </section>
 
@@ -347,20 +350,54 @@
   var pastN = C.pastCount || 0;
   for(var i=1;i<=pastN;i++){ imgs.push('/assets/past/'+(i<10?'0'+i:i)+'.jpg'); }
   (function(){
-    var slidesEl = S('slides'), dotsEl = S('dots');
-    slidesEl.innerHTML = imgs.map(function(src,idx){
-      return '<div class="slide'+(idx===0?' on':'')+'" onclick="openLB('+idx+')"><div class="bg" style="background-image:url('+src+')"></div><img loading="'+(idx<2?'eager':'lazy')+'" src="'+src+'" alt="Week of Sports — past event photo"></div>';
+    var stage = S('cfStage'), dotsEl = S('cfDots'), n = imgs.length;
+    if(!stage || !n) return;
+    stage.innerHTML = imgs.map(function(src,idx){
+      return '<div class="cf-card" data-i="'+idx+'"><img loading="'+(idx<3?'eager':'lazy')+'" src="'+src+'" alt="Week of Sports — past event photo"></div>';
     }).join('');
-    dotsEl.innerHTML = imgs.map(function(_,idx){ return '<button class="dot'+(idx===0?' on':'')+'" data-i="'+idx+'" aria-label="Go to photo '+(idx+1)+'"></button>'; }).join('');
-    var slides = slidesEl.children, dots = dotsEl.children, cur = 0, timer = null;
-    function go(n){ slides[cur].classList.remove('on'); dots[cur].classList.remove('on'); cur=(n+imgs.length)%imgs.length; slides[cur].classList.add('on'); dots[cur].classList.add('on'); }
-    function start(){ stop(); timer = setInterval(function(){ go(cur+1); }, 4500); }
+    dotsEl.innerHTML = imgs.map(function(_,idx){ return '<button class="cf-dot'+(idx===0?' on':'')+'" data-i="'+idx+'" aria-label="Go to photo '+(idx+1)+'"></button>'; }).join('');
+    var cards = stage.children, dots = dotsEl.children, cur = 0, timer = null;
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function layout(){
+      for(var i=0;i<n;i++){
+        var o=i-cur; if(o> n/2) o-=n; if(o< -n/2) o+=n;   /* shortest circular offset */
+        var a=Math.abs(o), card=cards[i];
+        var x=o*40, z=-Math.min(a,3)*210, ry=-o*38, s=(o===0)?1.06:Math.max(0.78,1-a*0.12);
+        card.style.transform='translate(-50%,-50%) translateX('+x+'%) translateZ('+z+'px) rotateY('+ry+'deg) scale('+s+')';
+        card.style.opacity = a>2.5 ? 0 : (o===0?1:0.92-a*0.12);
+        card.style.zIndex = String(100-Math.round(a*10));
+        card.style.pointerEvents = a>2.5 ? 'none' : 'auto';
+        card.classList.toggle('is-active', o===0);
+        if(dots[i]) dots[i].classList.toggle('on', i===cur);
+      }
+    }
+    function go(k){ cur=((k%n)+n)%n; layout(); }
+    function start(){ if(reduce) return; stop(); timer=setInterval(function(){ go(cur+1); }, 3800); }
     function stop(){ if(timer){ clearInterval(timer); timer=null; } }
-    S('cnext').onclick = function(){ go(cur+1); start(); };
-    S('cprev').onclick = function(){ go(cur-1); start(); };
+    S('cfNext').onclick=function(){ go(cur+1); start(); };
+    S('cfPrev').onclick=function(){ go(cur-1); start(); };
     dotsEl.addEventListener('click', function(e){ var d=e.target.getAttribute('data-i'); if(d!==null){ go(+d); start(); } });
-    var car = S('carousel'); car.addEventListener('mouseenter', stop); car.addEventListener('mouseleave', start);
-    if(imgs.length>1) start();
+    stage.addEventListener('click', function(e){
+      var c=e.target.closest('.cf-card'); if(!c) return;
+      var i=+c.getAttribute('data-i');
+      if(i===cur){ openLB(i); } else { go(i); start(); }
+    });
+    var cf=S('cf'); cf.addEventListener('mouseenter', stop); cf.addEventListener('mouseleave', start);
+    layout();
+    if(n>1) start();
+
+    /* static "moments" bento — a spread of the pool, always visible */
+    var mEl=S('moments');
+    if(mEl){
+      var picks=[], step=Math.max(1,Math.floor(n/6));
+      for(var p=0; p<n && picks.length<6; p+=step){ picks.push(p); }
+      while(picks.length<Math.min(6,n)){ picks.push(picks.length); }
+      var shape=['big','wide','tall','','','wide'];
+      mEl.className='mosaic';
+      mEl.innerHTML=picks.map(function(idx,k){
+        return '<div class="mcell '+(shape[k]||'')+'" onclick="openLB('+idx+')"><img loading="lazy" src="'+imgs[idx]+'" alt="Week of Sports moment"></div>';
+      }).join('');
+    }
   })();
 
   /* ---- sponsors (placeholders if empty) ---- */

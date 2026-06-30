@@ -74,7 +74,7 @@ window.WOS = {
   galleryCount: 36,                        /* photos in /assets/gallery as 01.jpg … */
 
   /* ---------- previous years (homepage "Previous years" section) ---------- */
-  pastCount: 12,                           /* photos in /assets/past as 01.jpg, 02.jpg … (add/replace yours here) */
+  pastCount: 20,                           /* photos in /assets/past as 01.jpg, 02.jpg … (add/replace yours here) */
 
   /* ---------- sponsors (add { name, logo, url }; empty shows placeholders) ---------- */
   sponsors: [],
