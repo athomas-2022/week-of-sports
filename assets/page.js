@@ -48,7 +48,7 @@
       '<a href="/fundraising-video/">Our story</a>'+
       '<a href="mailto:'+C.contactEmail+'">Contact</a>'+
     '</div>'+
-    '<p class="f-note">Concept preview. All content is editable in <code>config.js</code>.</p></div>';
+    '</div>';
   document.body.appendChild(footer);
 
   /* ---- video modal + lightbox ---- */
