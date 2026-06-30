@@ -241,25 +241,27 @@
       if(!selected('del')) return showError('Please choose how to get your order.');
       if(!selected('pay')) return showError('Please choose a payment method.');
 
-      var e = G.entries, fields = {};
-      fields[e.name]=S('f-name').value.trim();
-      fields[e.phone]=S('f-phone').value.trim();
-      fields[e.studentHomeroom]=S('f-homeroom').value.trim();
       var shirts=items.filter(function(i){return i.type==='shirt';});
       var hoodies=items.filter(function(i){return i.type==='hoodie';});
-      fields[e.buyShirt]= shirts.length ? 'Yes' : 'No (Buy a hoodie)';
-      shirts.forEach(function(it,i){ var s=e.shirtSlots[i]; if(!s)return; fields[s.color]=it.color; fields[s.size]=it.size; fields[s.another]= i<shirts.length-1?'Yes':'No'; });
-      fields[e.buyHoodie]= hoodies.length ? 'Yes' : 'No';
-      hoodies.forEach(function(it,i){ var s=e.hoodieSlots[i]; if(!s)return; fields[s.color]=it.color; fields[s.size]=it.size; fields[s.another]= i<hoodies.length-1?'Yes':'No'; });
-      fields[e.delivery]=selected('del');
-      fields[e.payment]=selected('pay');
+      var summary = items.map(function(it){
+        return (it.type==='shirt'?'T-Shirt':'Hoodie')+': '+it.color+', '+it.size.replace(/ \(.*\)/,'');
+      }).join('  |  ');
+      var fields = {
+        name:     S('f-name').value.trim(),
+        phone:    S('f-phone').value.trim(),
+        homeroom: S('f-homeroom').value.trim(),
+        order:    summary,
+        total:    money(total()),
+        delivery: selected('del'),
+        payment:  selected('pay')
+      };
 
       var btn=S('place'); btn.disabled=true; btn.textContent='Placing…';
       var ifr=document.createElement('iframe'); ifr.name='gf_'+Date.now(); ifr.style.display='none'; document.body.appendChild(ifr);
-      var f=document.createElement('form'); f.action=G.formAction; f.method='POST'; f.target=ifr.name; f.style.display='none';
-      Object.keys(fields).forEach(function(k){ var inp=document.createElement('input'); inp.type='hidden'; inp.name='entry.'+k; inp.value=fields[k]; f.appendChild(inp); });
+      var f=document.createElement('form'); f.action=G.orderEndpoint; f.method='POST'; f.target=ifr.name; f.style.display='none';
+      Object.keys(fields).forEach(function(k){ var inp=document.createElement('input'); inp.type='hidden'; inp.name=k; inp.value=fields[k]; f.appendChild(inp); });
       document.body.appendChild(f); f.submit();
-      setTimeout(function(){ showSuccess(shirts, hoodies); }, 700);
+      setTimeout(function(){ showSuccess(shirts, hoodies); }, 900);
     });
 
     function showSuccess(shirts, hoodies){

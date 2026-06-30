@@ -105,9 +105,12 @@ window.WOS = {
   hoodiePrice: 30,
   gearFormUrl: "https://forms.gle/oFYzKQ3KhHJikV2Y6",
 
-  /* ---------- gear order page (/gear) — submits into the existing Google Form ---------- */
+  /* ---------- gear order page (/gear) — submits straight into your Google Sheet ----------
+     orderEndpoint = the Apps Script web-app URL bound to the "Week of Sports 2026 Orders"
+     sheet (athomas@liberty-benton.org). Orders append as rows there. */
   gearOrder: {
-    formAction: "https://docs.google.com/forms/d/e/1FAIpQLSczCeztwhRGkF1yNF-_s5qwtswnmxbeR5XegwyNtJyx8PqkNg/formResponse",
+    orderEndpoint: "https://script.google.com/macros/s/AKfycbyIrZy_q0UI_msumF5Lixic5kFi8tMOWcbBnn8nVfbtXnkB88xWuuwmZW9BwyIyurECmA/exec",
+    formAction: "https://docs.google.com/forms/d/e/1FAIpQLSczCeztwhRGkF1yNF-_s5qwtswnmxbeR5XegwyNtJyx8PqkNg/formResponse",  /* legacy Google Form — no longer used */
     deadline: "November 1",                 /* PLACEHOLDER — order-by date */
     maxPerType: 4,
     shirtPhoto:  "/assets/product-shirt.jpg",
