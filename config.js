@@ -98,6 +98,50 @@ window.WOS = {
   hoodiePrice: 30,
   gearFormUrl: "https://forms.gle/oFYzKQ3KhHJikV2Y6",
 
+  /* ---------- gear order page (/gear) — submits into the existing Google Form ---------- */
+  gearOrder: {
+    formAction: "https://docs.google.com/forms/d/e/1FAIpQLSczCeztwhRGkF1yNF-_s5qwtswnmxbeR5XegwyNtJyx8PqkNg/formResponse",
+    deadline: "November 1",                 /* PLACEHOLDER — order-by date */
+    maxPerType: 4,
+    shirtPhoto:  "/assets/product-shirt.jpg",
+    hoodiePhoto: "/assets/product-hoodie.jpg",
+    colors: [
+      { name: "Blue", hex: "#2f74d0" },
+      { name: "Red",  hex: "#c8202f" },
+      { name: "Grey", hex: "#9aa3ad" }
+    ],
+    shirtSizes:  ["Youth XS","Youth S","Youth M","Youth L","Youth XL","S","M","L","XL","2XL (+$1.00)","3XL (+$2.00)","4XL (+$4.00)","5XL (+$6.00)"],
+    hoodieSizes: ["Youth XS","Youth S","Youth M","Youth L","Youth XL","S","M","L","XL","2XL (+$1.00)","3XL (+$2.00)","4XL (+$3.00)"],
+    delivery: [
+      "I will have my order dropped off in my homeroom (Elementary and Middle School)",
+      "I will have my order dropped off at the high school",
+      "I will schedule with info@weekofsports.com to pickup"
+    ],
+    payment: [
+      "Venmo (AndrewThomas24) (Put name in description)",
+      "Give Payment (cash or check- made out to Andrew Thomas LLC) to LBHS Office (In envelope)",
+      "Give Payment (cash or check- made out to Andrew Thomas LLC) to MS/ES Office (In envelope)",
+      "Email info@weekofsports.com to determine payment"
+    ],
+    entries: {
+      name: "1406133203", phone: "669342656", studentHomeroom: "650042010",
+      buyShirt: "1393243617", buyHoodie: "1972290609",
+      delivery: "1966866005", payment: "1674885797",
+      shirtSlots: [
+        { color: "865607942",  size: "1961284553", another: "393640042"  },
+        { color: "1557277692", size: "1502277901", another: "2071387215" },
+        { color: "1710728888", size: "654703230",  another: "1029479014" },
+        { color: "257956055",  size: "1308959253", another: "483937629"  }
+      ],
+      hoodieSlots: [
+        { color: "1201931753", size: "1991681689", another: "75943834"  },
+        { color: "490187393",  size: "838746899",  another: "444514728" },
+        { color: "847296809",  size: "2047190767", another: "718354254" },
+        { color: "298559359",  size: "1043985234", another: "715654819" }
+      ]
+    }
+  },
+
   /* ---------- scrolling ticker ---------- */
   ticker: [
     "Dec 8–12 · Spirit week",

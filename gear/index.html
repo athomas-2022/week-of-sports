@@ -3,60 +3,273 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Gear · Week of Sports 2026</title>
+<title>Order Gear · Week of Sports 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/site.css">
 <script src="/config.js"></script>
+<style>
+  .order{max-width:780px;margin:0 auto}
+  .o-h{font-family:'Oswald';font-weight:600;text-transform:uppercase;letter-spacing:.06em;font-size:18px;color:var(--navy);margin:38px 0 14px;display:flex;align-items:center;gap:10px}
+  .o-h .n{width:28px;height:28px;border-radius:50%;background:var(--royal);color:#fff;font-size:14px;display:flex;align-items:center;justify-content:center;flex:none}
+  .o-h:first-child{margin-top:0}
+  .addbar{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .prod{display:flex;flex-direction:column;align-items:flex-start;gap:4px;background:var(--paper);border:1.5px solid #dbe4f0;border-radius:14px;padding:18px;cursor:pointer;transition:border-color .2s,transform .15s;font-family:'Inter'}
+  .prod:hover{border-color:var(--royal);transform:translateY(-2px)}
+  .prod .pn{font-family:'Oswald';font-weight:600;text-transform:uppercase;letter-spacing:.04em;font-size:18px;color:var(--navy)}
+  .prod .pp{font-family:'Oswald';font-weight:700;font-size:24px;color:var(--royal)}
+  .prod .pa{font-size:13px;color:#5a6b7f;display:flex;align-items:center;gap:6px;margin-top:4px}
+  .prod[disabled]{opacity:.45;cursor:not-allowed}
+  .prod img{width:100%;height:150px;object-fit:cover;object-position:center 26%;border-radius:10px;margin-bottom:12px;display:block;background:#eef2f8}
+  .o-empty{text-align:center;color:#8a98aa;font-size:15px;padding:22px;border:1.5px dashed #dbe4f0;border-radius:14px;margin-top:14px}
+  .item{background:#fff;border:1px solid #e3e9f1;border-radius:14px;padding:16px 18px;margin-top:12px}
+  .item-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .item-name{font-family:'Oswald';font-weight:600;text-transform:uppercase;letter-spacing:.04em;font-size:16px;color:var(--navy)}
+  .item-price{font-family:'Oswald';font-weight:700;color:var(--royal);font-size:16px;margin-left:auto;font-variant-numeric:tabular-nums}
+  .item-rm{width:30px;height:30px;border-radius:8px;border:1px solid #e3e9f1;background:#fff;color:#8a98aa;font-size:20px;line-height:1;cursor:pointer}
+  .item-rm:hover{border-color:#c8202f;color:#c8202f}
+  .item-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .field .flabel{display:block;font-family:'Oswald';font-weight:600;text-transform:uppercase;letter-spacing:.08em;font-size:11px;color:#6a7a8f;margin-bottom:7px}
+  .swatches{display:flex;gap:10px}
+  .sw{position:relative;cursor:pointer}
+  .sw input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer}
+  .sw .dot{display:block;width:34px;height:34px;border-radius:50%;background:var(--c);border:2px solid #fff;box-shadow:0 0 0 2px #dbe4f0;transition:box-shadow .15s}
+  .sw input:checked + .dot{box-shadow:0 0 0 3px var(--navy)}
+  .sw input:focus-visible + .dot{box-shadow:0 0 0 3px var(--royal)}
+  select.size,input.tin{width:100%;min-height:46px;border:1.5px solid #dbe4f0;border-radius:10px;padding:0 12px;font-family:'Inter';font-size:16px;color:var(--ink);background:#fff}
+  select.size:focus,input.tin:focus{outline:none;border-color:var(--royal);box-shadow:0 0 0 3px rgba(47,116,208,.18)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  label.fl{display:block}
+  label.fl .t{display:block;font-family:'Oswald';font-weight:600;text-transform:uppercase;letter-spacing:.06em;font-size:12px;color:#46566b;margin-bottom:7px}
+  .req{color:#c8202f}
+  .opts{display:flex;flex-direction:column;gap:10px}
+  .opt{display:flex;align-items:flex-start;gap:12px;background:#fff;border:1.5px solid #dbe4f0;border-radius:12px;padding:14px 16px;cursor:pointer;transition:border-color .2s,background .2s}
+  .opt:hover{border-color:#b9cdea}
+  .opt input{margin-top:3px;width:18px;height:18px;flex:none;accent-color:var(--royal)}
+  .opt.sel{border-color:var(--royal);background:#f1f6fd}
+  .opt .ot{font-size:15px;color:var(--ink);line-height:1.4}
+  #venmo-box{margin-top:14px;background:#f1f6fd;border:1px solid #cfe0f7;border-radius:12px;padding:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  #venmo-box .vt{font-size:14px;color:#37506e}
+  .o-bar{position:sticky;bottom:0;background:#fff;border:1px solid #e3e9f1;border-radius:14px;padding:16px 18px;margin-top:30px;display:flex;align-items:center;justify-content:space-between;gap:14px;box-shadow:0 -6px 20px rgba(10,35,66,.06)}
+  .o-total{font-family:'Oswald';font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#46566b;font-size:15px}
+  .o-total b{font-family:'Oswald';font-weight:700;font-size:30px;color:var(--navy);margin-left:8px;font-variant-numeric:tabular-nums}
+  #place{min-height:50px;padding:0 30px;font-size:16px}
+  .o-err{margin-top:14px;background:#fdecec;border:1px solid #f3b4b4;color:#a3201f;border-radius:10px;padding:12px 14px;font-size:14px}
+  .success{text-align:center;max-width:560px;margin:0 auto;padding:30px 0}
+  .success .ck{width:72px;height:72px;border-radius:50%;background:#e7f6ec;color:#1f9d57;display:flex;align-items:center;justify-content:center;font-size:38px;margin:0 auto 18px}
+  .success h2{font-family:'Anton';text-transform:uppercase;font-size:38px;color:var(--navy);margin-bottom:8px}
+  .success p{color:#46566b;font-size:16px;line-height:1.6;margin-bottom:8px}
+  .sum{text-align:left;background:var(--paper);border:1px solid #e3e9f1;border-radius:12px;padding:16px 18px;margin:20px 0;font-size:15px}
+  .sum .li{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #e7edf4}
+  .sum .li:last-child{border-bottom:0;font-family:'Oswald';font-weight:700;color:var(--navy)}
+  @media (max-width:620px){
+    .addbar,.item-row,.grid2{grid-template-columns:1fr}
+    .o-bar{flex-direction:column;align-items:stretch} #place{width:100%}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
 </head>
 <body>
 <main>
   <section class="page-head"><div class="wrap inner">
     <div class="eyebrow">Shop</div>
-    <h1>Gear</h1>
-    <p>Wear the legacy. Every shirt and hoodie turns profit straight into the Andrew Walker Memorial Scholarship Fund.</p>
+    <h1>Order your gear</h1>
+    <p id="order-sub">Shirts $15 · hoodies $30 · larger sizes a little more.</p>
   </div></section>
 
-  <section class="gear">
-    <div class="wrap gear-grid">
-      <div class="reveal"><img id="shirt-img" alt="This year's Week of Sports shirt design" /></div>
-      <div class="gear-copy reveal">
-        <div class="eyebrow">This year's design</div>
-        <h2>Eagles, all in.</h2>
-        <p>Soft, comfortable, and built to be worn all season long — not just on game day. Order online, then pay by Venmo.</p>
-        <div class="price-chips">
-          <div class="pchip">T-shirt <b id="shirt-price"></b></div>
-          <div class="pchip">Hoodie <b id="hoodie-price"></b></div>
+  <section class="section light">
+    <div class="wrap order">
+      <form id="order-form" novalidate>
+        <h2 class="o-h"><span class="n">1</span> Pick your gear</h2>
+        <div class="addbar">
+          <button type="button" class="prod" data-add="shirt"><img id="img-shirt" alt="Week of Sports T-shirt"><span class="pn">T-Shirt</span><span class="pp" id="p-shirt">$15</span><span class="pa">＋ Add a shirt</span></button>
+          <button type="button" class="prod" data-add="hoodie"><img id="img-hoodie" alt="Week of Sports hoodie"><span class="pn">Hoodie</span><span class="pp" id="p-hoodie">$30</span><span class="pa">＋ Add a hoodie</span></button>
         </div>
-        <div class="cta">
-          <a class="btn btn-white" id="gear-link" target="_blank">Order gear</a>
-          <button class="btn btn-ghost" onclick="openVenmo()">Pay with Venmo</button>
-        </div>
-      </div>
-    </div>
-  </section>
+        <div id="items"></div>
+        <p id="items-empty" class="o-empty">No items yet — add a shirt or hoodie above to get started.</p>
 
-  <section class="gallery on-light">
-    <div class="wrap">
-      <div class="sec-eyebrow">See it worn</div>
-      <h2 class="sec-h">On the court &amp; in the crowd</h2>
-      <div class="grid" id="grid" style="margin-top:30px"></div>
+        <h2 class="o-h"><span class="n">2</span> Your info</h2>
+        <div class="grid2">
+          <label class="fl"><span class="t">Name <span class="req">*</span></span><input class="tin" id="f-name" autocomplete="name" required></label>
+          <label class="fl"><span class="t">Phone number <span class="req">*</span></span><input class="tin" id="f-phone" type="tel" autocomplete="tel" required></label>
+        </div>
+        <label class="fl" style="margin-top:16px"><span class="t">Student name &amp; homeroom <span class="req">*</span></span><input class="tin" id="f-homeroom" required></label>
+
+        <h2 class="o-h"><span class="n">3</span> How should we get it to you?</h2>
+        <div class="opts" id="delivery-opts"></div>
+
+        <h2 class="o-h"><span class="n">4</span> Payment</h2>
+        <div class="opts" id="payment-opts"></div>
+        <div id="venmo-box" hidden><span class="vt">Pay by Venmo to <b>@AndrewThomas24</b> — put your name in the description.</span><a class="btn btn-primary" id="venmo-btn" target="_blank">Pay total on Venmo</a></div>
+
+        <div class="o-bar">
+          <div class="o-total">Total<b id="total">$0</b></div>
+          <button type="submit" class="btn btn-primary" id="place">Place order</button>
+        </div>
+        <p id="order-error" class="o-err" role="alert" aria-live="polite" hidden></p>
+      </form>
+
+      <div class="success" id="order-success" aria-live="polite" hidden>
+        <div class="ck">&#10003;</div>
+        <h2>Order placed!</h2>
+        <p id="success-msg"></p>
+        <div class="sum" id="success-sum"></div>
+        <div id="success-venmo"></div>
+        <button class="btn btn-outline" id="another" style="margin-top:18px">Place another order</button>
+      </div>
     </div>
   </section>
 </main>
 
 <script>
   window.renderPage = function(C){
-    var S = function(id){ return document.getElementById(id); };
-    S('shirt-img').src = C.shirt;
-    S('shirt-price').textContent = '$'+C.shirtPrice;
-    S('hoodie-price').textContent = '$'+C.hoodiePrice;
-    S('gear-link').href = C.gearFormUrl;
-    var imgs = [], n = Math.min(12, C.galleryCount||0);
-    for(var i=1;i<=n;i++) imgs.push('/assets/gallery/'+(i<10?'0'+i:i)+'.jpg');
-    window.LBIMAGES = imgs;
-    S('grid').innerHTML = imgs.map(function(src,idx){ return '<img loading="lazy" src="'+src+'" onclick="openLB('+idx+')" alt="Week of Sports gear">'; }).join('');
+    var G = C.gearOrder, S = function(id){return document.getElementById(id);};
+    var items = [], uid = 0;
+
+    S('p-shirt').textContent = '$'+C.shirtPrice;
+    S('p-hoodie').textContent = '$'+C.hoodiePrice;
+    if(G.shirtPhoto) S('img-shirt').src = G.shirtPhoto;
+    if(G.hoodiePhoto) S('img-hoodie').src = G.hoodiePhoto;
+    S('order-sub').textContent = 'Shirts $'+C.shirtPrice+' · hoodies $'+C.hoodiePrice+' · larger sizes a little more. Order by '+G.deadline+'.';
+
+    function surcharge(size){ var m=/\+\$(\d+)/.exec(size||''); return m?+m[1]:0; }
+    function priceOf(it){ return (it.type==='shirt'?C.shirtPrice:C.hoodiePrice) + surcharge(it.size); }
+    function total(){ return items.reduce(function(s,it){return s+priceOf(it);},0); }
+    function money(n){ return '$'+n.toLocaleString('en-US'); }
+
+    function defaultSize(type){ var a=type==='shirt'?G.shirtSizes:G.hoodieSizes; return a.indexOf('M')>-1?'M':a[0]; }
+
+    function addItem(type){
+      var count = items.filter(function(i){return i.type===type;}).length;
+      if(count >= G.maxPerType) return;
+      items.push({ id:++uid, type:type, color:G.colors[0].name, size:defaultSize(type) });
+      render();
+    }
+
+    function render(){
+      var html = items.map(function(it){
+        var sizes = (it.type==='shirt'?G.shirtSizes:G.hoodieSizes);
+        var sw = G.colors.map(function(c){
+          return '<label class="sw" style="--c:'+c.hex+'"><input type="radio" name="color-'+it.id+'" value="'+c.name+'"'+(c.name===it.color?' checked':'')+' aria-label="'+c.name+'"><span class="dot"></span></label>';
+        }).join('');
+        var opts = sizes.map(function(s){ return '<option'+(s===it.size?' selected':'')+'>'+s+'</option>'; }).join('');
+        return '<div class="item" data-id="'+it.id+'">'+
+          '<div class="item-top"><span class="item-name">'+(it.type==='shirt'?'T-Shirt':'Hoodie')+'</span><span class="item-price">'+money(priceOf(it))+'</span><button type="button" class="item-rm" data-rm="'+it.id+'" aria-label="Remove item">&times;</button></div>'+
+          '<div class="item-row"><div class="field"><span class="flabel">Color</span><div class="swatches">'+sw+'</div></div>'+
+          '<div class="field"><span class="flabel">Size</span><select class="size" data-id="'+it.id+'">'+opts+'</select></div></div></div>';
+      }).join('');
+      S('items').innerHTML = html;
+      S('items-empty').hidden = items.length > 0;
+      ['shirt','hoodie'].forEach(function(t){
+        var btn = document.querySelector('.prod[data-add="'+t+'"]');
+        var full = items.filter(function(i){return i.type===t;}).length >= G.maxPerType;
+        btn.disabled = full;
+        btn.querySelector('.pa').textContent = full ? 'Max '+G.maxPerType+' added' : '＋ Add a '+t;
+      });
+      updateTotal();
+    }
+
+    function updateTotal(){
+      var t = total();
+      S('total').textContent = money(t);
+      if(selectedPayment() === G.payment[0]){ S('venmo-box').hidden = false; S('venmo-btn').href = venmoLink(t); }
+      else S('venmo-box').hidden = true;
+    }
+
+    function venmoLink(t){
+      var note = encodeURIComponent('Week of Sports gear — '+(S('f-name').value||'name'));
+      return 'https://venmo.com/u/'+C.venmoHandle+'?txn=pay&amount='+t+'&note='+note;
+    }
+
+    S('items').addEventListener('change', function(e){
+      var id = +(e.target.dataset.id || (e.target.name||'').replace('color-',''));
+      var it = items.filter(function(x){return x.id===id;})[0];
+      if(!it) return;
+      if(e.target.classList.contains('size')) it.size = e.target.value;
+      else if(e.target.name && e.target.name.indexOf('color-')===0) it.color = e.target.value;
+      var row = e.target.closest('.item');
+      if(row) row.querySelector('.item-price').textContent = money(priceOf(it));
+      updateTotal();
+    });
+    S('items').addEventListener('click', function(e){
+      var rm = e.target.dataset.rm;
+      if(rm){ items = items.filter(function(x){return x.id!==+rm;}); render(); }
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('.prod'), function(b){
+      b.addEventListener('click', function(){ addItem(b.dataset.add); });
+    });
+
+    function optCards(host, list, group){
+      S(host).innerHTML = list.map(function(o,i){
+        return '<label class="opt"><input type="radio" name="'+group+'" value="'+o.replace(/"/g,'&quot;')+'"><span class="ot">'+o+'</span></label>';
+      }).join('');
+      S(host).addEventListener('change', function(){
+        Array.prototype.forEach.call(S(host).querySelectorAll('.opt'), function(l){ l.classList.toggle('sel', l.querySelector('input').checked); });
+        if(group==='pay') updateTotal();
+      });
+    }
+    optCards('delivery-opts', G.delivery, 'del');
+    optCards('payment-opts', G.payment, 'pay');
+
+    function selected(group){ var r=document.querySelector('input[name="'+group+'"]:checked'); return r?r.value:''; }
+    function selectedPayment(){ return selected('pay'); }
+    S('f-name').addEventListener('input', updateTotal);
+
+    function showError(msg, focusEl){
+      var e=S('order-error'); e.textContent=msg; e.hidden=false;
+      e.scrollIntoView({behavior:'smooth',block:'center'}); if(focusEl) focusEl.focus();
+    }
+
+    S('order-form').addEventListener('submit', function(ev){
+      ev.preventDefault();
+      S('order-error').hidden = true;
+      if(items.length===0) return showError('Add at least one shirt or hoodie before ordering.');
+      if(!S('f-name').value.trim()) return showError('Please enter your name.', S('f-name'));
+      if(!S('f-phone').value.trim()) return showError('Please enter a phone number.', S('f-phone'));
+      if(!S('f-homeroom').value.trim()) return showError('Please enter the student name & homeroom.', S('f-homeroom'));
+      if(!selected('del')) return showError('Please choose how to get your order.');
+      if(!selected('pay')) return showError('Please choose a payment method.');
+
+      var e = G.entries, fields = {};
+      fields[e.name]=S('f-name').value.trim();
+      fields[e.phone]=S('f-phone').value.trim();
+      fields[e.studentHomeroom]=S('f-homeroom').value.trim();
+      var shirts=items.filter(function(i){return i.type==='shirt';});
+      var hoodies=items.filter(function(i){return i.type==='hoodie';});
+      fields[e.buyShirt]= shirts.length ? 'Yes' : 'No (Buy a hoodie)';
+      shirts.forEach(function(it,i){ var s=e.shirtSlots[i]; if(!s)return; fields[s.color]=it.color; fields[s.size]=it.size; fields[s.another]= i<shirts.length-1?'Yes':'No'; });
+      fields[e.buyHoodie]= hoodies.length ? 'Yes' : 'No';
+      hoodies.forEach(function(it,i){ var s=e.hoodieSlots[i]; if(!s)return; fields[s.color]=it.color; fields[s.size]=it.size; fields[s.another]= i<hoodies.length-1?'Yes':'No'; });
+      fields[e.delivery]=selected('del');
+      fields[e.payment]=selected('pay');
+
+      var btn=S('place'); btn.disabled=true; btn.textContent='Placing…';
+      var ifr=document.createElement('iframe'); ifr.name='gf_'+Date.now(); ifr.style.display='none'; document.body.appendChild(ifr);
+      var f=document.createElement('form'); f.action=G.formAction; f.method='POST'; f.target=ifr.name; f.style.display='none';
+      Object.keys(fields).forEach(function(k){ var inp=document.createElement('input'); inp.type='hidden'; inp.name='entry.'+k; inp.value=fields[k]; f.appendChild(inp); });
+      document.body.appendChild(f); f.submit();
+      setTimeout(function(){ showSuccess(shirts, hoodies); }, 700);
+    });
+
+    function showSuccess(shirts, hoodies){
+      var t=total(), pay=selected('pay');
+      S('order-form').hidden=true;
+      var lines=items.map(function(it){ return '<div class="li"><span>'+(it.type==='shirt'?'T-Shirt':'Hoodie')+' · '+it.color+' · '+it.size.replace(/ \(.*\)/,'')+'</span><span>'+money(priceOf(it))+'</span></div>'; }).join('');
+      S('success-sum').innerHTML = lines + '<div class="li"><span>Total</span><span>'+money(t)+'</span></div>';
+      S('success-msg').textContent = 'Thanks, '+S('f-name').value.trim()+'! Your order is in. Here’s what to do next for payment:';
+      if(pay===G.payment[0]){
+        S('success-venmo').innerHTML = '<a class="btn btn-primary" target="_blank" href="'+venmoLink(t)+'">Pay '+money(t)+' on Venmo</a><p style="font-size:13px;color:#6a7a8f;margin-top:8px">Send to @'+C.venmoHandle+' and put your name in the note.</p>';
+      } else {
+        S('success-venmo').innerHTML = '<p style="color:#46566b">Payment: '+pay+'</p>';
+      }
+      S('order-success').hidden=false;
+      S('order-success').scrollIntoView({behavior:'smooth',block:'start'});
+    }
+
+    S('another').addEventListener('click', function(){ location.reload(); });
+
+    render();
   };
 </script>
 <script src="/assets/page.js"></script>
