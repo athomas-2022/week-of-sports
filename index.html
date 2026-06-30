@@ -10,8 +10,9 @@
 <link rel="stylesheet" href="/assets/site.css">
 <script src="/config.js"></script>
 <script>
-  (function(){ var c=(window.WOS||{}).colors||{}, r=document.documentElement.style;
-    for(var k in c){ r.setProperty('--'+k, c[k]); } })();
+  (function(){ var W=window.WOS||{}, c=W.colors||{}, r=document.documentElement.style;
+    for(var k in c){ r.setProperty('--'+k, c[k]); }
+    if(W.cfBeaconToken){ var b=document.createElement('script'); b.defer=true; b.src='https://static.cloudflareinsights.com/beacon.min.js'; b.setAttribute('data-cf-beacon', JSON.stringify({token:W.cfBeaconToken})); document.head.appendChild(b); } })();
 </script>
 </head>
 <body>

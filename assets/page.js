@@ -13,6 +13,9 @@
   var cc = C.colors || {}, rootStyle = document.documentElement.style;
   for(var k in cc){ rootStyle.setProperty('--'+k, cc[k]); }
 
+  /* Cloudflare Web Analytics (only if a token is set in config) */
+  if(C.cfBeaconToken){ var cfb = document.createElement('script'); cfb.defer = true; cfb.src = 'https://static.cloudflareinsights.com/beacon.min.js'; cfb.setAttribute('data-cf-beacon', JSON.stringify({token: C.cfBeaconToken})); document.head.appendChild(cfb); }
+
   /* ---- header + ticker ---- */
   var links = [['Home','/#top'],['About','/#about'],['Donate','/#donate'],['Contact','/#contact'],['Volunteer','/#volunteer']];
   var header = document.createElement('header');

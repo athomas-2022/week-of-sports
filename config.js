@@ -20,6 +20,12 @@ window.WOS = {
   instagramUrl: "https://www.instagram.com/weekofsports",
   facebookUrl:  "https://www.facebook.com/week.of.sports/",
 
+  /* ---------- analytics ----------
+     Paste your Cloudflare Web Analytics token here to turn on analytics
+     site-wide (Cloudflare dashboard → Analytics & Logs → Web Analytics →
+     Add a site → copy the token). Leave blank to keep it off. */
+  cfBeaconToken: "93fc09c9d47348b2adbec53439e8ab56",
+
   /* ---------- giving ---------- */
   venmoHandle:     "AndrewThomas24",      /* real — venmo.com/u/AndrewThomas24 */
   fundraisingGoal: 10000,                 /* PLACEHOLDER — $ goal */
