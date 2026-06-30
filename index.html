@@ -372,7 +372,7 @@
       }
     }
     function go(k){ cur=((k%n)+n)%n; layout(); }
-    function start(){ if(reduce) return; stop(); timer=setInterval(function(){ go(cur+1); }, 3800); }
+    function start(){ if(reduce) return; stop(); timer=setInterval(function(){ go(cur+1); }, 2000); }
     function stop(){ if(timer){ clearInterval(timer); timer=null; } }
     S('cfNext').onclick=function(){ go(cur+1); start(); };
     S('cfPrev').onclick=function(){ go(cur-1); start(); };
@@ -389,13 +389,12 @@
     /* static "moments" bento — a spread of the pool, always visible */
     var mEl=S('moments');
     if(mEl){
-      var picks=[], step=Math.max(1,Math.floor(n/6));
-      for(var p=0; p<n && picks.length<6; p+=step){ picks.push(p); }
-      while(picks.length<Math.min(6,n)){ picks.push(picks.length); }
-      var shape=['big','wide','tall','','','wide'];
-      mEl.className='mosaic';
+      var picks=[], step=Math.max(1,Math.floor(n/5));
+      for(var p=0; p<n && picks.length<5; p+=step){ picks.push(p); }
+      while(picks.length<Math.min(5,n)){ picks.push(picks.length); }
+      mEl.className='moments-grid';
       mEl.innerHTML=picks.map(function(idx,k){
-        return '<div class="mcell '+(shape[k]||'')+'" onclick="openLB('+idx+')"><img loading="lazy" src="'+imgs[idx]+'" alt="Week of Sports moment"></div>';
+        return '<div class="mcell'+(k===0?' feature':'')+'" onclick="openLB('+idx+')"><img loading="lazy" src="'+imgs[idx]+'" alt="Week of Sports moment"></div>';
       }).join('');
     }
   })();
