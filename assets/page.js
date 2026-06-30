@@ -80,10 +80,12 @@
     return u;
   }
   window.openVideo = function(){
-    var url = embedUrl(C.heroVideoUrl);
-    document.getElementById('modal-content').innerHTML = url
-      ? '<iframe src="'+url+'" allow="autoplay; fullscreen" allowfullscreen></iframe>'
-      : '<div class="modal-msg">Add your video link in <b>heroVideoUrl</b> in config.js.</div>';
+    var url = embedUrl(C.heroVideoUrl), mc = document.getElementById('modal-content');
+    if(!url){ mc.innerHTML = '<div class="modal-msg">Add your video link in <b>heroVideoUrl</b> in config.js.</div>'; modal.classList.add('open'); return; }
+    mc.innerHTML = '<div class="vspin"></div><iframe class="vframe" src="'+url+'" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>';
+    var ifr = mc.querySelector('iframe');
+    function reveal(){ ifr.classList.add('ready'); var sp=mc.querySelector('.vspin'); if(sp) sp.remove(); }
+    ifr.onload = reveal; setTimeout(reveal, 2500);
     modal.classList.add('open');
   };
   window.closeVideo = function(){ modal.classList.remove('open'); document.getElementById('modal-content').innerHTML=''; };

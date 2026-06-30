@@ -6,6 +6,8 @@
 <title>Week of Sports 2026 · Andrew Walker Memorial Scholarship</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://www.youtube.com">
+<link rel="preconnect" href="https://i.ytimg.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/site.css">
 <script src="/config.js"></script>
@@ -379,9 +381,12 @@
     return u;
   }
   function openVideo(){
-    var url = embedUrl(C.heroVideoUrl);
-    S('modal-content').innerHTML = url ? '<iframe src="'+url+'" allow="autoplay; fullscreen" allowfullscreen></iframe>'
-      : '<div class="modal-msg">Your fundraising video will play here.<br>Upload it to YouTube or Vimeo and paste the link into <b>heroVideoUrl</b> in config.js.</div>';
+    var url = embedUrl(C.heroVideoUrl), mc = S('modal-content');
+    if(!url){ mc.innerHTML = '<div class="modal-msg">Your fundraising video will play here.<br>Upload it to YouTube or Vimeo and paste the link into <b>heroVideoUrl</b> in config.js.</div>'; S('modal').classList.add('open'); return; }
+    mc.innerHTML = '<div class="vspin"></div><iframe class="vframe" src="'+url+'" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>';
+    var ifr = mc.querySelector('iframe');
+    function reveal(){ ifr.classList.add('ready'); var sp=mc.querySelector('.vspin'); if(sp) sp.remove(); }
+    ifr.onload = reveal; setTimeout(reveal, 2500);
     S('modal').classList.add('open');
   }
   function closeVideo(){ S('modal').classList.remove('open'); S('modal-content').innerHTML=''; }
