@@ -161,9 +161,9 @@
 
 <section class="gallery on-light" id="gallery">
   <div class="wrap">
-    <div class="sec-eyebrow">Game day</div>
-    <h2 class="sec-h">The energy</h2>
-    <p class="sec-sub">A look back at the community that shows up — and why it's worth every minute.</p>
+    <div class="sec-eyebrow">Looking back</div>
+    <h2 class="sec-h">Previous years</h2>
+    <p class="sec-sub">Highlights from past Week of Sports events — the games, the crowds, and the community that makes it happen.</p>
     <div class="grid" id="grid"></div>
   </div>
 </section>
@@ -321,11 +321,12 @@
     return '<div class="day'+(isToday?' today':'')+'"><div class="dnum">'+(i+1)+'</div><div class="dname">'+s.day+'</div><div class="dtheme">'+s.theme+'</div><div class="badge">'+badge+'</div></div>';
   }).join('');
 
-  /* ---- gallery ---- */
+  /* ---- previous years gallery ---- */
   var imgs = [];
-  for(var i=1;i<=(C.galleryCount||0);i++){ imgs.push('/assets/gallery/'+(i<10?'0'+i:i)+'.jpg'); }
+  var pastN = C.pastCount || 0;
+  for(var i=1;i<=pastN;i++){ imgs.push('/assets/past/'+(i<10?'0'+i:i)+'.jpg'); }
   S('grid').innerHTML = imgs.map(function(src,idx){
-    return '<img loading="lazy" src="'+src+'" alt="Week of Sports photo" onclick="openLB('+idx+')">';
+    return '<img loading="lazy" src="'+src+'" alt="Week of Sports — past event photo" onclick="openLB('+idx+')">';
   }).join('');
 
   /* ---- sponsors (placeholders if empty) ---- */
