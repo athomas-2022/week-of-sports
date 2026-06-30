@@ -64,8 +64,8 @@ window.WOS = {
     title: "What is Week of Sports?",
     body: "Week of Sports is a week-long, all-school celebration that turns a love of the game into real scholarship dollars. Spirit days, a class-vs-class donation challenge, gear sales, raffles, and a packed game-day finale all come together to fund the Andrew Walker Memorial Scholarship — carrying Andrew's legacy forward for the students who come next.",
     highlights: [
-      { k: "1 week",     v: "of spirit days, games & giving" },
-      { k: "3 divisions", v: "elementary, middle & high compete" },
+      { k: "1 week",     v: "spirit week dress-up themes" },
+      { k: "Donation Challenge", v: "Elementary v Middle v High School" },
       { k: "100%",       v: "of profit to the scholarship" }
     ]
   },
