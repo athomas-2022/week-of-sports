@@ -41,24 +41,26 @@
     <div class="eyebrow rise d1">Liberty-Benton High School &nbsp;·&nbsp; Andrew Walker Memorial Scholarship</div>
     <h1 class="rise d2">Week of<br>Sports <span class="yr" id="hero-year">2026</span></h1>
     <p class="tag rise d3"><em>Continuing a legacy.</em> One week. Every sport. One cause.</p>
-    <div class="cd-label rise d4"><span class="pulse"></span> Counting down to game day</div>
-    <div class="cd rise d4">
-      <div class="cell"><div class="num" id="d-days">000</div><div class="lab">Days</div></div>
-      <div class="cell"><div class="num" id="d-hrs">00</div><div class="lab">Hrs</div></div>
-      <div class="cell"><div class="num" id="d-min">00</div><div class="lab">Min</div></div>
-      <div class="cell"><div class="num" id="d-sec">00</div><div class="lab">Sec</div></div>
-    </div>
-    <div class="cta rise d5">
+    <div class="cta rise d4">
       <button class="btn btn-white" onclick="openVenmo()">Donate now</button>
       <button class="btn btn-ghost" onclick="openVideo()"><span class="play-ico">&#9658;</span> Watch our story</button>
     </div>
   </div>
 </section>
 
-<section class="cause on-light" id="about">
+<section class="about-ev on-light" id="about">
+  <div class="wrap">
+    <div class="sec-eyebrow">About the fundraiser</div>
+    <h2 class="sec-h" id="aboutev-title">What is Week of Sports?</h2>
+    <p class="sec-sub" id="aboutev-body"></p>
+    <div class="hl" id="aboutev-hl"></div>
+  </div>
+</section>
+
+<section class="cause on-light" id="legacy">
   <div class="wrap cause-grid">
     <div class="reveal">
-      <div class="eyebrow" style="color:var(--royal)">About — why we play</div>
+      <div class="eyebrow" style="color:var(--royal)">In his memory</div>
       <h2 id="cause-title"></h2>
       <p id="cause-body"></p>
       <div class="values" id="cause-values"></div>
@@ -78,6 +80,18 @@
       <a class="btn btn-outline" id="donation-form-link" target="_blank">Donation form</a>
       <a class="btn btn-outline" id="scholarship-link" target="_blank">Scholarship info</a>
       <a class="btn btn-outline" href="/raffle-baskets/">Raffle baskets</a>
+    </div>
+  </div>
+</section>
+
+<section class="countdown-sec" id="countdown">
+  <div class="wrap">
+    <div class="cd-label"><span class="pulse"></span> Counting down to game day</div>
+    <div class="cd">
+      <div class="cell"><div class="num" id="d-days">000</div><div class="lab">Days</div></div>
+      <div class="cell"><div class="num" id="d-hrs">00</div><div class="lab">Hrs</div></div>
+      <div class="cell"><div class="num" id="d-min">00</div><div class="lab">Min</div></div>
+      <div class="cell"><div class="num" id="d-sec">00</div><div class="lab">Sec</div></div>
     </div>
   </div>
 </section>
@@ -153,9 +167,9 @@
     <div class="sec-eyebrow">With thanks</div>
     <h2 class="sec-h">Our sponsors</h2>
     <p class="sec-sub">Local businesses make this possible. Want your logo here next to the Eagles?</p>
-    <div class="sgrid" id="sgrid"></div>
-    <div class="center-cta"><a class="btn btn-primary" id="sponsor-cta">Become a sponsor</a></div>
   </div>
+  <div class="smarquee"><div class="strack" id="strack"></div></div>
+  <div class="wrap"><div class="center-cta" style="margin-top:34px"><a class="btn btn-primary" id="sponsor-cta">Become a sponsor</a></div></div>
 </section>
 
 <section class="volunteer" id="volunteer">
@@ -191,6 +205,20 @@
     <p class="f-note">Concept preview. Dates, totals, Venmo handle, logo, shirt &amp; sponsors are placeholders — all editable in <code>config.js</code>.</p>
   </div>
 </footer>
+
+<div class="promo" id="gear-promo" hidden>
+  <div class="promo-card">
+    <button class="promo-x" id="promo-x" aria-label="Close">&times;</button>
+    <img id="promo-img" alt="Week of Sports gear" />
+    <div class="promo-body">
+      <div class="eyebrow" style="color:var(--royal);text-align:center">New for 2026</div>
+      <h3>Grab your gear</h3>
+      <p>Shirts $15 · hoodies $30 — every purchase funds the scholarship.</p>
+      <a class="btn btn-primary" href="/gear/">Shop gear</a>
+      <button class="promo-no" id="promo-no">No thanks</button>
+    </div>
+  </div>
+</div>
 
 <div class="modal" id="modal" onclick="if(event.target===this)closeVideo()">
   <div class="modal-box"><button class="modal-x" onclick="closeVideo()" aria-label="Close">&times;</button><div id="modal-content"></div></div>
@@ -230,6 +258,11 @@
   S('cause-body').textContent = C.cause.body;
   S('cause-crest').src = C.crest;
   S('cause-values').innerHTML = C.cause.values.map(function(x){return '<span class="value">'+x+'</span>';}).join('');
+  if(C.aboutEvent){
+    S('aboutev-title').textContent = C.aboutEvent.title;
+    S('aboutev-body').textContent = C.aboutEvent.body;
+    S('aboutev-hl').innerHTML = (C.aboutEvent.highlights||[]).map(function(h){return '<div class="hlc"><div class="hk">'+h.k+'</div><div class="hv">'+h.v+'</div></div>';}).join('');
+  }
   S('shirt-img').src = C.shirt;
   S('shirt-price').textContent = '$'+C.shirtPrice;
   S('hoodie-price').textContent = '$'+C.hoodiePrice;
@@ -291,9 +324,9 @@
 
   /* ---- sponsors (placeholders if empty) ---- */
   var sp = C.sponsors && C.sponsors.length ? C.sponsors.map(function(s){
-    return '<a class="sponsor" href="'+(s.url||'#')+'" target="_blank">'+(s.logo?'<img src="'+s.logo+'" alt="'+s.name+'">':s.name)+'</a>';
-  }) : Array.apply(null,{length:8}).map(function(){ return '<div class="sponsor">Your logo here</div>'; });
-  S('sgrid').innerHTML = sp.join('');
+    return '<a class="slogo" href="'+(s.url||'#')+'" target="_blank">'+(s.logo?'<img src="'+s.logo+'" alt="'+s.name+'">':'<span>'+s.name+'</span>')+'</a>';
+  }) : Array.apply(null,{length:6}).map(function(){ return '<div class="slogo"><span>Your logo here</span></div>'; });
+  S('strack').innerHTML = sp.join('') + sp.join('');
 
   /* ---- sticky nav ---- */
   var hdr = S('hdr');
@@ -358,6 +391,19 @@
     if(e.key==='Escape'){ closeVideo(); closeLB(); }
     if(S('lb').classList.contains('open')){ if(e.key==='ArrowLeft') stepLB(-1); if(e.key==='ArrowRight') stepLB(1); }
   });
+
+  /* ---- gear promo popup (shows once per browser session) ---- */
+  (function(){
+    var p=S('gear-promo'); if(!p) return;
+    try{ if(sessionStorage.getItem('wos_gear_promo')) return; }catch(e){}
+    var img=(C.gearOrder && C.gearOrder.shirtPhoto) || C.shirt;
+    if(img) S('promo-img').src=img;
+    setTimeout(function(){ p.hidden=false; requestAnimationFrame(function(){ p.classList.add('open'); }); }, 1600);
+    function done(){ p.classList.remove('open'); setTimeout(function(){ p.hidden=true; }, 260); try{ sessionStorage.setItem('wos_gear_promo','1'); }catch(e){} }
+    S('promo-x').onclick=done; S('promo-no').onclick=done;
+    p.addEventListener('click', function(e){ if(e.target===p) done(); });
+    document.addEventListener('keydown', function(e){ if(e.key==='Escape' && !p.hidden) done(); });
+  })();
 </script>
 </body>
 </html>
