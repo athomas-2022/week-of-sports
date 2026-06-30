@@ -126,7 +126,6 @@
       <div class="thermo-track"><div class="thermo-fill" id="thermo"></div></div>
     </div>
     <div class="board" id="board"></div>
-    <div class="center-cta"><button class="btn btn-primary" onclick="openVenmo()">Donate to your class</button></div>
   </div>
 </section>
 
@@ -164,7 +163,12 @@
     <div class="sec-eyebrow">Looking back</div>
     <h2 class="sec-h">Previous years</h2>
     <p class="sec-sub">Highlights from past Week of Sports events — the games, the crowds, and the community that makes it happen.</p>
-    <div class="mosaic" id="grid"></div>
+    <div class="carousel" id="carousel">
+      <div class="slides" id="slides"></div>
+      <button class="cbtn cprev" id="cprev" aria-label="Previous photo">&#8249;</button>
+      <button class="cbtn cnext" id="cnext" aria-label="Next photo">&#8250;</button>
+      <div class="dots" id="dots"></div>
+    </div>
   </div>
 </section>
 
@@ -335,22 +339,26 @@
     return '<div class="day'+(isToday?' today':'')+'"><div class="dnum">'+(i+1)+'</div><div class="dname">'+s.day+'</div><div class="dtheme">'+s.theme+'</div><div class="badge">'+badge+'</div></div>';
   }).join('') : '<p style="grid-column:1/-1;text-align:center;color:#6a7a8f;font-size:16px">This year’s spirit week themes are coming soon!</p>';
 
-  /* ---- previous years gallery (dynamic mosaic, shapes adapt to each photo) ---- */
+  /* ---- previous years: rotating carousel (blur-fill so every photo fits) ---- */
   var imgs = [];
   var pastN = C.pastCount || 0;
   for(var i=1;i<=pastN;i++){ imgs.push('/assets/past/'+(i<10?'0'+i:i)+'.jpg'); }
-  S('grid').innerHTML = imgs.map(function(src,idx){
-    return '<div class="mcell" onclick="openLB('+idx+')"><img loading="lazy" src="'+src+'" alt="Week of Sports — past event photo"></div>';
-  }).join('');
-  [].forEach.call(S('grid').children, function(cell,idx){
-    var im = cell.querySelector('img');
-    function shape(){ var r = (im.naturalWidth/im.naturalHeight) || 1;
-      if(idx===0) cell.classList.add('big');
-      else if(r < 0.85) cell.classList.add('tall');
-      else if(r > 1.55) cell.classList.add('wide');
-    }
-    if(im.complete && im.naturalWidth) shape(); else im.addEventListener('load', shape);
-  });
+  (function(){
+    var slidesEl = S('slides'), dotsEl = S('dots');
+    slidesEl.innerHTML = imgs.map(function(src,idx){
+      return '<div class="slide'+(idx===0?' on':'')+'" onclick="openLB('+idx+')"><div class="bg" style="background-image:url('+src+')"></div><img loading="'+(idx<2?'eager':'lazy')+'" src="'+src+'" alt="Week of Sports — past event photo"></div>';
+    }).join('');
+    dotsEl.innerHTML = imgs.map(function(_,idx){ return '<button class="dot'+(idx===0?' on':'')+'" data-i="'+idx+'" aria-label="Go to photo '+(idx+1)+'"></button>'; }).join('');
+    var slides = slidesEl.children, dots = dotsEl.children, cur = 0, timer = null;
+    function go(n){ slides[cur].classList.remove('on'); dots[cur].classList.remove('on'); cur=(n+imgs.length)%imgs.length; slides[cur].classList.add('on'); dots[cur].classList.add('on'); }
+    function start(){ stop(); timer = setInterval(function(){ go(cur+1); }, 4500); }
+    function stop(){ if(timer){ clearInterval(timer); timer=null; } }
+    S('cnext').onclick = function(){ go(cur+1); start(); };
+    S('cprev').onclick = function(){ go(cur-1); start(); };
+    dotsEl.addEventListener('click', function(e){ var d=e.target.getAttribute('data-i'); if(d!==null){ go(+d); start(); } });
+    var car = S('carousel'); car.addEventListener('mouseenter', stop); car.addEventListener('mouseleave', start);
+    if(imgs.length>1) start();
+  })();
 
   /* ---- sponsors (placeholders if empty) ---- */
   var sp = C.sponsors && C.sponsors.length ? C.sponsors.map(function(s){
