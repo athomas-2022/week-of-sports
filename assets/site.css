@@ -188,6 +188,7 @@ h1 .yr{color:var(--sky);background:linear-gradient(100deg,var(--sky) 28%,#fff 50
 .moments-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:1120px;margin:0 auto}
 .moments-grid .mcell{position:relative;overflow:hidden;border-radius:14px;cursor:pointer;background:#0e2f54;aspect-ratio:1/1}
 .moments-grid .mcell.feature{grid-column:1/3;grid-row:1/3;aspect-ratio:auto}
+.moments-grid .mcell.wide{grid-column:span 2;aspect-ratio:2/1}
 .moments-grid .mcell img{width:100%;height:100%;object-fit:cover;object-position:50% 32%;display:block;transition:transform .55s cubic-bezier(.2,.7,.2,1)}
 .moments-grid .mcell:hover img{transform:scale(1.06)}
 .moments-grid .mcell::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(8,26,48,.32),transparent 55%);opacity:0;transition:opacity .3s}
@@ -199,6 +200,7 @@ h1 .yr{color:var(--sky);background:linear-gradient(100deg,var(--sky) 28%,#fff 50
   .cf-btn{width:40px;height:40px;font-size:22px}
   .moments-grid{grid-template-columns:repeat(2,1fr)}
   .moments-grid .mcell.feature{grid-column:1/3;grid-row:auto;aspect-ratio:16/10}
+  .moments-grid .mcell.wide{grid-column:1/3;aspect-ratio:16/9}
 }
 @media(prefers-reduced-motion:reduce){ .cf-card{transition:opacity .3s ease} }
 

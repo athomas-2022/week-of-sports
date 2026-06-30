@@ -389,12 +389,13 @@
     /* static "moments" bento — a spread of the pool, always visible */
     var mEl=S('moments');
     if(mEl){
-      var picks=[], step=Math.max(1,Math.floor(n/5));
-      for(var p=0; p<n && picks.length<5; p+=step){ picks.push(p); }
-      while(picks.length<Math.min(5,n)){ picks.push(picks.length); }
+      var picks=[], step=Math.max(1,Math.floor(n/7));
+      for(var p=0; p<n && picks.length<7; p+=step){ picks.push(p); }
+      while(picks.length<Math.min(7,n)){ picks.push(picks.length); }
       mEl.className='moments-grid';
       mEl.innerHTML=picks.map(function(idx,k){
-        return '<div class="mcell'+(k===0?' feature':'')+'" onclick="openLB('+idx+')"><img loading="lazy" src="'+imgs[idx]+'" alt="Week of Sports moment"></div>';
+        var cls = k===0 ? ' feature' : (k>=5 ? ' wide' : '');
+        return '<div class="mcell'+cls+'" onclick="openLB('+idx+')"><img loading="lazy" src="'+imgs[idx]+'" alt="Week of Sports moment"></div>';
       }).join('');
     }
   })();
