@@ -77,7 +77,7 @@ window.WOS = {
   pastCount: 28,                           /* photos in /assets/past as 01.jpg, 02.jpg … (add/replace yours here) */
   /* which past photos fill the static "More moments" grid (1-based file #s).
      order: [feature, 4 squares, 2 wide]. empty = auto spread. */
-  momentsPics: [2, 7, 9, 16, 6, 21, 22],
+  momentsPics: [2, 7, 9, 28, 6, 21, 22],
 
   /* ---------- sponsors (add { name, logo, url }; empty shows placeholders) ---------- */
   sponsors: [],
