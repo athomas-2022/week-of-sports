@@ -23,6 +23,7 @@
   header.innerHTML = '<div class="wrap nav">'+
     '<a class="brand" href="/"><img src="'+C.logo+'" alt="Week of Sports logo"> Week of Sports</a>'+
     '<nav class="nav-links">'+links.map(function(l){return '<a href="'+l[1]+'">'+l[0]+'</a>';}).join('')+'</nav>'+
+    '<a class="nav-ig" href="'+(C.instagramUrl||'https://www.instagram.com/weekofsports')+'" target="_blank" rel="noopener" aria-label="Follow Week of Sports on Instagram"><svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5.5"></rect><circle cx="12" cy="12" r="4.2"></circle><circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none"></circle></svg></a>'+
     '<button class="btn btn-primary" id="hdr-donate">Donate</button></div>';
 
   var ticker = document.createElement('div');
