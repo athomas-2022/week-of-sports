@@ -100,7 +100,7 @@ window.WOS = {
   heroVideoUrl:  "https://youtu.be/-3iifoMWy7U",  /* "Watch our story" popup — plays with sound */
 
   /* ---------- gear ---------- */
-  gearReady:   false,                      /* set true when this year's gear + order form are ready (false = "coming soon") */
+  gearReady:   true,                       /* set true when this year's gear + order form are ready (false = "coming soon") */
   shirtPrice:  15,
   hoodiePrice: 30,
   gearFormUrl: "https://forms.gle/oFYzKQ3KhHJikV2Y6",
