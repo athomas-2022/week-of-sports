@@ -34,27 +34,22 @@
 <div class="ticker"><div class="ticker-track" id="ticker"></div></div>
 
 <section class="hero" id="top">
-  <div class="hero-bg" id="hero-bg">
-    <div class="yt-bg" id="yt-bg"></div>
-    <video id="hero-vid" autoplay muted loop playsinline></video>
-  </div>
-  <div class="wrap hero-inner">
-    <div class="eyebrow rise d1">Liberty-Benton High School &nbsp;·&nbsp; Andrew Walker Memorial Scholarship</div>
-    <h1 class="rise d2">Week of<br>Sports <span class="yr" id="hero-year">2026</span></h1>
-    <p class="tag rise d3"><em>Continuing a legacy.</em> One week. Every sport. One cause.</p>
-    <div class="cta rise d4">
-      <button class="btn btn-white" onclick="openVenmo()">Donate now</button>
-      <button class="btn btn-ghost" onclick="openVideo()"><span class="play-ico">&#9658;</span> Watch our story</button>
+  <div class="wrap hero-grid">
+    <div class="hero-inner">
+      <div class="eyebrow rise d1">Liberty-Benton High School &nbsp;·&nbsp; Andrew Walker Memorial Scholarship</div>
+      <h1 class="rise d2">Week of<br>Sports <span class="yr" id="hero-year">2026</span></h1>
+      <p class="tag rise d3"><em>Continuing a legacy.</em> One week. Every sport. One cause.</p>
+      <div class="cta rise d4">
+        <button class="btn btn-white" onclick="openVenmo()">Donate now</button>
+        <button class="btn btn-ghost" onclick="openVideo()"><span class="play-ico">&#9658;</span> Watch our story</button>
+      </div>
     </div>
-  </div>
-</section>
-
-<section class="about-ev on-light" id="about">
-  <div class="wrap">
-    <div class="sec-eyebrow">About the fundraiser</div>
-    <h2 class="sec-h" id="aboutev-title">What is Week of Sports?</h2>
-    <p class="sec-sub" id="aboutev-body"></p>
-    <div class="hl" id="aboutev-hl"></div>
+    <div class="hero-video rise d3">
+      <div class="hero-vframe">
+        <div class="yt-bg" id="yt-bg"></div>
+        <video id="hero-vid" autoplay muted loop playsinline></video>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -67,6 +62,15 @@
       <div class="values" id="cause-values"></div>
     </div>
     <div class="crest-card reveal"><img id="cause-crest" alt="Andrew Walker Memorial Scholarship crest" /></div>
+  </div>
+</section>
+
+<section class="about-ev on-light" id="about">
+  <div class="wrap">
+    <div class="sec-eyebrow">About the fundraiser</div>
+    <h2 class="sec-h" id="aboutev-title">What is Week of Sports?</h2>
+    <p class="sec-sub" id="aboutev-body"></p>
+    <div class="hl" id="aboutev-hl"></div>
   </div>
 </section>
 
@@ -238,7 +242,7 @@
 
   /* ---- hero background: YouTube fundraising video (muted loop), or mp4 fallback ---- */
   var v = S('hero-vid');
-  S('hero-bg').style.backgroundImage = 'url('+C.heroPoster+')';
+  var hvf = document.querySelector('.hero-vframe'); if(hvf) hvf.style.backgroundImage = 'url('+C.heroPoster+')';
   if(C.heroYouTubeId){
     v.style.display = 'none';
     var yt = document.createElement('iframe');
