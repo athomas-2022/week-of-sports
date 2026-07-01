@@ -33,9 +33,24 @@
       <a href="#volunteer">Volunteer</a>
     </nav>
     <a class="nav-ig" href="https://www.instagram.com/weekofsports" target="_blank" rel="noopener" aria-label="Follow Week of Sports on Instagram"><svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5.5"></rect><circle cx="12" cy="12" r="4.2"></circle><circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none"></circle></svg></a>
-    <button class="btn btn-primary" onclick="openVenmo()">Donate</button>
+    <button class="btn btn-primary hdr-cta" onclick="openVenmo()">Donate</button>
+    <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="mnav"><span class="bars"></span></button>
   </div>
 </header>
+
+<div class="mnav" id="mnav" aria-hidden="true">
+  <nav class="mnav-links" aria-label="Primary">
+    <a class="mlink" href="#top">Home</a>
+    <a class="mlink" href="#about">About</a>
+    <a class="mlink" href="#donate">Donate</a>
+    <a class="mlink" href="#contact">Contact</a>
+    <a class="mlink" href="#volunteer">Volunteer</a>
+  </nav>
+  <div class="mnav-cta">
+    <button class="btn btn-primary" id="mnavDonate">Donate via Venmo</button>
+    <a class="mnav-ig" href="https://www.instagram.com/weekofsports" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5.5"></rect><circle cx="12" cy="12" r="4.2"></circle><circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none"></circle></svg> Follow along</a>
+  </div>
+</div>
 <div class="ticker"><div class="ticker-track" id="ticker"></div></div>
 
 <section class="hero" id="top">
@@ -414,6 +429,24 @@
   /* ---- sticky nav ---- */
   var hdr = S('hdr');
   window.addEventListener('scroll', function(){ hdr.classList.toggle('scrolled', window.scrollY>40); });
+
+  /* ---- mobile nav drawer ---- */
+  (function(){
+    var tgl = S('navToggle'), drawer = S('mnav');
+    if(!tgl || !drawer) return;
+    function setOpen(open){
+      drawer.classList.toggle('open', open);
+      tgl.setAttribute('aria-expanded', open ? 'true' : 'false');
+      tgl.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
+      document.body.style.overflow = open ? 'hidden' : '';
+    }
+    tgl.addEventListener('click', function(){ setOpen(!drawer.classList.contains('open')); });
+    drawer.querySelectorAll('a.mlink').forEach(function(a){ a.addEventListener('click', function(){ setOpen(false); }); });
+    S('mnavDonate').addEventListener('click', function(){ setOpen(false); openVenmo(); });
+    document.addEventListener('keydown', function(e){ if(e.key==='Escape') setOpen(false); });
+    window.addEventListener('resize', function(){ if(window.innerWidth>760) setOpen(false); });
+  })();
 
   /* ---- countdown (or coming soon) ---- */
   var target = C.gameDay ? new Date(C.gameDay) : null;

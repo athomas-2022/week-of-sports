@@ -43,6 +43,44 @@ header.scrolled + .ticker{top:54px}
 .ticker-track span::after{content:"";position:absolute;right:0;top:50%;transform:translateY(-50%);width:5px;height:5px;border-radius:50%;background:#fff;opacity:.5}
 @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
+/* ---------- MOBILE NAV (hamburger + full drawer) ---------- */
+.nav-toggle{display:none;margin-left:auto;width:46px;height:46px;flex:none;align-items:center;justify-content:center;background:transparent;border:0;color:#fff;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.nav-toggle .bars{position:relative;display:block;width:24px;height:2px;background:currentColor;border-radius:2px;transition:background .2s}
+.nav-toggle .bars::before,.nav-toggle .bars::after{content:"";position:absolute;left:0;width:24px;height:2px;background:currentColor;border-radius:2px;transition:transform .3s cubic-bezier(.2,.7,.2,1)}
+.nav-toggle .bars::before{top:-7px}
+.nav-toggle .bars::after{top:7px}
+.nav-toggle[aria-expanded="true"] .bars{background:transparent}
+.nav-toggle[aria-expanded="true"] .bars::before{transform:translateY(7px) rotate(45deg)}
+.nav-toggle[aria-expanded="true"] .bars::after{transform:translateY(-7px) rotate(-45deg)}
+
+.mnav{position:fixed;inset:0;z-index:58;overflow-y:auto;background:linear-gradient(165deg,var(--navy) 0%,#061529 100%);
+  display:flex;flex-direction:column;justify-content:center;
+  padding:clamp(94px,15vh,140px) 30px max(30px,env(safe-area-inset-bottom));
+  opacity:0;visibility:hidden;transform:translateY(-10px);
+  transition:opacity .3s ease,transform .4s cubic-bezier(.2,.7,.2,1),visibility .3s}
+.mnav.open{opacity:1;visibility:visible;transform:none}
+.mnav-links{display:flex;flex-direction:column}
+.mnav .mlink{display:flex;align-items:center;justify-content:space-between;
+  font-family:'Oswald';font-weight:600;text-transform:uppercase;letter-spacing:.04em;
+  font-size:clamp(26px,7.5vw,36px);color:#fff;padding:16px 2px;
+  border-bottom:1px solid rgba(255,255,255,.10);transition:color .2s,padding-left .2s}
+.mnav .mlink::after{content:"\203A";color:var(--sky);font-size:.9em;opacity:.55;transition:transform .2s,opacity .2s}
+.mnav .mlink:hover,.mnav .mlink:focus-visible{color:var(--sky);padding-left:8px;outline:0}
+.mnav .mlink:hover::after,.mnav .mlink:focus-visible::after{opacity:1;transform:translateX(3px)}
+.mnav-cta{margin-top:30px;display:flex;flex-direction:column;align-items:center;gap:18px}
+.mnav-cta .btn{width:100%;justify-content:center;font-size:16px;padding:16px}
+.mnav-ig{display:inline-flex;align-items:center;gap:9px;color:var(--muted);font-family:'Oswald';font-weight:500;letter-spacing:.06em;text-transform:uppercase;font-size:13px;transition:color .2s}
+.mnav-ig:hover{color:#fff}
+@media(min-width:761px){.mnav{display:none}}
+@media(max-width:760px){
+  .nav-toggle{display:inline-flex}
+  .nav .nav-ig,.nav .hdr-cta{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  .mnav{transition:opacity .2s ease,visibility .2s;transform:none}
+  .nav-toggle .bars,.nav-toggle .bars::before,.nav-toggle .bars::after{transition:none}
+}
+
 /* ---------- HERO (split: text left, video right) ---------- */
 .hero{min-height:86vh;display:flex;align-items:center;background:var(--navy);position:relative;overflow:hidden}
 .hero::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 100% at 88% 22%, rgba(47,116,208,.22), transparent 55%)}
