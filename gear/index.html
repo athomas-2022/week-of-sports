@@ -99,6 +99,8 @@
           <label class="fl"><span class="t">Name <span class="req">*</span></span><input class="tin" id="f-name" autocomplete="name" required></label>
           <label class="fl"><span class="t">Phone number <span class="req">*</span></span><input class="tin" id="f-phone" type="tel" autocomplete="tel" required></label>
         </div>
+        <label class="fl" style="margin-top:16px"><span class="t">Email <span class="req">*</span></span><input class="tin" id="f-email" type="email" autocomplete="email" placeholder="you@example.com" required></label>
+        <p style="margin:6px 0 0;font-size:13px;color:#52617a">We'll email your receipt and how to pay to this address.</p>
         <label class="fl" style="margin-top:16px"><span class="t">Student name &amp; homeroom <span class="req">*</span></span><input class="tin" id="f-homeroom" required></label>
 
         <h2 class="o-h"><span class="n">3</span> How should we get it to you?</h2>
@@ -237,6 +239,8 @@
       if(items.length===0) return showError('Add at least one shirt or hoodie before ordering.');
       if(!S('f-name').value.trim()) return showError('Please enter your name.', S('f-name'));
       if(!S('f-phone').value.trim()) return showError('Please enter a phone number.', S('f-phone'));
+      var email = S('f-email').value.trim();
+      if(!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return showError('Please enter a valid email so we can send your receipt.', S('f-email'));
       if(!S('f-homeroom').value.trim()) return showError('Please enter the student name & homeroom.', S('f-homeroom'));
       if(!selected('del')) return showError('Please choose how to get your order.');
       if(!selected('pay')) return showError('Please choose a payment method.');
@@ -249,6 +253,7 @@
       var fields = {
         name:     S('f-name').value.trim(),
         phone:    S('f-phone').value.trim(),
+        email:    email,
         homeroom: S('f-homeroom').value.trim(),
         order:    summary,
         total:    money(total()),
