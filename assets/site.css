@@ -53,12 +53,13 @@ header.scrolled + .ticker{top:54px}
 .nav-toggle[aria-expanded="true"] .bars::before{transform:translateY(7px) rotate(45deg)}
 .nav-toggle[aria-expanded="true"] .bars::after{transform:translateY(-7px) rotate(-45deg)}
 
-.mnav{position:fixed;inset:0;z-index:58;overflow-y:auto;background:linear-gradient(165deg,var(--navy) 0%,#061529 100%);
+.mnav{position:fixed;inset:0;z-index:58;overflow-y:auto;background:linear-gradient(165deg,var(--navy) 0%,#071a30 100%);
   display:flex;flex-direction:column;justify-content:center;
   padding:clamp(94px,15vh,140px) 30px max(30px,env(safe-area-inset-bottom));
   opacity:0;visibility:hidden;transform:translateY(-10px);
-  transition:opacity .3s ease,transform .4s cubic-bezier(.2,.7,.2,1),visibility .3s}
-.mnav.open{opacity:1;visibility:visible;transform:none}
+  transition:opacity .3s ease,transform .4s cubic-bezier(.2,.7,.2,1),visibility 0s linear .3s}
+.mnav.open{opacity:1;visibility:visible;transform:none;
+  transition:opacity .3s ease,transform .4s cubic-bezier(.2,.7,.2,1),visibility 0s}
 .mnav-links{display:flex;flex-direction:column}
 .mnav .mlink{display:flex;align-items:center;justify-content:space-between;
   font-family:'Oswald';font-weight:600;text-transform:uppercase;letter-spacing:.04em;
@@ -77,7 +78,8 @@ header.scrolled + .ticker{top:54px}
   .nav .nav-ig,.nav .hdr-cta{display:none}
 }
 @media(prefers-reduced-motion:reduce){
-  .mnav{transition:opacity .2s ease,visibility .2s;transform:none}
+  .mnav{transition:opacity .2s ease,visibility 0s linear .2s;transform:none}
+  .mnav.open{transition:opacity .2s ease,visibility 0s}
   .nav-toggle .bars,.nav-toggle .bars::before,.nav-toggle .bars::after{transition:none}
 }
 

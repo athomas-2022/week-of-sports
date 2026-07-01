@@ -81,18 +81,30 @@
   (function(){
     var tgl = document.getElementById('navToggle');
     if(!tgl || !drawer) return;
+    var lastFocus = null;
+    function siblingsInert(on){
+      Array.prototype.forEach.call(document.body.children, function(el){
+        if(el === drawer || el === header) return;
+        if(on) el.setAttribute('inert',''); else el.removeAttribute('inert');
+      });
+    }
+    function isOpen(){ return drawer.classList.contains('open'); }
     function setOpen(open){
       drawer.classList.toggle('open', open);
       tgl.setAttribute('aria-expanded', open ? 'true' : 'false');
       tgl.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
       drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
       document.body.style.overflow = open ? 'hidden' : '';
+      siblingsInert(open);
+      if(open){ lastFocus = document.activeElement; var f = drawer.querySelector('.mlink'); if(f) f.focus({preventScroll:true}); }
+      else if(lastFocus){ lastFocus.focus({preventScroll:true}); lastFocus = null; }
     }
-    tgl.addEventListener('click', function(){ setOpen(!drawer.classList.contains('open')); });
+    tgl.addEventListener('click', function(){ setOpen(!isOpen()); });
     drawer.querySelectorAll('a.mlink').forEach(function(a){ a.addEventListener('click', function(){ setOpen(false); }); });
     drawer.querySelector('#mnavDonate').addEventListener('click', function(){ setOpen(false); window.openVenmo(); });
-    document.addEventListener('keydown', function(e){ if(e.key==='Escape') setOpen(false); });
-    window.addEventListener('resize', function(){ if(window.innerWidth>760) setOpen(false); });
+    var brand = header.querySelector('.brand'); if(brand) brand.addEventListener('click', function(){ if(isOpen()) setOpen(false); });
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && isOpen()) setOpen(false); });
+    window.addEventListener('resize', function(){ if(window.innerWidth > 760 && isOpen()) setOpen(false); });
   })();
 
   window.openVenmo = function(){
