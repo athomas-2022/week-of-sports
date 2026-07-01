@@ -55,7 +55,7 @@ window.WOS = {
   /* ---------- the cause ---------- */
   cause: {
     title: "In honor of Andrew Walker",
-    body:  "Week of Sports celebrates the legacy of Andrew Walker — a passionate sports enthusiast whose love for the game touched everyone who knew him. His energy and dedication lifted up teammates, coaches, and fans alike. Every dollar raised this week funds the Andrew Walker Memorial Scholarship, carrying his spirit forward for the students who come next.",
+    body:  "Week of Sports celebrates the legacy of Andrew Walker — a passionate sports enthusiast whose love for the game touched everyone who knew him. His energy and dedication lifted up teammates, coaches, and fans alike. The week supports the Andrew Walker Memorial Scholarship, carrying his spirit forward for the students who come next.",
     values: ["Be kind", "Be connected", "Be brave"]
   },
 
@@ -66,7 +66,7 @@ window.WOS = {
     highlights: [
       { k: "1 week",     v: "spirit week dress-up themes" },
       { k: "Donation Challenge", v: "Elementary v Middle v High School" },
-      { k: "100%",       v: "of profit to the scholarship" }
+      { k: "1 cause",    v: "the Andrew Walker Memorial Scholarship" }
     ]
   },
 
