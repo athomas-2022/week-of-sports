@@ -17,7 +17,7 @@
   if(C.cfBeaconToken){ var cfb = document.createElement('script'); cfb.defer = true; cfb.src = 'https://static.cloudflareinsights.com/beacon.min.js'; cfb.setAttribute('data-cf-beacon', JSON.stringify({token: C.cfBeaconToken})); document.head.appendChild(cfb); }
 
   /* ---- header + ticker ---- */
-  var links = [['Home','/#top'],['About','/#about'],['Donate','/#donate'],['Contact','/#contact'],['Volunteer','/#volunteer']];
+  var links = [['Home','/#top'],['About','/#about'],['Gear','/gear/'],['Donate','/#donate'],['Contact','/#contact'],['Volunteer','/#volunteer']];
   var header = document.createElement('header');
   header.id = 'hdr';
   header.innerHTML = '<div class="wrap nav">'+
