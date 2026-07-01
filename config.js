@@ -109,7 +109,7 @@ window.WOS = {
      orderEndpoint = the Apps Script web-app URL bound to the "Week of Sports 2026 Orders"
      sheet (athomas@liberty-benton.org). Orders append as rows there. */
   gearOrder: {
-    orderEndpoint: "https://script.google.com/macros/s/AKfycbyIrZy_q0UI_msumF5Lixic5kFi8tMOWcbBnn8nVfbtXnkB88xWuuwmZW9BwyIyurECmA/exec",
+    orderEndpoint: "https://script.google.com/macros/s/AKfycbwv2GFGDBbg1N4RU9CzNQyGK6316Qz7tlMjatnxHj9ctymETVc5gXAgrw12OuT9SuK-kQ/exec",
     formAction: "https://docs.google.com/forms/d/e/1FAIpQLSczCeztwhRGkF1yNF-_s5qwtswnmxbeR5XegwyNtJyx8PqkNg/formResponse",  /* legacy Google Form — no longer used */
     deadline: "November 1",                 /* PLACEHOLDER — order-by date */
     maxPerType: 0,                          /* max shirts (and, separately, max hoodies) per order; 0 = no limit */
