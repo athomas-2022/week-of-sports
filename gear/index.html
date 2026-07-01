@@ -152,7 +152,7 @@
 
     function addItem(type){
       var count = items.filter(function(i){return i.type===type;}).length;
-      if(count >= G.maxPerType) return;
+      if(G.maxPerType && count >= G.maxPerType) return;
       items.push({ id:++uid, type:type, color:G.colors[0].name, size:defaultSize(type) });
       render();
     }
@@ -173,8 +173,8 @@
       S('items-empty').hidden = items.length > 0;
       ['shirt','hoodie'].forEach(function(t){
         var btn = document.querySelector('.prod[data-add="'+t+'"]');
-        var full = items.filter(function(i){return i.type===t;}).length >= G.maxPerType;
-        btn.disabled = full;
+        var full = G.maxPerType && items.filter(function(i){return i.type===t;}).length >= G.maxPerType;
+        btn.disabled = !!full;
         btn.querySelector('.pa').textContent = full ? 'Max '+G.maxPerType+' added' : '＋ Add a '+t;
       });
       updateTotal();

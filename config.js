@@ -112,7 +112,7 @@ window.WOS = {
     orderEndpoint: "https://script.google.com/macros/s/AKfycbyIrZy_q0UI_msumF5Lixic5kFi8tMOWcbBnn8nVfbtXnkB88xWuuwmZW9BwyIyurECmA/exec",
     formAction: "https://docs.google.com/forms/d/e/1FAIpQLSczCeztwhRGkF1yNF-_s5qwtswnmxbeR5XegwyNtJyx8PqkNg/formResponse",  /* legacy Google Form — no longer used */
     deadline: "November 1",                 /* PLACEHOLDER — order-by date */
-    maxPerType: 4,
+    maxPerType: 0,                          /* max shirts (and, separately, max hoodies) per order; 0 = no limit */
     shirtPhoto:  "/assets/product-shirt.jpg",
     hoodiePhoto: "/assets/product-hoodie.jpg",
     colors: [
