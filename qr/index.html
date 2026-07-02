@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Scan Codes · Week of Sports</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png">
+<link rel="apple-touch-icon" href="/assets/favicon-180.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#0a2342">
+<style>
+  :root{--navy:#0a2342;--royal:#2f74d0;--ink:#1a2b45;--muted:#46566b;--line:#dbe4f0;--paper:#f4f7fc}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--paper)}
+  .top{max-width:960px;margin:0 auto;padding:40px 24px 8px}
+  .top .kick{font-family:'Oswald';font-weight:600;text-transform:uppercase;letter-spacing:.14em;font-size:13px;color:var(--royal)}
+  .top h1{font-family:'Anton';text-transform:uppercase;font-size:clamp(34px,6vw,52px);color:var(--navy);margin:.15em 0 .25em;letter-spacing:.01em}
+  .top p{font-size:15px;color:var(--muted);line-height:1.6;max-width:64ch;margin:0 0 18px}
+  .top code{background:#e7eef8;border-radius:5px;padding:1px 6px;font-size:13px;color:var(--navy)}
+  .btn{display:inline-flex;align-items:center;gap:9px;background:var(--royal);color:#fff;border:0;border-radius:11px;font-family:'Oswald';font-weight:600;text-transform:uppercase;letter-spacing:.05em;font-size:15px;padding:13px 24px;cursor:pointer;box-shadow:0 8px 20px rgba(47,116,208,.28);transition:background .2s,transform .15s}
+  .btn:hover{background:#1f5fc4;transform:translateY(-2px)}
+  .grid{max-width:960px;margin:0 auto;padding:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
+  .qr-card{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 10px 30px rgba(10,35,66,.07)}
+  .qr-head{background:var(--navy);color:#fff;font-family:'Anton';text-transform:uppercase;letter-spacing:.03em;text-align:center;padding:13px 14px;font-size:19px}
+  .qr-body{padding:24px 22px 26px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:9px}
+  .qr-img{width:260px;height:260px;max-width:100%;display:block}
+  .qr-label{font-family:'Oswald';font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:var(--navy);font-size:22px;margin:6px 0 0}
+  .qr-cap{font-size:14.5px;color:var(--muted);line-height:1.5;max-width:32ch;margin:0}
+  .qr-url{font-family:'Oswald';font-weight:600;color:var(--royal);font-size:13.5px;letter-spacing:.02em;word-break:break-all;margin-top:2px}
+  .foot{max-width:960px;margin:0 auto;padding:8px 24px 48px;color:#7286a0;font-size:13px}
+  @media print{
+    @page{margin:14mm}
+    .no-print{display:none!important}
+    body{background:#fff}
+    .grid{grid-template-columns:1fr 1fr;gap:16px;padding:0;max-width:none}
+    .qr-card{box-shadow:none;border:1px solid #cfdaea;break-inside:avoid;page-break-inside:avoid}
+    .qr-img{width:230px;height:230px}
+  }
+  @media (prefers-reduced-motion:reduce){.btn{transition:none}}
+</style>
+</head>
+<body>
+  <header class="top no-print">
+    <div class="kick">Week of Sports · print kit</div>
+    <h1>Scan codes</h1>
+    <p>Print this sheet for posters, hallway signs, and table tents — each code below is ready to cut out. Prefer to build your own flyer? Grab the individual image files in <code>/assets/qr/</code> — <b>.svg</b> stays razor-sharp at any print size, <b>.png</b> drops easily into Canva, Docs, or Slides.</p>
+    <button class="btn" onclick="window.print()">🖨️ Print these codes</button>
+  </header>
+
+  <main class="grid">
+    <section class="qr-card">
+      <div class="qr-head">Week of Sports</div>
+      <div class="qr-body">
+        <img class="qr-img" src="/assets/qr/wos-home.svg" alt="QR code linking to weekofsports.com" width="260" height="260">
+        <h2 class="qr-label">Start here</h2>
+        <p class="qr-cap">Scan to explore Week of Sports — gear, game day, and the story behind it.</p>
+        <div class="qr-url">weekofsports.com</div>
+      </div>
+    </section>
+
+    <section class="qr-card">
+      <div class="qr-head">Week of Sports</div>
+      <div class="qr-body">
+        <img class="qr-img" src="/assets/qr/wos-gear.svg" alt="QR code linking to the gear order page" width="260" height="260">
+        <h2 class="qr-label">Order gear</h2>
+        <p class="qr-cap">Scan to buy this year's shirts &amp; hoodies and support the scholarship.</p>
+        <div class="qr-url">weekofsports.com/gear</div>
+      </div>
+    </section>
+
+    <section class="qr-card">
+      <div class="qr-head">Week of Sports</div>
+      <div class="qr-body">
+        <img class="qr-img" src="/assets/qr/wos-donate.svg" alt="QR code linking to the Venmo donation page" width="260" height="260">
+        <h2 class="qr-label">Donate</h2>
+        <p class="qr-cap">Scan to give on Venmo (@AndrewThomas24) — put your name in the note.</p>
+        <div class="qr-url">venmo.com/u/AndrewThomas24</div>
+      </div>
+    </section>
+
+    <section class="qr-card">
+      <div class="qr-head">Week of Sports</div>
+      <div class="qr-body">
+        <img class="qr-img" src="/assets/qr/wos-challenge.svg" alt="QR code linking to the donation challenge leaderboard" width="260" height="260">
+        <h2 class="qr-label">The challenge</h2>
+        <p class="qr-cap">Scan to watch the class-vs-class donation race — Elementary vs Middle vs High.</p>
+        <div class="qr-url">weekofsports.com/#challenge</div>
+      </div>
+    </section>
+
+    <section class="qr-card">
+      <div class="qr-head">Week of Sports</div>
+      <div class="qr-body">
+        <img class="qr-img" src="/assets/qr/wos-video.svg" alt="QR code linking to the fundraising video" width="260" height="260">
+        <h2 class="qr-label">Our story</h2>
+        <p class="qr-cap">Scan to watch why Week of Sports exists and meet Andrew.</p>
+        <div class="qr-url">weekofsports.com/fundraising-video</div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot no-print">Tip: keep at least a small white border around each code when you resize it — that quiet space is what lets phones lock on quickly.</footer>
+</body>
+</html>
