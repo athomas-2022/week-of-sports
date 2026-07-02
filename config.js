@@ -46,6 +46,25 @@ window.WOS = {
     { name: "Elementary",    tagline: "Tiny but mighty",  amount: 1310, color: "sky"   }
   ],
 
+  /* ---------- LIVE leaderboard (optional — turns the challenge into a live scoreboard) ----------
+     Update the class-vs-class totals from your PHONE and the website refreshes itself.
+     One-time setup:
+       1. In your Google Sheet, add a tab with two columns and a header row:
+              Division      | Amount
+              High school   | 2450
+              Middle school | 1820
+              Elementary    | 1310
+       2. File -> Share -> Publish to web -> choose that tab -> format "Comma-separated values (.csv)" -> Publish.
+       3. Copy the link it gives you and paste it below as csvUrl (in quotes).
+     Then during the week just edit the Amount cells (the Google Sheets phone app works great) —
+     the leaderboard updates every ~45 seconds on its own, with a live "updated just now" stamp.
+     Leave csvUrl blank ("") to keep the static amounts above / the "coming soon" state. */
+  leaderboard: {
+    csvUrl:         "",   /* paste your "Publish to web -> CSV" link here to go live */
+    goal:           0,    /* optional $ goal; 0 = no goal bar, just the race + running total */
+    refreshSeconds: 45    /* how often the page checks the sheet for new totals */
+  },
+
   /* ---------- game-day schedule (fill in when the lineup is set; empty = "coming soon") ---------- */
   gameDayEvents: [],
 

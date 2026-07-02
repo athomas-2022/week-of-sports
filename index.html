@@ -147,6 +147,7 @@
       <div class="thermo-track"><div class="thermo-fill" id="thermo"></div></div>
     </div>
     <div class="board" id="board"></div>
+    <div class="board-foot" id="board-foot" hidden><span class="live-dot"></span> Live totals — <span id="live-updated">updating…</span></div>
   </div>
 </section>
 
@@ -342,18 +343,114 @@
     }
   })();
 
-  /* ---- leaderboard (or coming soon) ---- */
-  if(C.fundraisingGoal>0){
-    var sorted = (C.divisions||[]).slice().sort(function(a,b){return b.amount-a.amount;});
-    var max = sorted.length ? sorted[0].amount : 1;
-    S('board').innerHTML = sorted.map(function(d,i){
-      var pct = Math.round(d.amount/max*100);
-      return '<div class="row"><div class="rank">'+(i+1)+'</div><div class="team"><div class="name">'+d.name+'</div><div class="meta">'+(d.tagline||'')+'</div></div><div class="bar-wrap"><div class="bar" data-pct="'+pct+'" style="background:var(--'+(d.color||'royal')+')"></div></div><div class="amt" data-val="'+d.amount+'">$0</div></div>';
-    }).join('');
-  } else {
-    var th = document.querySelector('.thermo'); if(th) th.style.display = 'none';
-    S('board').innerHTML = '<p style="text-align:center;color:#6a7a8f;font-size:16px;max-width:600px;margin:0 auto">The class-vs-class donation challenge returns this winter — live totals will appear here once it kicks off.</p>';
-  }
+  /* ---- donation challenge: live leaderboard / static / coming soon ---- */
+  var Challenge = (function(){
+    var L = C.leaderboard || {};
+    var goal = +(L.goal || C.fundraisingGoal || 0);
+    var live = !!(L.csvUrl && String(L.csvUrl).trim());
+    var boardEl = S('board'), foot = S('board-foot'), thermoWrap = document.querySelector('.thermo');
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var base = (C.divisions||[]).map(function(d){ return { name:d.name, tagline:d.tagline||'', color:d.color||'royal', amount:+d.amount||0 }; });
+    function baseOf(name){ var k=String(name||'').toLowerCase().trim(); for(var i=0;i<base.length;i++){ if(base[i].name.toLowerCase().trim()===k) return base[i]; } return null; }
+    var data = null, shown = false, updatedAt = 0;
+
+    function total(divs){ return (divs||[]).reduce(function(s,d){ return s+(+d.amount||0); },0); }
+    function q(name){ return String(name).replace(/"/g,'\\"'); }
+
+    function paintThermo(animate){
+      var t = total(data), rb = S('raised');
+      if(rb){ if(animate && !reduce) countUp(rb, t, 1400, +rb.dataset.v||0); else rb.textContent = money(t); rb.dataset.v = t; }
+      var g = S('goal'), track = document.querySelector('.thermo-track');
+      if(goal>0){ if(g) g.textContent = 'Goal '+money(goal); if(S('thermo')) S('thermo').style.width = Math.min(100, t/goal*100)+'%'; }
+      else { if(g) g.style.display='none'; if(track) track.style.display='none'; }
+    }
+
+    function rowFor(name){
+      var row = boardEl.querySelector('.row[data-div="'+q(name)+'"]');
+      if(!row){
+        row = document.createElement('div'); row.className='row'; row.setAttribute('data-div', name); row.dataset.val='0';
+        row.innerHTML = '<div class="rank"></div><div class="team"><div class="name"></div><div class="meta"></div></div><div class="bar-wrap"><div class="bar"></div></div><div class="amt">$0</div>';
+      }
+      return row;
+    }
+
+    function paint(animate){
+      if(!data) return;
+      var divs = data.slice().sort(function(a,b){ return b.amount-a.amount; });
+      var max = Math.max(1, divs.length ? divs[0].amount : 1);
+      var firsts = {};
+      Array.prototype.forEach.call(boardEl.children, function(r){ firsts[r.getAttribute('data-div')] = r.getBoundingClientRect().top; });
+      divs.forEach(function(d,i){
+        var row = rowFor(d.name); boardEl.appendChild(row);
+        row.querySelector('.rank').textContent = i+1;
+        row.querySelector('.name').textContent = d.name;
+        row.querySelector('.meta').textContent = d.tagline||'';
+        row.classList.toggle('leader', i===0 && d.amount>0);
+        row.querySelector('.bar').style.background = 'var(--'+(d.color||'royal')+')';
+        var bar = row.querySelector('.bar'), amtEl = row.querySelector('.amt'), prev = +row.dataset.val||0;
+        var pct = Math.round(d.amount/max*100);
+        if(shown){
+          bar.style.width = pct+'%';
+          if(animate && !reduce) countUp(amtEl, d.amount, 1200, prev); else amtEl.textContent = money(d.amount);
+          row.dataset.val = d.amount;
+        } else { bar.style.width='0%'; amtEl.textContent='$0'; row.dataset.val='0'; }
+      });
+      if(animate && !reduce){
+        Array.prototype.forEach.call(boardEl.children, function(row){
+          var first = firsts[row.getAttribute('data-div')]; if(first==null) return;
+          var dy = first - row.getBoundingClientRect().top; if(!dy) return;
+          row.style.transition='none'; row.style.transform='translateY('+dy+'px)';
+          requestAnimationFrame(function(){ row.style.transition='transform .6s cubic-bezier(.22,1,.36,1)'; row.style.transform=''; });
+        });
+      }
+      paintThermo(animate);
+    }
+
+    function stamp(){
+      if(!live || !foot || !shown) return;
+      foot.hidden = false;
+      var s = Math.max(0, Math.round((Date.now()-updatedAt)/1000)), u = S('live-updated');
+      if(u) u.textContent = s<5 ? 'updated just now' : ('updated '+(s<60 ? s+'s' : Math.round(s/60)+' min')+' ago');
+    }
+    function applyData(divs){ if(!divs || !divs.length) return; data=divs; updatedAt=Date.now(); paint(true); stamp(); }
+
+    function parseLine(line){ var out=[],cur='',inq=false; for(var i=0;i<line.length;i++){ var ch=line[i]; if(inq){ if(ch=='"'){ if(line[i+1]=='"'){cur+='"';i++;} else inq=false; } else cur+=ch; } else { if(ch=='"')inq=true; else if(ch==','){ out.push(cur); cur=''; } else cur+=ch; } } out.push(cur); return out; }
+    function parseCSV(text){
+      var lines = text.replace(/\r/g,'').split('\n').filter(function(l){ return l.trim().length; });
+      if(!lines.length) return [];
+      var head = parseLine(lines[0]).map(function(h){ return h.toLowerCase().trim(); });
+      var di=-1, ai=-1, ti=-1, ci=-1;
+      head.forEach(function(h,i){ if(di<0&&/division|class|team|name|group|school/.test(h))di=i; if(ai<0&&/amount|total|raised|dollar|\$/.test(h))ai=i; if(ti<0&&/tagline|slogan|motto/.test(h))ti=i; if(ci<0&&/colou?r/.test(h))ci=i; });
+      if(di<0)di=0; if(ai<0)ai=1;
+      var out=[];
+      for(var r=1;r<lines.length;r++){
+        var c=parseLine(lines[r]), name=(c[di]||'').trim(); if(!name) continue;
+        var amt=parseFloat(String(c[ai]||'').replace(/[^0-9.]/g,''))||0, b=baseOf(name)||{};
+        out.push({ name:name, amount:amt, tagline:(ti>=0&&c[ti]?c[ti].trim():b.tagline||''), color:(ci>=0&&c[ci]?c[ci].trim():b.color||'royal') });
+      }
+      return out;
+    }
+    function fetchLive(){
+      var url = String(L.csvUrl).trim(); url += (url.indexOf('?')>=0?'&':'?')+'_='+Date.now();
+      fetch(url, {cache:'no-store'}).then(function(r){ return r.text(); }).then(function(t){
+        var divs = parseCSV(t);
+        if(divs.length) applyData(divs); else if(!data) applyData(base);
+      }).catch(function(){ if(!data) applyData(base); });
+    }
+
+    function onShown(){ if(shown) return; shown=true; if(data) paint(true); stamp(); }
+    function init(){
+      if(!live && goal<=0){
+        if(thermoWrap) thermoWrap.style.display='none';
+        boardEl.innerHTML = '<p class="board-soon">The class-vs-class donation challenge returns this winter — live totals will appear here once it kicks off.</p>';
+        return;
+      }
+      if(live){ fetchLive(); setInterval(fetchLive, Math.max(20, +L.refreshSeconds||45)*1000); setInterval(stamp, 1000); }
+      else { applyData(base); }
+    }
+    return { init:init, onShown:onShown };
+  })();
+  Challenge.init();
 
   /* ---- spirit week (highlight today) or coming soon ---- */
   var todayStr = new Date().toISOString().slice(0,10);
@@ -488,16 +585,8 @@
   }
 
   /* ---- count-up + reveal on scroll ---- */
-  function countUp(el, t, dur){ var s=performance.now(); (function step(p){var k=Math.min(1,(p-s)/dur); el.textContent=money(t*k); if(k<1) requestAnimationFrame(step);})(s); }
-  var boardDone=false;
-  function animateBoard(){
-    if(boardDone || !C.fundraisingGoal) return; boardDone=true;
-    S('thermo').style.width = Math.min(100, C.raisedTotal/C.fundraisingGoal*100)+'%';
-    countUp(S('raised'), C.raisedTotal, 1500);
-    document.querySelectorAll('.bar').forEach(function(b){ b.style.width=b.dataset.pct+'%'; });
-    document.querySelectorAll('.amt').forEach(function(a){ countUp(a, +a.dataset.val, 1500); });
-  }
-  new IntersectionObserver(function(en){ en.forEach(function(e){ if(e.isIntersecting) animateBoard(); }); },{threshold:.3}).observe(S('board'));
+  function countUp(el, t, dur, from){ from=from||0; var s=performance.now(); (function step(p){var k=Math.min(1,(p-s)/dur); el.textContent=money(from+(t-from)*k); if(k<1) requestAnimationFrame(step);})(s); }
+  new IntersectionObserver(function(en){ en.forEach(function(e){ if(e.isIntersecting) Challenge.onShown(); }); },{threshold:.25}).observe(S('board'));
   var revObs = new IntersectionObserver(function(en){ en.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); revObs.unobserve(e.target);} }); },{threshold:.15});
   document.querySelectorAll('.reveal').forEach(function(el){ revObs.observe(el); });
 
