@@ -21,6 +21,7 @@
   .prod{display:flex;flex-direction:column;align-items:flex-start;gap:4px;background:var(--paper);border:1.5px solid #dbe4f0;border-radius:16px;padding:22px;cursor:pointer;transition:border-color .2s,transform .15s,box-shadow .2s;font-family:'Inter'}
   .prod:hover{border-color:var(--royal);transform:translateY(-3px);box-shadow:0 14px 30px rgba(47,116,208,.2)}
   .prod:active{transform:translateY(-1px)}
+  .prod .prow{display:flex;flex-direction:column;gap:4px;align-self:flex-start}
   .prod .pn{font-family:'Oswald';font-weight:600;text-transform:uppercase;letter-spacing:.04em;font-size:18px;color:var(--navy)}
   .prod .pp{font-family:'Oswald';font-weight:700;font-size:24px;color:var(--royal)}
   .prod .pa{margin-top:14px;align-self:stretch;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--royal);color:#fff;font-family:'Oswald';font-weight:600;letter-spacing:.05em;text-transform:uppercase;font-size:16px;padding:14px 18px;border-radius:11px;box-shadow:0 6px 16px rgba(47,116,208,.3);transition:background .2s}
@@ -74,11 +75,12 @@
     .grid2{grid-template-columns:1fr}
     /* keep both pickers side-by-side but compact, so your cart shows without scrolling */
     .addbar{gap:10px}
-    .prod{padding:12px;border-radius:13px}
-    .prod img{height:82px;margin-bottom:9px}
-    .prod .pn{font-size:15px}
-    .prod .pp{font-size:19px}
-    .prod .pa{margin-top:10px;padding:10px 8px;font-size:13px;letter-spacing:.03em}
+    .prod{padding:10px;border-radius:12px}
+    .prod img{height:58px;margin-bottom:7px}
+    .prod .prow{flex-direction:row;justify-content:space-between;align-items:baseline;width:100%;gap:8px}
+    .prod .pn{font-size:13.5px}
+    .prod .pp{font-size:17px}
+    .prod .pa{margin-top:7px;padding:8px 6px;font-size:12px;letter-spacing:.02em}
     /* tighter cart item cards */
     .item{padding:12px 13px;margin-top:10px}
     .item-row{gap:12px}
@@ -102,8 +104,8 @@
       <form id="order-form" novalidate>
         <h2 class="o-h"><span class="n">1</span> Pick your gear</h2>
         <div class="addbar">
-          <button type="button" class="prod" data-add="shirt"><img id="img-shirt" alt="Week of Sports T-shirt"><span class="pn">T-Shirt</span><span class="pp" id="p-shirt">$15</span><span class="pa">＋ Add a shirt</span></button>
-          <button type="button" class="prod" data-add="hoodie"><img id="img-hoodie" alt="Week of Sports hoodie"><span class="pn">Hoodie</span><span class="pp" id="p-hoodie">$30</span><span class="pa">＋ Add a hoodie</span></button>
+          <button type="button" class="prod" data-add="shirt"><img id="img-shirt" alt="Week of Sports T-shirt"><span class="prow"><span class="pn">T-Shirt</span><span class="pp" id="p-shirt">$15</span></span><span class="pa">＋ Add a shirt</span></button>
+          <button type="button" class="prod" data-add="hoodie"><img id="img-hoodie" alt="Week of Sports hoodie"><span class="prow"><span class="pn">Hoodie</span><span class="pp" id="p-hoodie">$30</span></span><span class="pa">＋ Add a hoodie</span></button>
         </div>
         <div id="items"></div>
         <p id="items-empty" class="o-empty">No items yet — add a shirt or hoodie above to get started.</p>
