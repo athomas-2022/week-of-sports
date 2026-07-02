@@ -110,7 +110,7 @@ window.WOS = {
   volunteerText: "Volunteers are crucial to the success of the event — from running raffle tables to working the doors. Everyone gets a role that matters, and hours count toward NHS and other service requirements.",
 
   /* ---------- assets (swap these each year — paths are site-root absolute) ---------- */
-  logo:          "/assets/logo.png",
+  logo:          "/assets/logo-lb.png",   /* LB word-cloud badge (Andrew Walker / Week of Sports) */
   crest:         "/assets/crest.png",
   shirt:         "/assets/shirt.png",
   heroYouTubeId: "-3iifoMWy7U",            /* fundraising video — plays muted as the looping hero background */
