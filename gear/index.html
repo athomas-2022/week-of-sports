@@ -20,13 +20,20 @@
   .addbar{display:grid;grid-template-columns:1fr 1fr;gap:14px}
   .prod{display:flex;flex-direction:column;align-items:flex-start;gap:4px;background:var(--paper);border:1.5px solid #dbe4f0;border-radius:16px;padding:22px;cursor:pointer;transition:border-color .2s,transform .15s,box-shadow .2s;font-family:'Inter'}
   .prod:hover{border-color:var(--royal);transform:translateY(-3px);box-shadow:0 14px 30px rgba(47,116,208,.2)}
-  .prod:active{transform:translateY(-1px)}
+  .prod:active{transform:scale(.97)}
   .prod .prow{display:flex;flex-direction:column;gap:4px;align-self:flex-start}
   .prod .pn{font-family:'Oswald';font-weight:600;text-transform:uppercase;letter-spacing:.04em;font-size:18px;color:var(--navy)}
   .prod .pp{font-family:'Oswald';font-weight:700;font-size:24px;color:var(--royal)}
   .prod .pa{margin-top:14px;align-self:stretch;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--royal);color:#fff;font-family:'Oswald';font-weight:600;letter-spacing:.05em;text-transform:uppercase;font-size:16px;padding:14px 18px;border-radius:11px;box-shadow:0 6px 16px rgba(47,116,208,.3);transition:background .2s}
   .prod:hover .pa{background:var(--blue)}
   .prod[disabled]{opacity:.45;cursor:not-allowed}
+  /* tap-to-add confirmation: the button flips to a green "✓ Added!" with a quick pop */
+  @keyframes pa-pop{0%{transform:scale(.92)}55%{transform:scale(1.03)}100%{transform:scale(1)}}
+  .prod .pa.added{background:#1a9d54;box-shadow:0 6px 16px rgba(26,157,84,.35);animation:pa-pop .34s ease-out}
+  .prod:hover .pa.added{background:#17914d}
+  /* the running total gives a little bump each time it changes */
+  @keyframes total-bump{0%{transform:scale(1)}35%{transform:scale(1.13)}100%{transform:scale(1)}}
+  .o-total b.bump{display:inline-block;animation:total-bump .42s ease-out}
   .prod img{width:100%;height:150px;object-fit:cover;object-position:center 26%;border-radius:10px;margin-bottom:12px;display:block;background:#eef2f8}
   .o-empty{text-align:center;color:#8a98aa;font-size:15px;padding:22px;border:1.5px dashed #dbe4f0;border-radius:14px;margin-top:14px}
   .item{background:#fff;border:1px solid #e3e9f1;border-radius:14px;padding:16px 18px;margin-top:12px}
@@ -88,7 +95,7 @@
     .sw .dot{width:30px;height:30px}
     .o-bar{flex-direction:column;align-items:stretch} #place{width:100%}
   }
-  @media (prefers-reduced-motion:reduce){*{transition:none!important}.item.just-added{animation:none!important}}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}.item.just-added,.prod .pa.added,.o-total b.bump{animation:none!important}}
 </style>
 </head>
 <body>
@@ -174,7 +181,32 @@
       var id = ++uid;
       items.push({ id:id, type:type, color:G.colors[0].name, size:defaultSize(type) });
       render();
-      revealItem(id);
+      confirmAdd(type);   /* button flips to "✓ Added!" */
+      pulseTotal();       /* total bumps to show it changed */
+      buzz(12);           /* haptic tap on phones that support it */
+      revealItem(id);     /* scroll new item into view + flash it */
+    }
+
+    function buzz(ms){ try{ if(navigator.vibrate) navigator.vibrate(ms); }catch(e){} }
+
+    function pulseTotal(){
+      var b = S('total');
+      b.classList.remove('bump'); void b.offsetWidth; b.classList.add('bump');
+    }
+
+    /* momentarily turn the tapped button green with a "✓ Added!" confirmation */
+    function confirmAdd(type){
+      var btn = document.querySelector('.prod[data-add="'+type+'"]');
+      if(!btn) return;
+      var pa = btn.querySelector('.pa');
+      clearTimeout(pa._restore);
+      pa.classList.add('added');
+      pa.textContent = '✓ Added!';
+      pa._restore = setTimeout(function(){
+        pa.classList.remove('added');
+        var full = G.maxPerType && items.filter(function(i){return i.type===type;}).length >= G.maxPerType;
+        pa.textContent = full ? 'Max '+G.maxPerType+' added' : '＋ Add a '+type;
+      }, 950);
     }
 
     /* after adding, make the new item obvious: bring it into view if it landed below the
@@ -242,7 +274,7 @@
     });
     S('items').addEventListener('click', function(e){
       var rm = e.target.dataset.rm;
-      if(rm){ items = items.filter(function(x){return x.id!==+rm;}); render(); }
+      if(rm){ items = items.filter(function(x){return x.id!==+rm;}); render(); pulseTotal(); buzz(8); }
     });
     Array.prototype.forEach.call(document.querySelectorAll('.prod'), function(b){
       b.addEventListener('click', function(){ addItem(b.dataset.add); });
