@@ -169,7 +169,7 @@
 
 <section class="gear on-dark" id="gear">
   <div class="wrap gear-grid">
-    <div class="reveal"><img id="shirt-img" alt="This year's Week of Sports shirt design" /></div>
+    <div class="reveal"><img id="shirt-img" alt="This year's Week of Sports gear design — the LB word-cloud" /></div>
     <div class="gear-copy reveal">
       <div class="eyebrow">This year's gear</div>
       <h2>Wear the legacy</h2>
@@ -304,7 +304,7 @@
     S('aboutev-body').textContent = C.aboutEvent.body;
     S('aboutev-hl').innerHTML = (C.aboutEvent.highlights||[]).map(function(h){return '<div class="hlc"><div class="hk">'+h.k+'</div><div class="hv">'+h.v+'</div></div>';}).join('');
   }
-  S('shirt-img').src = C.shirt;
+  S('shirt-img').src = C.gearImage || C.shirt;
   if(C.gearReady){
     S('shirt-price').textContent = '$'+C.shirtPrice;
     S('hoodie-price').textContent = '$'+C.hoodiePrice;

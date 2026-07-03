@@ -111,6 +111,7 @@ window.WOS = {
 
   /* ---------- assets (swap these each year — paths are site-root absolute) ---------- */
   logo:          "/assets/logo-lb.png",   /* LB word-cloud badge (Andrew Walker / Week of Sports) */
+  gearImage:     "/assets/gear-lb.png",   /* big image in the homepage "This year's gear" section */
   crest:         "/assets/crest.png",
   shirt:         "/assets/shirt.png",
   heroYouTubeId: "-3iifoMWy7U",            /* fundraising video — plays muted as the looping hero background */
