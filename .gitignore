@@ -2,3 +2,10 @@
 .DS_Store
 Thumbs.db
 *.log
+
+# Private admin tools — NEVER deploy (contain buyer/entrant data + Apps Script source)
+Orders Dashboard/
+Order Intake (Apps Script)/
+Raffle/
+board-test.csv
+_raffle_preview.html
