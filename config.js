@@ -132,6 +132,8 @@ window.WOS = {
     orderEndpoint: "https://script.google.com/macros/s/AKfycbwv2GFGDBbg1N4RU9CzNQyGK6316Qz7tlMjatnxHj9ctymETVc5gXAgrw12OuT9SuK-kQ/exec",
     formAction: "https://docs.google.com/forms/d/e/1FAIpQLSczCeztwhRGkF1yNF-_s5qwtswnmxbeR5XegwyNtJyx8PqkNg/formResponse",  /* legacy Google Form — no longer used */
     deadline: "November 1",                 /* PLACEHOLDER — order-by date */
+    orderingOpen: false,                    /* false = people can BROWSE the gear but can't place an order yet. Set to true to open ordering. */
+    orderingClosedMsg: "Ordering opens soon — take a look at this year's gear, then check back to place your order.",
     maxPerType: 0,                          /* max shirts (and, separately, max hoodies) per order; 0 = no limit */
     shirtPhoto:  "/assets/product-shirt.jpg",
     hoodiePhoto: "/assets/product-hoodie.jpg",

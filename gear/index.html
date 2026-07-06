@@ -77,6 +77,8 @@
   .o-total b{font-family:'Oswald';font-weight:700;font-size:30px;color:var(--navy);margin-left:8px;font-variant-numeric:tabular-nums}
   #place{min-height:50px;padding:0 30px;font-size:16px}
   .o-err{margin-top:14px;background:#fdecec;border:1px solid #f3b4b4;color:#a3201f;border-radius:10px;padding:12px 14px;font-size:14px}
+  .order-note{background:#eaf2fd;border:1px solid #cfe0f7;color:#173a63;border-radius:14px;padding:15px 18px;font-size:15px;line-height:1.55;margin:0 0 24px}
+  .order-note b{color:var(--royal)}
   .success{text-align:center;max-width:560px;margin:0 auto;padding:30px 0}
   .success .ck{width:72px;height:72px;border-radius:50%;background:#e7f6ec;color:#1f9d57;display:flex;align-items:center;justify-content:center;font-size:38px;margin:0 auto 18px}
   .success h2{font-family:'Anton';text-transform:uppercase;font-size:38px;color:var(--navy);margin-bottom:8px}
@@ -167,12 +169,22 @@
       return;
     }
     var items = [], uid = 0;
+    var canOrder = G.orderingOpen !== false;   /* false = browse-only preview, ordering disabled */
 
     S('p-shirt').textContent = '$'+C.shirtPrice;
     S('p-hoodie').textContent = '$'+C.hoodiePrice;
     if(G.shirtPhoto) S('img-shirt').src = G.shirtPhoto;
     if(G.hoodiePhoto) S('img-hoodie').src = G.hoodiePhoto;
-    S('order-sub').textContent = 'Shirts $'+C.shirtPrice+' · hoodies $'+C.hoodiePrice+' · larger sizes a little more. Order by '+G.deadline+'.';
+    S('order-sub').textContent = canOrder
+      ? 'Shirts $'+C.shirtPrice+' · hoodies $'+C.hoodiePrice+' · larger sizes a little more. Order by '+G.deadline+'.'
+      : 'Shirts $'+C.shirtPrice+' · hoodies $'+C.hoodiePrice+' · larger sizes a little more. Take a look at this year’s gear — ordering opens soon.';
+
+    if(!canOrder){
+      var place = S('place'); place.disabled = true; place.textContent = 'Ordering opens soon';
+      var note = document.createElement('div'); note.className = 'order-note';
+      note.innerHTML = '<b>👀 Preview —</b> ' + (G.orderingClosedMsg || 'ordering isn’t open yet. Browse this year’s gear, then check back soon to place your order.');
+      var form = S('order-form'); form.parentNode.insertBefore(note, form);
+    }
 
     function surcharge(size){ var m=/\+\$(\d+)/.exec(size||''); return m?+m[1]:0; }
     function priceOf(it){ return (it.type==='shirt'?C.shirtPrice:C.hoodiePrice) + surcharge(it.size); }
@@ -259,7 +271,7 @@
     function updateTotal(){
       var t = total();
       S('total').textContent = money(t);
-      if(selectedPayment() === G.payment[0]){ S('venmo-box').hidden = false; S('venmo-btn').href = venmoLink(t); }
+      if(canOrder && selectedPayment() === G.payment[0]){ S('venmo-box').hidden = false; S('venmo-btn').href = venmoLink(t); }
       else S('venmo-box').hidden = true;
     }
 
@@ -310,6 +322,7 @@
     S('order-form').addEventListener('submit', function(ev){
       ev.preventDefault();
       S('order-error').hidden = true;
+      if(!canOrder) return showError(G.orderingClosedMsg || 'Ordering isn’t open yet — check back soon to place your order.');
       if(items.length===0) return showError('Add at least one shirt or hoodie before ordering.');
       if(!S('f-name').value.trim()) return showError('Please enter your name.', S('f-name'));
       if(!S('f-phone').value.trim()) return showError('Please enter a phone number.', S('f-phone'));
