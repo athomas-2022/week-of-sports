@@ -12,8 +12,8 @@
 window.WOS = {
 
   /* ---------- the event ---------- */
-  year:      "2026",
-  gameDay:   "",                          /* set e.g. "2026-12-12T14:00:00" when confirmed (blank = "coming soon") */
+  year:      "2027",
+  gameDay:   "2027-01-09T12:00:00",       /* game day — January 9, 2027, noon (blank = "coming soon") */
   location:  "Liberty-Benton High School",
   mapsQuery: "Liberty-Benton High School, Findlay, OH",
   contactEmail: "info@weekofsports.com",
@@ -176,9 +176,9 @@ window.WOS = {
 
   /* ---------- scrolling ticker ---------- */
   ticker: [
-    "Week of Sports 2026",
+    "Week of Sports 2027",
     "Andrew Walker Memorial Scholarship",
-    "Dates coming soon",
+    "Game Day · January 9, 2027",
     "Gear dropping soon",
     "Donate to the scholarship",
     "Follow @weekofsports"
