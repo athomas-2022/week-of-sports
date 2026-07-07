@@ -12,7 +12,7 @@
 window.WOS = {
 
   /* ---------- the event ---------- */
-  year:      "2027",
+  year:      "26-27",
   gameDay:   "2027-01-09T12:00:00",       /* game day — January 9, 2027, noon (blank = "coming soon") */
   location:  "Liberty-Benton High School",
   mapsQuery: "Liberty-Benton High School, Findlay, OH",
@@ -176,7 +176,7 @@ window.WOS = {
 
   /* ---------- scrolling ticker ---------- */
   ticker: [
-    "Week of Sports 2027",
+    "Week of Sports 26-27",
     "Andrew Walker Memorial Scholarship",
     "Game Day · January 9, 2027",
     "Gear dropping soon",
