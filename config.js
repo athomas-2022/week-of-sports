@@ -137,13 +137,41 @@ window.WOS = {
     maxPerType: 0,                          /* max shirts (and, separately, max hoodies) per order; 0 = no limit */
     shirtPhoto:  "/assets/product-shirt.jpg",
     hoodiePhoto: "/assets/product-hoodie.jpg",
-    colors: [
+    colors: [                                 /* default color choices for apparel (any product without its own "colors" list uses these) */
       { name: "Blue", hex: "#2f74d0" },
       { name: "Red",  hex: "#c8202f" },
       { name: "Grey", hex: "#9aa3ad" }
     ],
-    shirtSizes:  ["Youth XS","Youth S","Youth M","Youth L","Youth XL","S","M","L","XL","2XL (+$1.00)","3XL (+$2.00)","4XL (+$4.00)","5XL (+$6.00)"],
-    hoodieSizes: ["Youth XS","Youth S","Youth M","Youth L","Youth XL","S","M","L","XL","2XL (+$1.00)","3XL (+$2.00)","4XL (+$3.00)"],
+
+    /* ---------- THIS YEAR'S PRODUCTS ----------
+       Every item people can order. To add/remove an item, add/remove a line below.
+       For each product:
+         name    – what shoppers see (e.g. "Hoodie")
+         price   – base price in dollars
+         photo   – (optional) picture path, e.g. "/assets/product-hat.jpg". Drop the
+                   image in /assets and put its path here. No photo yet = a tidy
+                   placeholder tile shows until you add one.
+         sizes   – (optional) list of sizes. Leave it off for one-size items (hat,
+                   beanie, sticker). A size like "2XL (+$1.00)" adds that surcharge.
+         colors  – (optional) list of {name,hex}. Leave it off to use the default
+                   colors above; use  colors: []  for an item with no color choice. */
+    products: [
+      { key: "tshirt",           name: "T-Shirt",          price: 15, photo: "/assets/product-shirt.jpg",
+        sizes: ["S","M","L","XL","2XL (+$1.00)","3XL (+$2.00)","4XL (+$4.00)","5XL (+$6.00)"] },
+      { key: "youth-tshirt",     name: "Youth T-Shirt",    price: 15,
+        sizes: ["Youth XS","Youth S","Youth M","Youth L","Youth XL"] },
+      { key: "longsleeve",       name: "Long Sleeve",      price: 18,
+        sizes: ["S","M","L","XL","2XL (+$1.00)","3XL (+$2.00)","4XL (+$4.00)","5XL (+$6.00)"] },
+      { key: "youth-longsleeve", name: "Youth Long Sleeve",price: 18,
+        sizes: ["Youth XS","Youth S","Youth M","Youth L","Youth XL"] },
+      { key: "hoodie",           name: "Hoodie",           price: 30, photo: "/assets/product-hoodie.jpg",
+        sizes: ["S","M","L","XL","2XL (+$1.00)","3XL (+$2.00)","4XL (+$3.00)"] },
+      { key: "youth-hoodie",     name: "Youth Hoodie",     price: 30,
+        sizes: ["Youth L","Youth XL"] },
+      { key: "beanie",           name: "Beanie",           price: 20, colors: [] },
+      { key: "hat",              name: "Hat",              price: 25, colors: [] },
+      { key: "sticker",          name: "Sticker",          price:  3, colors: [] }
+    ],
     delivery: [
       "I will have my order dropped off in my homeroom (Elementary and Middle School)",
       "I will have my order dropped off at the high school",

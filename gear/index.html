@@ -4,11 +4,11 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Order Gear · Week of Sports 26-27</title>
-<meta name="description" content="This year's Week of Sports shirts and hoodies — every purchase supports the Andrew Walker Memorial Scholarship at Liberty-Benton.">
+<meta name="description" content="This year's Week of Sports gear — shirts, hoodies, hats, and more. Every purchase supports the Andrew Walker Memorial Scholarship at Liberty-Benton.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Week of Sports">
 <meta property="og:title" content="Order Gear · Week of Sports 26-27">
-<meta property="og:description" content="Shop this year's Week of Sports shirts and hoodies — every purchase supports the Andrew Walker Memorial Scholarship.">
+<meta property="og:description" content="Shop this year's Week of Sports gear — shirts, hoodies, hats, and more. Every purchase supports the Andrew Walker Memorial Scholarship.">
 <meta property="og:url" content="https://weekofsports.com/gear/">
 <meta property="og:image" content="https://weekofsports.com/assets/share-card.png">
 <meta property="og:image:width" content="1200">
@@ -34,8 +34,8 @@
   .o-h{font-family:'Oswald';font-weight:600;text-transform:uppercase;letter-spacing:.06em;font-size:18px;color:var(--navy);margin:38px 0 14px;display:flex;align-items:center;gap:10px}
   .o-h .n{width:28px;height:28px;border-radius:50%;background:var(--royal);color:#fff;font-size:14px;display:flex;align-items:center;justify-content:center;flex:none}
   .o-h:first-child{margin-top:0}
-  .addbar{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-  .prod{display:flex;flex-direction:column;align-items:flex-start;gap:4px;background:var(--paper);border:1.5px solid #dbe4f0;border-radius:16px;padding:22px;cursor:pointer;transition:border-color .2s,transform .15s,box-shadow .2s;font-family:'Inter'}
+  .addbar{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .prod{display:flex;flex-direction:column;align-items:flex-start;gap:4px;background:var(--paper);border:1.5px solid #dbe4f0;border-radius:16px;padding:18px;cursor:pointer;transition:border-color .2s,transform .15s,box-shadow .2s;font-family:'Inter'}
   .prod:hover{border-color:var(--royal);transform:translateY(-3px);box-shadow:0 14px 30px rgba(47,116,208,.2)}
   .prod:active{transform:scale(.97)}
   .prod .prow{display:flex;flex-direction:column;gap:4px;align-self:flex-start}
@@ -51,7 +51,12 @@
   /* the running total gives a little bump each time it changes */
   @keyframes total-bump{0%{transform:scale(1)}35%{transform:scale(1.13)}100%{transform:scale(1)}}
   .o-total b.bump{display:inline-block;animation:total-bump .42s ease-out}
-  .prod img{width:100%;height:150px;object-fit:cover;object-position:center 26%;border-radius:10px;margin-bottom:12px;display:block;background:#eef2f8}
+  .prod img,.prod .ph{width:100%;height:130px;border-radius:10px;margin-bottom:12px;display:block;background:#eef2f8}
+  .prod img{object-fit:cover;object-position:center 26%}
+  /* tidy placeholder shown for products that don't have a photo yet */
+  .prod .ph{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;color:#9db0c8;background:linear-gradient(135deg,#f3f7fc,#e9f0f9);border:1px dashed #cdd9ea}
+  .prod .ph svg{width:34px;height:34px;opacity:.7}
+  .prod .ph span{font-family:'Oswald';font-weight:600;text-transform:uppercase;letter-spacing:.08em;font-size:10px}
   .o-empty{text-align:center;color:#8a98aa;font-size:15px;padding:22px;border:1.5px dashed #dbe4f0;border-radius:14px;margin-top:14px}
   .item{background:#fff;border:1px solid #e3e9f1;border-radius:14px;padding:16px 18px;margin-top:12px}
   .item-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
@@ -99,10 +104,11 @@
   .sum .li:last-child{border-bottom:0;font-family:'Oswald';font-weight:700;color:var(--navy)}
   @media (max-width:620px){
     .grid2{grid-template-columns:1fr}
-    /* keep both pickers side-by-side but compact, so your cart shows without scrolling */
-    .addbar{gap:10px}
+    /* two per row on phones, compact so the cart shows without much scrolling */
+    .addbar{grid-template-columns:repeat(2,1fr);gap:10px}
     .prod{padding:10px;border-radius:12px}
-    .prod img{height:58px;margin-bottom:7px}
+    .prod img,.prod .ph{height:78px;margin-bottom:7px}
+    .prod .ph svg{width:26px;height:26px}
     .prod .prow{flex-direction:row;justify-content:space-between;align-items:baseline;width:100%;gap:8px}
     .prod .pn{font-size:13.5px}
     .prod .pp{font-size:17px}
@@ -129,12 +135,9 @@
     <div class="wrap order">
       <form id="order-form" novalidate>
         <h2 class="o-h"><span class="n">1</span> Pick your gear</h2>
-        <div class="addbar">
-          <button type="button" class="prod" data-add="shirt"><img id="img-shirt" alt="Week of Sports T-shirt"><span class="prow"><span class="pn">T-Shirt</span><span class="pp" id="p-shirt">$15</span></span><span class="pa">＋ Add a shirt</span></button>
-          <button type="button" class="prod" data-add="hoodie"><img id="img-hoodie" alt="Week of Sports hoodie"><span class="prow"><span class="pn">Hoodie</span><span class="pp" id="p-hoodie">$30</span></span><span class="pa">＋ Add a hoodie</span></button>
-        </div>
+        <div class="addbar" id="addbar"></div>
         <div id="items"></div>
-        <p id="items-empty" class="o-empty">No items yet — add a shirt or hoodie above to get started.</p>
+        <p id="items-empty" class="o-empty">No items yet — add gear above to get started.</p>
 
         <h2 class="o-h"><span class="n">2</span> Your info</h2>
         <div class="grid2">
@@ -179,16 +182,20 @@
       document.querySelector('.order').innerHTML = '<div style="text-align:center;padding:40px 0"><div class="sec-eyebrow" style="color:var(--royal)">Coming soon</div><h2 class="sec-h" style="color:var(--navy)">Ordering opens soon</h2><p class="lede">This year’s shirts and hoodies are being finalized. Check back soon, or follow <a href="https://www.instagram.com/weekofsports" target="_blank">@weekofsports</a> for the drop.</p><div class="center-cta" style="margin-top:8px"><a class="btn btn-primary" href="/">Back to home</a></div></div>';
       return;
     }
-    var items = [], uid = 0;
+    var products = G.products || [], items = [], uid = 0;
     var canOrder = G.orderingOpen !== false;   /* false = browse-only preview, ordering disabled */
 
-    S('p-shirt').textContent = '$'+C.shirtPrice;
-    S('p-hoodie').textContent = '$'+C.hoodiePrice;
-    if(G.shirtPhoto) S('img-shirt').src = G.shirtPhoto;
-    if(G.hoodiePhoto) S('img-hoodie').src = G.hoodiePhoto;
+    function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+    function money(n){ return '$'+n.toLocaleString('en-US'); }
+    function prod(key){ for(var i=0;i<products.length;i++){ if(products[i].key===key) return products[i]; } return null; }
+    function colorsOf(p){ return p && p.colors ? p.colors : (G.colors||[]); }   /* no "colors" on a product = use the shared default palette */
+    function sizesOf(p){ return (p && p.sizes) || []; }                          /* no "sizes" = one-size item, no size picker */
+
+    var prices = products.map(function(p){return p.price;});
+    var fromTxt = prices.length ? ' — from '+money(Math.min.apply(null, prices)) : '';
     S('order-sub').textContent = canOrder
-      ? 'Shirts $'+C.shirtPrice+' · hoodies $'+C.hoodiePrice+' · larger sizes a little more. Order by '+G.deadline+'.'
-      : 'Shirts $'+C.shirtPrice+' · hoodies $'+C.hoodiePrice+' · larger sizes a little more. Take a look at this year’s gear — ordering opens soon.';
+      ? 'This year’s tees, hoodies, and more'+fromTxt+'. Order by '+G.deadline+'.'
+      : 'This year’s tees, hoodies, and more'+fromTxt+'. Take a look — ordering opens soon.';
 
     if(!canOrder){
       var place = S('place'); place.disabled = true; place.textContent = 'Ordering opens soon';
@@ -197,20 +204,47 @@
       var form = S('order-form'); form.parentNode.insertBefore(note, form);
     }
 
+    /* ---- one "add" tile per product ---- */
+    function phHTML(name){
+      return '<span class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="10" r="1.8"/><path d="M21 16l-5-5-9 9"/></svg><span>'+esc(name)+'</span></span>';
+    }
+    function mediaHTML(p){
+      return p.photo ? '<img src="'+esc(p.photo)+'" alt="'+esc(p.name)+'" data-ph="'+esc(p.name)+'">' : phHTML(p.name);
+    }
+    S('addbar').innerHTML = products.map(function(p){
+      return '<button type="button" class="prod" data-add="'+esc(p.key)+'">'+mediaHTML(p)+
+        '<span class="prow"><span class="pn">'+esc(p.name)+'</span><span class="pp">'+money(p.price)+'</span></span>'+
+        '<span class="pa">＋ Add</span></button>';
+    }).join('');
+    /* if a photo path is wrong or the image isn’t uploaded yet, fall back to the placeholder tile */
+    Array.prototype.forEach.call(S('addbar').querySelectorAll('img[data-ph]'), function(im){
+      im.addEventListener('error', function(){ im.outerHTML = phHTML(im.getAttribute('data-ph')); });
+    });
+    Array.prototype.forEach.call(S('addbar').querySelectorAll('.prod'), function(b){
+      b.addEventListener('click', function(){ addItem(b.dataset.add); });
+    });
+
     function surcharge(size){ var m=/\+\$(\d+)/.exec(size||''); return m?+m[1]:0; }
-    function priceOf(it){ return (it.type==='shirt'?C.shirtPrice:C.hoodiePrice) + surcharge(it.size); }
+    function priceOf(it){ var p=prod(it.key); return (p?p.price:0) + surcharge(it.size); }
     function total(){ return items.reduce(function(s,it){return s+priceOf(it);},0); }
-    function money(n){ return '$'+n.toLocaleString('en-US'); }
 
-    function defaultSize(type){ var a=type==='shirt'?G.shirtSizes:G.hoodieSizes; return a.indexOf('M')>-1?'M':a[0]; }
+    function defaultSize(p){ var a=sizesOf(p); if(!a.length) return ''; return a.indexOf('M')>-1?'M':a[0]; }
+    function defaultColor(p){ var c=colorsOf(p); return c.length?c[0].name:''; }
 
-    function addItem(type){
-      var count = items.filter(function(i){return i.type===type;}).length;
+    /* the label an add-button rests on (accounts for a per-product max, if set) */
+    function restLabel(key){
+      var full = G.maxPerType && items.filter(function(i){return i.key===key;}).length >= G.maxPerType;
+      return full ? 'Max '+G.maxPerType+' added' : '＋ Add';
+    }
+
+    function addItem(key){
+      var p = prod(key); if(!p) return;
+      var count = items.filter(function(i){return i.key===key;}).length;
       if(G.maxPerType && count >= G.maxPerType) return;
       var id = ++uid;
-      items.push({ id:id, type:type, color:G.colors[0].name, size:defaultSize(type) });
+      items.push({ id:id, key:key, color:defaultColor(p), size:defaultSize(p) });
       render();
-      confirmAdd(type);   /* button flips to "✓ Added!" */
+      confirmAdd(key);    /* button flips to "✓ Added!" */
       pulseTotal();       /* total bumps to show it changed */
       buzz(12);           /* haptic tap on phones that support it */
       revealItem(id);     /* scroll new item into view + flash it */
@@ -224,8 +258,8 @@
     }
 
     /* momentarily turn the tapped button green with a "✓ Added!" confirmation */
-    function confirmAdd(type){
-      var btn = document.querySelector('.prod[data-add="'+type+'"]');
+    function confirmAdd(key){
+      var btn = document.querySelector('.prod[data-add="'+key+'"]');
       if(!btn) return;
       var pa = btn.querySelector('.pa');
       clearTimeout(pa._restore);
@@ -233,8 +267,7 @@
       pa.textContent = '✓ Added!';
       pa._restore = setTimeout(function(){
         pa.classList.remove('added');
-        var full = G.maxPerType && items.filter(function(i){return i.type===type;}).length >= G.maxPerType;
-        pa.textContent = full ? 'Max '+G.maxPerType+' added' : '＋ Add a '+type;
+        pa.textContent = restLabel(key);
       }, 950);
     }
 
@@ -258,23 +291,29 @@
 
     function render(){
       var html = items.map(function(it){
-        var sizes = (it.type==='shirt'?G.shirtSizes:G.hoodieSizes);
-        var sw = G.colors.map(function(c){
-          return '<label class="sw" style="--c:'+c.hex+'"><input type="radio" name="color-'+it.id+'" value="'+c.name+'"'+(c.name===it.color?' checked':'')+' aria-label="'+c.name+'"><span class="dot"></span></label>';
-        }).join('');
-        var opts = sizes.map(function(s){ return '<option'+(s===it.size?' selected':'')+'>'+s+'</option>'; }).join('');
+        var p = prod(it.key); if(!p) return '';
+        var cols = colorsOf(p), sizes = sizesOf(p), row = '';
+        if(cols.length){
+          var sw = cols.map(function(c){
+            return '<label class="sw" style="--c:'+c.hex+'"><input type="radio" name="color-'+it.id+'" value="'+esc(c.name)+'"'+(c.name===it.color?' checked':'')+' aria-label="'+esc(c.name)+'"><span class="dot"></span></label>';
+          }).join('');
+          row += '<div class="field"><span class="flabel">Color</span><div class="swatches">'+sw+'</div></div>';
+        }
+        if(sizes.length){
+          var opts = sizes.map(function(s){ return '<option'+(s===it.size?' selected':'')+'>'+esc(s)+'</option>'; }).join('');
+          row += '<div class="field"><span class="flabel">Size</span><select class="size" data-id="'+it.id+'">'+opts+'</select></div>';
+        }
         return '<div class="item" data-id="'+it.id+'">'+
-          '<div class="item-top"><span class="item-name">'+(it.type==='shirt'?'T-Shirt':'Hoodie')+'</span><span class="item-price">'+money(priceOf(it))+'</span><button type="button" class="item-rm" data-rm="'+it.id+'" aria-label="Remove item">&times;</button></div>'+
-          '<div class="item-row"><div class="field"><span class="flabel">Color</span><div class="swatches">'+sw+'</div></div>'+
-          '<div class="field"><span class="flabel">Size</span><select class="size" data-id="'+it.id+'">'+opts+'</select></div></div></div>';
+          '<div class="item-top"><span class="item-name">'+esc(p.name)+'</span><span class="item-price">'+money(priceOf(it))+'</span><button type="button" class="item-rm" data-rm="'+it.id+'" aria-label="Remove item">&times;</button></div>'+
+          (row ? '<div class="item-row">'+row+'</div>' : '')+'</div>';
       }).join('');
       S('items').innerHTML = html;
       S('items-empty').hidden = items.length > 0;
-      ['shirt','hoodie'].forEach(function(t){
-        var btn = document.querySelector('.prod[data-add="'+t+'"]');
-        var full = G.maxPerType && items.filter(function(i){return i.type===t;}).length >= G.maxPerType;
+      Array.prototype.forEach.call(S('addbar').querySelectorAll('.prod'), function(btn){
+        var key = btn.dataset.add;
+        var full = G.maxPerType && items.filter(function(i){return i.key===key;}).length >= G.maxPerType;
         btn.disabled = !!full;
-        btn.querySelector('.pa').textContent = full ? 'Max '+G.maxPerType+' added' : '＋ Add a '+t;
+        btn.querySelector('.pa').textContent = restLabel(key);
       });
       updateTotal();
     }
@@ -305,9 +344,6 @@
       var rm = e.target.dataset.rm;
       if(rm){ items = items.filter(function(x){return x.id!==+rm;}); render(); pulseTotal(); buzz(8); }
     });
-    Array.prototype.forEach.call(document.querySelectorAll('.prod'), function(b){
-      b.addEventListener('click', function(){ addItem(b.dataset.add); });
-    });
 
     function optCards(host, list, group){
       S(host).innerHTML = list.map(function(o,i){
@@ -325,6 +361,14 @@
     function selectedPayment(){ return selected('pay'); }
     S('f-name').addEventListener('input', updateTotal);
 
+    /* the color/size pieces of an item, skipping whichever ones this product doesn't have */
+    function descParts(it){
+      var parts = [];
+      if(it.color) parts.push(it.color);
+      if(it.size) parts.push(it.size.replace(/ \(.*\)/,''));
+      return parts;
+    }
+
     function showError(msg, focusEl){
       var e=S('order-error'); e.textContent=msg; e.hidden=false;
       e.scrollIntoView({behavior:'smooth',block:'center'}); if(focusEl) focusEl.focus();
@@ -334,7 +378,7 @@
       ev.preventDefault();
       S('order-error').hidden = true;
       if(!canOrder) return showError(G.orderingClosedMsg || 'Ordering isn’t open yet — check back soon to place your order.');
-      if(items.length===0) return showError('Add at least one shirt or hoodie before ordering.');
+      if(items.length===0) return showError('Add at least one item before ordering.');
       if(!S('f-name').value.trim()) return showError('Please enter your name.', S('f-name'));
       if(!S('f-phone').value.trim()) return showError('Please enter a phone number.', S('f-phone'));
       var email = S('f-email').value.trim();
@@ -343,10 +387,9 @@
       if(!selected('del')) return showError('Please choose how to get your order.');
       if(!selected('pay')) return showError('Please choose a payment method.');
 
-      var shirts=items.filter(function(i){return i.type==='shirt';});
-      var hoodies=items.filter(function(i){return i.type==='hoodie';});
       var summary = items.map(function(it){
-        return (it.type==='shirt'?'T-Shirt':'Hoodie')+': '+it.color+', '+it.size.replace(/ \(.*\)/,'');
+        var p = prod(it.key), parts = descParts(it);
+        return p.name + (parts.length ? ': '+parts.join(', ') : '');
       }).join('  |  ');
       var fields = {
         name:     S('f-name').value.trim(),
@@ -364,13 +407,17 @@
       var f=document.createElement('form'); f.action=G.orderEndpoint; f.method='POST'; f.target=ifr.name; f.style.display='none';
       Object.keys(fields).forEach(function(k){ var inp=document.createElement('input'); inp.type='hidden'; inp.name=k; inp.value=fields[k]; f.appendChild(inp); });
       document.body.appendChild(f); f.submit();
-      setTimeout(function(){ showSuccess(shirts, hoodies); }, 900);
+      setTimeout(showSuccess, 900);
     });
 
-    function showSuccess(shirts, hoodies){
+    function showSuccess(){
       var t=total(), pay=selected('pay');
       S('order-form').hidden=true;
-      var lines=items.map(function(it){ return '<div class="li"><span>'+(it.type==='shirt'?'T-Shirt':'Hoodie')+' · '+it.color+' · '+it.size.replace(/ \(.*\)/,'')+'</span><span>'+money(priceOf(it))+'</span></div>'; }).join('');
+      var lines=items.map(function(it){
+        var p = prod(it.key), parts = descParts(it);
+        var label = p.name + (parts.length ? ' · '+parts.join(' · ') : '');
+        return '<div class="li"><span>'+esc(label)+'</span><span>'+money(priceOf(it))+'</span></div>';
+      }).join('');
       S('success-sum').innerHTML = lines + '<div class="li"><span>Total</span><span>'+money(t)+'</span></div>';
       S('success-msg').textContent = 'Thanks, '+S('f-name').value.trim()+'! Your order is in. Here’s what to do next for payment:';
       if(pay===G.payment[0]){
