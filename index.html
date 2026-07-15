@@ -221,7 +221,7 @@
     <p class="sec-sub">Local businesses make this possible. Want your logo here next to the Eagles?</p>
   </div>
   <div class="smarquee"><div class="strack" id="strack"></div></div>
-  <div class="wrap"><div class="center-cta" style="margin-top:34px"><a class="btn btn-primary" id="sponsor-cta">Become a sponsor</a></div></div>
+  <div class="wrap"><div class="center-cta" style="margin-top:34px"><a class="btn btn-primary" id="sponsor-cta" href="mailto:info@weekofsports.com?subject=Week of Sports sponsorship">Become a sponsor</a><p class="mail-fallback" id="sponsor-fallback" hidden></p></div></div>
 </section>
 
 <section class="volunteer" id="volunteer">
@@ -238,6 +238,7 @@
     <h2 class="sec-h">Questions?</h2>
     <p class="sec-sub">Reach out any time — we'd love to hear from you.</p>
     <a class="btn btn-primary" id="contact-mail" href="mailto:info@weekofsports.com">Email us</a>
+    <p class="mail-fallback" id="contact-fallback" hidden></p>
   </div>
 </section>
 
@@ -330,10 +331,30 @@
   S('vol-text').textContent = C.volunteerText || '';
   S('donation-form-link').href = C.donationFormUrl || '#';
   S('scholarship-link').href = C.scholarshipUrl || '#';
-  S('contact-mail').href = 'mailto:'+C.contactEmail;
   S('ways').innerHTML = (C.giveWays||[]).map(function(w){return '<div class="way"><h4>'+w.title+'</h4><p>'+w.text+'</p></div>';}).join('');
   S('foot-mail').href = 'mailto:'+C.contactEmail;
-  S('sponsor-cta').href = 'mailto:'+C.contactEmail+'?subject=Week of Sports sponsorship';
+
+  /* ---- contact buttons ----
+     mailto: links silently do nothing when the visitor has no default mail app,
+     which makes the button look broken. Keep the mailto (works for people who do
+     have one), but on click also copy the address and reveal it so nobody's stuck. */
+  function wireMail(btnId, noteId, subject){
+    var btn = S(btnId); if(!btn) return;
+    var addr = C.contactEmail || '';
+    btn.href = 'mailto:'+addr+(subject?'?subject='+encodeURIComponent(subject):'');
+    var note = noteId ? S(noteId) : null;
+    btn.addEventListener('click', function(){
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(addr).catch(function(){});
+      }
+      if(note){
+        note.innerHTML = 'No email app opened? Write to <a href="mailto:'+addr+'">'+addr+'</a> — we’ve copied it to your clipboard.';
+        note.hidden = false;
+      }
+    });
+  }
+  wireMail('contact-mail', 'contact-fallback');
+  wireMail('sponsor-cta', 'sponsor-fallback', 'Week of Sports sponsorship');
 
   /* ---- ticker ---- */
   var tk = (C.ticker||[]).map(function(s){return '<span>'+s+'</span>';}).join('');
