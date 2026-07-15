@@ -84,7 +84,7 @@ window.WOS = {
      "photo" at it (jpg/png). */
   scholars: [
     { year: "26", name: "Isaac Schworm", photo: "/assets/isaac-schworm.jpg" },
-    { year: "25", name: "Madi Gaerke",   photo: "/assets/madi-gaerke.jpg" },
+    { year: "25", name: "Madison Gaerke", photo: "/assets/madi-gaerke.jpg" },
     { year: "24", name: "Mason Modd",    photo: "/assets/mason-modd.jpg" }
   ],
 
