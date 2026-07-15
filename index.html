@@ -221,7 +221,7 @@
     <p class="sec-sub">Local businesses make this possible. Want your logo here next to the Eagles?</p>
   </div>
   <div class="smarquee"><div class="strack" id="strack"></div></div>
-  <div class="wrap"><div class="center-cta" style="margin-top:34px"><a class="btn btn-primary" id="sponsor-cta" href="mailto:info@weekofsports.com?subject=Week of Sports sponsorship">Become a sponsor</a><p class="mail-fallback" id="sponsor-fallback" hidden></p></div></div>
+  <div class="wrap"><div class="center-cta" style="margin-top:34px"><a class="btn btn-primary" id="sponsor-cta" href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=info@weekofsports.com&amp;su=Week%20of%20Sports%20sponsorship" target="_blank" rel="noopener">Become a sponsor</a><p class="mail-fallback" id="sponsor-fallback" hidden></p></div></div>
 </section>
 
 <section class="volunteer" id="volunteer">
@@ -237,7 +237,7 @@
     <div class="sec-eyebrow">Get in touch</div>
     <h2 class="sec-h">Questions?</h2>
     <p class="sec-sub">Reach out any time — we'd love to hear from you.</p>
-    <a class="btn btn-primary" id="contact-mail" href="mailto:info@weekofsports.com">Email us</a>
+    <a class="btn btn-primary" id="contact-mail" href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=info@weekofsports.com" target="_blank" rel="noopener">Email us</a>
     <p class="mail-fallback" id="contact-fallback" hidden></p>
   </div>
 </section>
@@ -332,29 +332,34 @@
   S('donation-form-link').href = C.donationFormUrl || '#';
   S('scholarship-link').href = C.scholarshipUrl || '#';
   S('ways').innerHTML = (C.giveWays||[]).map(function(w){return '<div class="way"><h4>'+w.title+'</h4><p>'+w.text+'</p></div>';}).join('');
-  S('foot-mail').href = 'mailto:'+C.contactEmail;
-
   /* ---- contact buttons ----
-     mailto: links silently do nothing when the visitor has no default mail app,
-     which makes the button look broken. Keep the mailto (works for people who do
-     have one), but on click also copy the address and reveal it so nobody's stuck. */
+     Open a Gmail compose window in a new tab. This works in any browser without
+     needing a default mail app configured (which is why a plain mailto: link
+     looked broken). Also copy the address + reveal it as a backup for anyone who
+     doesn't use Gmail. */
+  function gmailCompose(addr, subject){
+    return 'https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(addr) +
+           (subject ? '&su=' + encodeURIComponent(subject) : '');
+  }
   function wireMail(btnId, noteId, subject){
     var btn = S(btnId); if(!btn) return;
     var addr = C.contactEmail || '';
-    btn.href = 'mailto:'+addr+(subject?'?subject='+encodeURIComponent(subject):'');
+    btn.href = gmailCompose(addr, subject);
+    btn.target = '_blank'; btn.rel = 'noopener';
     var note = noteId ? S(noteId) : null;
     btn.addEventListener('click', function(){
       if(navigator.clipboard && navigator.clipboard.writeText){
         navigator.clipboard.writeText(addr).catch(function(){});
       }
       if(note){
-        note.innerHTML = 'No email app opened? Write to <a href="mailto:'+addr+'">'+addr+'</a> — we’ve copied it to your clipboard.';
+        note.innerHTML = 'Prefer a different email app? Write to <a href="mailto:'+addr+'">'+addr+'</a> — we’ve copied it to your clipboard.';
         note.hidden = false;
       }
     });
   }
   wireMail('contact-mail', 'contact-fallback');
   wireMail('sponsor-cta', 'sponsor-fallback', 'Week of Sports sponsorship');
+  var fm = S('foot-mail'); if(fm){ fm.href = gmailCompose(C.contactEmail); fm.target = '_blank'; fm.rel = 'noopener'; }
 
   /* ---- ticker ---- */
   var tk = (C.ticker||[]).map(function(s){return '<span>'+s+'</span>';}).join('');
