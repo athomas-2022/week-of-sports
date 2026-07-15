@@ -104,6 +104,15 @@
   </div>
 </section>
 
+<section class="scholars on-light" id="recipients">
+  <div class="wrap">
+    <div class="sec-eyebrow">Carrying the legacy forward</div>
+    <h2 class="sec-h">Scholarship recipients</h2>
+    <p class="sec-sub">Each year the Andrew Walker Memorial Scholarship is awarded to a Liberty-Benton student who lives out Andrew's spirit. Congratulations to our recipients.</p>
+    <div class="scholar-grid" id="scholars"></div>
+  </div>
+</section>
+
 <section class="about-ev on-light" id="about">
   <div class="wrap">
     <div class="sec-eyebrow">About the fundraiser</div>
@@ -311,6 +320,13 @@
   S('cause-body').textContent = C.cause.body;
   S('cause-crest').src = C.crest;
   S('cause-values').innerHTML = C.cause.values.map(function(x){return '<span class="value">'+x+'</span>';}).join('');
+  S('scholars').innerHTML = (C.scholars||[]).map(function(s){
+    return '<figure class="scholar reveal">'+
+        '<div class="scholar-photo"><span class="scholar-badge">'+s.year+'</span>'+
+          '<img src="'+s.photo+'" alt="'+s.name+', '+s.year+' Andrew Walker Memorial Scholarship recipient" loading="lazy"></div>'+
+        '<figcaption><span class="scholar-name">'+s.name+'</span><span class="scholar-role">Andrew Walker Memorial Scholar</span></figcaption>'+
+      '</figure>';
+  }).join('');
   if(C.aboutEvent){
     S('aboutev-title').textContent = C.aboutEvent.title;
     S('aboutev-body').textContent = C.aboutEvent.body;

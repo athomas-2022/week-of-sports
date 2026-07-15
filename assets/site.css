@@ -117,6 +117,20 @@ h1 .yr{color:var(--sky);white-space:nowrap}
 .crest-card{background:var(--navy);border-radius:20px;padding:34px;text-align:center;box-shadow:0 24px 50px rgba(10,35,66,.25)}
 .crest-card img{width:100%;max-width:300px;border-radius:12px}
 
+/* ---------- SCHOLARSHIP RECIPIENTS ---------- */
+.scholars{background:var(--paper);color:var(--ink);padding:88px 0}
+.scholar-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.scholar{background:#fff;border:1px solid #e3e9f1;border-radius:18px;overflow:hidden;box-shadow:0 10px 30px rgba(10,35,66,.08);transition:transform .25s,box-shadow .25s}
+.scholar:hover{transform:translateY(-6px);box-shadow:0 22px 46px rgba(10,35,66,.17)}
+.scholar-photo{position:relative;aspect-ratio:4/3;overflow:hidden;background:#0e2f54}
+.scholar-photo img{width:100%;height:100%;object-fit:cover;object-position:50% 26%;display:block;transition:transform .5s ease}
+.scholar:hover .scholar-photo img{transform:scale(1.045)}
+.scholar-badge{position:absolute;top:14px;left:14px;z-index:2;font-family:'Oswald';font-weight:600;letter-spacing:.05em;font-size:13px;text-transform:uppercase;color:#fff;background:rgba(10,35,66,.74);backdrop-filter:blur(4px);padding:6px 13px;border-radius:999px}
+.scholar figcaption{padding:20px 22px 24px;text-align:center}
+.scholar-name{display:block;font-family:'Anton';text-transform:uppercase;font-size:25px;letter-spacing:.01em;color:var(--navy);line-height:1.05}
+.scholar-role{display:block;margin-top:8px;font-family:'Oswald';font-weight:500;letter-spacing:.05em;text-transform:uppercase;font-size:12.5px;color:var(--royal)}
+@media(max-width:820px){ .scholar-grid{grid-template-columns:1fr;max-width:430px;margin:0 auto;gap:22px} }
+
 /* ---------- GIVE ---------- */
 .give{background:#fff;color:var(--ink);padding:92px 0}
 .ways{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:40px}

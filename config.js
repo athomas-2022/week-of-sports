@@ -78,6 +78,16 @@ window.WOS = {
     values: ["Be kind", "Be connected", "Be brave"]
   },
 
+  /* ---------- scholarship recipients ----------
+     Past winners of the Andrew Walker Memorial Scholarship. Newest first.
+     Add next year's winner at the TOP. Drop the photo in /assets and point
+     "photo" at it (jpg/png). */
+  scholars: [
+    { year: "2025–26", name: "Isaac Schworm", photo: "/assets/isaac-schworm.jpg" },
+    { year: "2024–25", name: "Madi Gaerke",   photo: "/assets/madi-gaerke.jpg" },
+    { year: "2023–24", name: "Mason Modd",    photo: "/assets/mason-modd.jpg" }
+  ],
+
   /* ---------- about the fundraiser (homepage "About" section) ---------- */
   aboutEvent: {
     title: "What is Week of Sports?",
