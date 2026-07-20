@@ -166,21 +166,15 @@ window.WOS = {
          colors  – (optional) list of {name,hex}. Leave it off to use the default
                    colors above; use  colors: []  for an item with no color choice. */
     products: [
-      { key: "tshirt",           name: "T-Shirt",          price: 15, photo: "/assets/product-shirt.jpg",
-        sizes: ["S","M","L","XL","2XL (+$1.00)","3XL (+$2.00)","4XL (+$4.00)","5XL (+$6.00)"] },
-      { key: "youth-tshirt",     name: "Youth T-Shirt",    price: 15,
-        sizes: ["Youth XS","Youth S","Youth M","Youth L","Youth XL"] },
-      { key: "longsleeve",       name: "Long Sleeve",      price: 18,
-        sizes: ["S","M","L","XL","2XL (+$1.00)","3XL (+$2.00)","4XL (+$4.00)","5XL (+$6.00)"] },
-      { key: "youth-longsleeve", name: "Youth Long Sleeve",price: 18,
-        sizes: ["Youth XS","Youth S","Youth M","Youth L","Youth XL"] },
-      { key: "hoodie",           name: "Hoodie",           price: 30, photo: "/assets/product-hoodie.jpg",
-        sizes: ["S","M","L","XL","2XL (+$1.00)","3XL (+$2.00)","4XL (+$3.00)"] },
-      { key: "youth-hoodie",     name: "Youth Hoodie",     price: 30,
-        sizes: ["Youth L","Youth XL"] },
-      { key: "beanie",           name: "Beanie",           price: 20, colors: [] },
-      { key: "hat",              name: "Hat",              price: 25, colors: [] },
-      { key: "sticker",          name: "Sticker",          price:  3, colors: [] }
+      { key: "tshirt",     name: "T-Shirt",     price: 15, photo: "/assets/product-shirt.jpg",
+        sizes: ["Youth XS","Youth S","Youth M","Youth L","Youth XL","S","M","L","XL","2XL (+$1.00)","3XL (+$2.00)","4XL (+$4.00)","5XL (+$6.00)"] },
+      { key: "longsleeve", name: "Long Sleeve", price: 18,
+        sizes: ["Youth XS","Youth S","Youth M","Youth L","Youth XL","S","M","L","XL","2XL (+$1.00)","3XL (+$2.00)","4XL (+$4.00)","5XL (+$6.00)"] },
+      { key: "hoodie",     name: "Hoodie",      price: 30, photo: "/assets/product-hoodie.jpg",
+        sizes: ["Youth L","Youth XL","S","M","L","XL","2XL (+$1.00)","3XL (+$2.00)","4XL (+$3.00)"] },
+      { key: "beanie",     name: "Beanie",      price: 20, colors: [] },
+      { key: "hat",        name: "Hat",         price: 25, colors: [] },
+      { key: "sticker",    name: "Sticker",     price:  3, colors: [] }
     ],
     delivery: [
       "I will have my order dropped off in my homeroom (Elementary and Middle School)",
