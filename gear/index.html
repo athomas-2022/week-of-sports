@@ -51,8 +51,17 @@
   /* the running total gives a little bump each time it changes */
   @keyframes total-bump{0%{transform:scale(1)}35%{transform:scale(1.13)}100%{transform:scale(1)}}
   .o-total b.bump{display:inline-block;animation:total-bump .42s ease-out}
-  .prod img,.prod .ph{width:100%;height:130px;border-radius:10px;margin-bottom:12px;display:block;background:#eef2f8}
-  .prod img{object-fit:cover;object-position:center 26%}
+  .prod>img,.prod>.ph,.prod>.pcar{width:100%;height:130px;border-radius:10px;margin-bottom:12px;display:block;background:#eef2f8}
+  .prod>img{object-fit:cover;object-position:center 26%}
+  /* color carousel: apparel tiles auto-scroll through one photo per color */
+  .prod>.pcar{position:relative;overflow:hidden}
+  .pcar .ptrack{display:flex;width:100%;height:100%;transition:transform .6s cubic-bezier(.22,.61,.36,1)}
+  .pcar .ptrack img{flex:0 0 100%;width:100%;height:100%;object-fit:cover;object-position:center 26%;display:block;margin:0;border-radius:0}
+  .pcar .pdots{position:absolute;left:0;right:0;bottom:7px;display:flex;justify-content:center;gap:5px;pointer-events:none}
+  .pcar .pdots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.55);box-shadow:0 0 0 1px rgba(10,35,66,.25)}
+  .pcar .pdots i.on{background:#fff}
+  .pcar .pclabel{position:absolute;left:8px;bottom:6px;font-family:'Oswald';font-weight:600;text-transform:uppercase;letter-spacing:.05em;font-size:10px;line-height:1;color:#fff;background:rgba(10,35,66,.6);padding:4px 8px;border-radius:999px}
+  @media (prefers-reduced-motion:reduce){.pcar .ptrack{transition:none}}
   /* tidy placeholder shown for products that don't have a photo yet */
   .prod .ph{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;color:#9db0c8;background:linear-gradient(135deg,#f3f7fc,#e9f0f9);border:1px dashed #cdd9ea}
   .prod .ph svg{width:34px;height:34px;opacity:.7}
@@ -107,7 +116,7 @@
     /* two per row on phones, compact so the cart shows without much scrolling */
     .addbar{grid-template-columns:repeat(2,1fr);gap:10px}
     .prod{padding:10px;border-radius:12px}
-    .prod img,.prod .ph{height:78px;margin-bottom:7px}
+    .prod>img,.prod>.ph,.prod>.pcar{height:78px;margin-bottom:7px}
     .prod .ph svg{width:26px;height:26px}
     .prod .prow{flex-direction:row;justify-content:space-between;align-items:baseline;width:100%;gap:8px}
     .prod .pn{font-size:13.5px}
@@ -208,8 +217,28 @@
     function phHTML(name){
       return '<span class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="10" r="1.8"/><path d="M21 16l-5-5-9 9"/></svg><span>'+esc(name)+'</span></span>';
     }
+    function reduceMotion(){ return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); }
+    function photosOf(p){
+      if(p.photos && p.photos.length) return p.photos.filter(Boolean);
+      return p.photo ? [p.photo] : [];
+    }
+    /* apparel with several photos → an auto-scrolling color slideshow tile */
+    function carouselHTML(p, photos){
+      var names = colorsOf(p).map(function(c){ return c.name; });
+      var mapped = names.length > 0 && photos.length === names.length;   /* one photo per color → show its name */
+      var imgs = photos.map(function(src){ return '<img src="'+esc(src)+'" alt="'+esc(p.name)+'">'; }).join('');
+      var dots = photos.map(function(_,i){ return '<i'+(i===0?' class="on"':'')+'></i>'; }).join('');
+      return '<span class="pcar" data-ph="'+esc(p.name)+'"'+(mapped?' data-colors="'+esc(names.join('|'))+'"':'')+'>'+
+               '<span class="ptrack">'+imgs+'</span>'+
+               '<span class="pdots">'+dots+'</span>'+
+               (mapped?'<span class="pclabel">'+esc(names[0])+'</span>':'')+
+             '</span>';
+    }
     function mediaHTML(p){
-      return p.photo ? '<img src="'+esc(p.photo)+'" alt="'+esc(p.name)+'" data-ph="'+esc(p.name)+'">' : phHTML(p.name);
+      var photos = photosOf(p);
+      if(photos.length > 1) return carouselHTML(p, photos);
+      if(photos.length === 1) return '<img src="'+esc(photos[0])+'" alt="'+esc(p.name)+'" data-ph="'+esc(p.name)+'">';
+      return phHTML(p.name);
     }
     S('addbar').innerHTML = products.map(function(p){
       return '<button type="button" class="prod" data-add="'+esc(p.key)+'">'+mediaHTML(p)+
@@ -223,6 +252,39 @@
     Array.prototype.forEach.call(S('addbar').querySelectorAll('.prod'), function(b){
       b.addEventListener('click', function(){ addItem(b.dataset.add); });
     });
+
+    /* gently auto-scroll each multi-photo tile through its colors */
+    function initCarousels(){
+      Array.prototype.forEach.call(S('addbar').querySelectorAll('.pcar'), function(car, ci){
+        var track = car.querySelector('.ptrack'), dotsWrap = car.querySelector('.pdots'), label = car.querySelector('.pclabel');
+        var names = (car.getAttribute('data-colors')||'').split('|').filter(Boolean);
+        var idx = 0;
+        function slides(){ return Array.prototype.slice.call(track.children); }
+        function show(i){
+          var n = slides().length; if(!n) return;
+          idx = (i%n+n)%n;
+          track.style.transform = 'translateX(-'+(idx*100)+'%)';
+          if(dotsWrap) Array.prototype.forEach.call(dotsWrap.children, function(d,di){ d.classList.toggle('on', di===idx); });
+          if(label){ if(names[idx]){ label.textContent = names[idx]; label.hidden = false; } else { label.hidden = true; } }
+        }
+        /* a color photo that isn't uploaded yet just drops out of the rotation */
+        slides().forEach(function(im){
+          im.addEventListener('error', function(){
+            var di = slides().indexOf(im);
+            if(im.parentNode) im.parentNode.removeChild(im);
+            if(dotsWrap && dotsWrap.children[di]) dotsWrap.removeChild(dotsWrap.children[di]);
+            if(names.length) names.splice(di,1);
+            if(!slides().length){ car.outerHTML = phHTML(car.getAttribute('data-ph')||''); return; }
+            show(idx >= slides().length ? slides().length-1 : idx);
+          });
+        });
+        show(0);
+        if(slides().length > 1 && !reduceMotion()){
+          setTimeout(function(){ car._t = setInterval(function(){ show(idx+1); }, 2400); }, ci*500);   /* stagger so tiles don't flip in unison */
+        }
+      });
+    }
+    initCarousels();
 
     function surcharge(size){ var m=/\+\$(\d+)/.exec(size||''); return m?+m[1]:0; }
     function priceOf(it){ var p=prod(it.key); return (p?p.price:0) + surcharge(it.size); }

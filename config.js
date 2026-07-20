@@ -158,19 +158,27 @@ window.WOS = {
        For each product:
          name    – what shoppers see (e.g. "Hoodie")
          price   – base price in dollars
-         photo   – (optional) picture path, e.g. "/assets/product-hat.jpg". Drop the
+         photo   – (optional) ONE picture path, e.g. "/assets/product-hat.jpg". Drop the
                    image in /assets and put its path here. No photo yet = a tidy
                    placeholder tile shows until you add one.
+         photos  – (optional) SEVERAL picture paths, one per color, in the same order as
+                   the colors below (Blue, Red, Grey). The tile auto-scrolls through them
+                   so shoppers see every color, with the color name shown. Use this
+                   instead of "photo" for apparel once you have a shot of each color, e.g.
+                   photos: ["/assets/tshirt-blue.jpg","/assets/tshirt-red.jpg","/assets/tshirt-grey.jpg"]
          sizes   – (optional) list of sizes. Leave it off for one-size items (hat,
                    beanie, sticker). A size like "2XL (+$1.00)" adds that surcharge.
          colors  – (optional) list of {name,hex}. Leave it off to use the default
                    colors above; use  colors: []  for an item with no color choice. */
     products: [
-      { key: "tshirt",     name: "T-Shirt",     price: 15, photo: "/assets/product-shirt.jpg",
+      { key: "tshirt",     name: "T-Shirt",     price: 15,
+        photos: ["/assets/product-shirt.jpg"],   /* one per color → ["/assets/tshirt-blue.jpg","/assets/tshirt-red.jpg","/assets/tshirt-grey.jpg"] */
         sizes: ["Youth XS","Youth S","Youth M","Youth L","Youth XL","S","M","L","XL","2XL (+$1.00)","3XL (+$2.00)","4XL (+$4.00)","5XL (+$6.00)"] },
       { key: "longsleeve", name: "Long Sleeve", price: 18,
+        /* photos: ["/assets/longsleeve-blue.jpg","/assets/longsleeve-red.jpg","/assets/longsleeve-grey.jpg"], */
         sizes: ["Youth XS","Youth S","Youth M","Youth L","Youth XL","S","M","L","XL","2XL (+$1.00)","3XL (+$2.00)","4XL (+$4.00)","5XL (+$6.00)"] },
-      { key: "hoodie",     name: "Hoodie",      price: 30, photo: "/assets/product-hoodie.jpg",
+      { key: "hoodie",     name: "Hoodie",      price: 30,
+        photos: ["/assets/product-hoodie.jpg"],  /* one per color → ["/assets/hoodie-blue.jpg","/assets/hoodie-red.jpg","/assets/hoodie-grey.jpg"] */
         sizes: ["Youth L","Youth XL","S","M","L","XL","2XL (+$1.00)","3XL (+$2.00)","4XL (+$3.00)"] },
       { key: "beanie",     name: "Beanie",      price: 20, colors: [] },
       { key: "hat",        name: "Hat",         price: 25, colors: [] },
