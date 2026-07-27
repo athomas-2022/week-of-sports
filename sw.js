@@ -30,8 +30,17 @@ self.addEventListener('fetch', function (e) {
   if (new URL(req.url).origin !== self.location.origin) return; // ignore Google/YouTube/etc.
   e.respondWith(
     fetch(req).then(function (res) {
-      var copy = res.clone();
-      caches.open(CACHE).then(function (c) { c.put(req, copy); });
+      /* Only whole, successful, same-origin responses are cacheable. cache.put()
+         rejects on a 206 (the hero video's range requests) and can reject when the
+         phone is out of storage — either way, never let that break the page. */
+      if (res && res.status === 200 && res.type === 'basic') {
+        var copy = res.clone();
+        e.waitUntil(
+          caches.open(CACHE)
+            .then(function (c) { return c.put(req, copy); })
+            .catch(function () {})
+        );
+      }
       return res;
     }).catch(function () {
       return caches.match(req).then(function (m) { return m || caches.match('/'); });
