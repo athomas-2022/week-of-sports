@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hero preview · Week of Sports 26-27</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#0a2342">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0a2342; --navy2:#0e2f54; --royal:#2f74d0; --blue:#1f5fc4; --sky:#7fb1f0;
+    --paper:#f4f7fc; --line:rgba(255,255,255,.16);
+    /* the one added accent, used in exactly one place: this year's recipient */
+    --gold:#e0b93f;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{overflow-x:hidden}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--navy);color:#fff;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  .wrap{max-width:1240px;margin:0 auto;padding:0 28px}
+  a{color:inherit}
+  :focus-visible{outline:3px solid var(--sky);outline-offset:3px;border-radius:4px}
+
+  /* ---------- the preview banner (not part of the design) ---------- */
+  .pv{background:#132c4d;border-bottom:1px solid var(--line);font-family:'Oswald',system-ui,sans-serif;
+      font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:#cdd9ea;padding:10px 0}
+  .pv b{color:#fff}
+
+  /* ---------- HERO ---------- */
+  .hero{position:relative;overflow:hidden;padding:clamp(48px,9vw,96px) 0 clamp(52px,8vw,86px)}
+  /* a single soft light source, top-left, like a gym window. no radial-blob-in-the-corner. */
+  .hero::before{content:"";position:absolute;inset:0;
+    background:radial-gradient(90% 70% at 12% 0%, rgba(47,116,208,.30), transparent 62%);pointer-events:none}
+  .hero-grid{position:relative;z-index:2;display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(32px,5vw,72px);align-items:center}
+
+  .kicker{font-family:'Oswald',system-ui,sans-serif;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+          font-size:12px;color:var(--sky);margin-bottom:18px}
+  h1{font-family:'Anton',Impact,system-ui,sans-serif;font-weight:400;text-transform:uppercase;
+     font-size:clamp(34px,5.2vw,62px);line-height:.95;letter-spacing:.005em;text-wrap:balance;margin-bottom:26px}
+
+  /* THE CREED — Andrew's three words, the typographic signature.
+     Stacked, hairline-separated, like stitched lettering on a banner. */
+  .creed{list-style:none;margin:0 0 28px;border-top:1px solid rgba(255,255,255,.14);max-width:520px}
+  .creed li{border-bottom:1px solid rgba(255,255,255,.14);
+    font-family:'Oswald',system-ui,sans-serif;font-weight:600;text-transform:uppercase;
+    font-size:clamp(19px,2.6vw,30px);letter-spacing:.09em;line-height:1;padding:15px 0;color:#fff}
+  .creed li span{display:inline-block}
+
+  .lede{font-size:clamp(15px,1.35vw,17.5px);line-height:1.65;color:#cdd9ea;max-width:47ch;margin-bottom:30px;text-wrap:pretty}
+  .lede b{color:#fff;font-weight:600}
+
+  .cta{display:flex;gap:13px;flex-wrap:wrap;align-items:center}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:48px;
+    font-family:'Oswald',system-ui,sans-serif;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+    font-size:14.5px;border-radius:9px;padding:13px 24px;cursor:pointer;border:0;text-decoration:none;
+    transition:transform .15s cubic-bezier(.2,.7,.2,1),background .2s,border-color .2s}
+  .btn-primary{background:var(--royal);color:#fff;box-shadow:0 10px 26px rgba(47,116,208,.4)}
+  .btn-primary:hover{background:var(--blue);transform:translateY(-2px)}
+  .btn-ghost{background:rgba(255,255,255,.06);color:#fff;border:1.5px solid var(--line)}
+  .btn-ghost:hover{border-color:#fff;background:rgba(255,255,255,.13);transform:translateY(-2px)}
+  .play{display:inline-flex;align-items:center;justify-content:center;width:21px;height:21px;border-radius:50%;
+        background:#fff;color:var(--navy);font-size:9px;padding-left:2px;flex:none}
+
+  .when{margin-top:24px;font-family:'Oswald',system-ui,sans-serif;font-weight:500;font-size:13.5px;
+        letter-spacing:.08em;text-transform:uppercase;color:#a9bdd8}
+  .when b{color:#fff;font-weight:600}
+
+  /* ---------- SIGNATURE: the honor roll ---------- */
+  .roll-card{background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.03));
+    border:1px solid var(--line);border-radius:18px;padding:clamp(20px,2.4vw,28px);
+    box-shadow:0 30px 68px rgba(3,12,26,.5)}
+  .roll-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+    font-family:'Oswald',system-ui,sans-serif;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+    font-size:11.5px;color:#a9bdd8;margin-bottom:18px}
+
+  .now{display:flex;align-items:center;gap:16px;margin-bottom:8px}
+  .now img{width:clamp(76px,9vw,104px);height:clamp(76px,9vw,104px);border-radius:12px;object-fit:cover;
+    object-position:center 22%;flex:none;background:#132c4d;
+    border:1px solid rgba(255,255,255,.22);box-shadow:0 12px 26px rgba(3,12,26,.45)}
+  .now-meta{min-width:0}
+  .now-year{font-family:'Anton',Impact,system-ui,sans-serif;font-size:clamp(30px,3.6vw,42px);
+    line-height:1;color:var(--gold)}
+  .now-name{font-family:'Oswald',system-ui,sans-serif;font-weight:600;font-size:clamp(17px,1.9vw,22px);
+    line-height:1.15;margin-top:4px;color:#fff}
+  .now-tag{font-family:'Oswald',system-ui,sans-serif;font-weight:500;font-size:11px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--gold);margin-top:7px;display:flex;align-items:center;gap:7px}
+  .now-tag::before{content:"";width:16px;height:2px;background:var(--gold);flex:none;border-radius:2px}
+
+  .past{list-style:none;margin-top:14px;border-top:1px solid rgba(255,255,255,.13)}
+  .past li{display:flex;align-items:baseline;gap:14px;padding:12px 2px;
+    border-bottom:1px solid rgba(255,255,255,.08)}
+  .past li:last-child{border-bottom:0;padding-bottom:2px}
+  .past .yr{font-family:'Anton',Impact,system-ui,sans-serif;font-size:19px;line-height:1;color:#8fa9c9;
+    width:44px;flex:none}
+  .past .nm{font-family:'Oswald',system-ui,sans-serif;font-weight:500;font-size:15.5px;color:#cdd9ea}
+
+
+  /* ---------- motion: one orchestrated entrance ----------
+     The hidden state lives ONLY inside the keyframe — never on .in itself, and the
+     whole thing is opt-in via no-preference. If the animation never runs (reduced
+     motion, print, a non-compositing renderer, a throttled background tab) every
+     element just renders at its normal opacity instead of staying invisible.
+     `backwards` fill applies the from-state during the stagger delay. */
+  @media (prefers-reduced-motion:no-preference){
+    .in{animation:in .7s cubic-bezier(.2,.7,.2,1) backwards}
+    .in.s1{animation-delay:.05s} .in.s2{animation-delay:.14s} .in.s3{animation-delay:.23s}
+    .in.s4{animation-delay:.32s} .in.s5{animation-delay:.42s} .in.s6{animation-delay:.5s}
+  }
+  /* Deliberately NO opacity here. An opacity fade cannot be made fail-safe: any fill
+     mode that hides the element before the animation runs leaves it invisible forever
+     if the animation never advances. Transform-only degrades to "sits 14px lower",
+     which nobody will ever notice, instead of "hero is blank". */
+  @keyframes in{from{transform:translateY(14px)} to{transform:none}}
+
+  @media(max-width:900px){
+    .hero-grid{grid-template-columns:1fr;gap:34px}
+    .creed{max-width:none}
+  }
+  @media(max-width:560px){
+    .wrap{padding:0 20px}
+    .cta .btn{width:100%}
+    .now img{width:84px;height:84px}
+  }
+  @media(prefers-reduced-motion:reduce){
+    .btn:hover{transform:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="pv"><div class="wrap">Preview only &nbsp;·&nbsp; <b>proposed hero</b> &nbsp;·&nbsp; not linked from the site</div></div>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+
+    <div>
+      <p class="kicker in s1">Liberty-Benton &nbsp;·&nbsp; Week of Sports 26-27</p>
+      <h1 class="in s2">The Andrew Walker<br>Memorial Scholarship</h1>
+
+      <ul class="creed in s3" id="creed"></ul>
+
+      <p class="lede in s4">Every January, Liberty-Benton spends a week playing for one of its own.
+        <b>The gear you buy becomes the scholarship</b> — awarded to a student who lives the way Andrew did.</p>
+
+      <div class="cta in s5">
+        <a class="btn btn-primary" href="/gear/">Shop the 26-27 gear</a>
+        <a class="btn btn-ghost" href="/fundraising-video/"><span class="play">&#9658;</span> Watch Andrew's story</a>
+      </div>
+
+      <p class="when in s6">Game day &nbsp;·&nbsp; <b id="gday">Saturday, January 9, 2027</b></p>
+    </div>
+
+    <aside class="roll-card in s4" aria-labelledby="roll-h">
+      <div class="roll-head"><span id="roll-h">Scholarship recipients</span><span id="roll-count"></span></div>
+      <div id="roll"></div>
+    </aside>
+
+  </div>
+</header>
+
+<script src="/config.js"></script>
+<script>
+(function(){
+  var C = window.WOS || {};
+  var S = function(id){ return document.getElementById(id); };
+  var esc = function(s){ return String(s==null?'':s).replace(/[&<>"]/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); };
+
+  /* Andrew's three words, straight from config.cause.values */
+  var vals = (C.cause && C.cause.values) || [];
+  S('creed').innerHTML = vals.map(function(v){
+    return '<li><span>' + esc(v) + '.</span></li>';
+  }).join('');
+
+  /* the honour roll — newest first, exactly as config.scholars is ordered */
+  var sch = C.scholars || [];
+  if(sch.length){
+    var now = sch[0], rest = sch.slice(1);
+    var html = '<div class="now">' +
+        (now.photo ? '<img src="'+esc(now.photo)+'" alt="'+esc(now.name)+'" width="104" height="104" decoding="async">' : '') +
+        '<div class="now-meta">' +
+          '<div class="now-year">’'+esc(now.year)+'</div>' +
+          '<div class="now-name">'+esc(now.name)+'</div>' +
+          '<div class="now-tag">this year’s recipient</div>' +
+        '</div></div>';
+    if(rest.length){
+      html += '<ul class="past">' + rest.map(function(s){
+        return '<li><span class="yr">’'+esc(s.year)+'</span><span class="nm">'+esc(s.name)+'</span></li>';
+      }).join('') + '</ul>';
+    }
+    S('roll').innerHTML = html;
+    S('roll-count').textContent = sch.length + ' so far';
+  }
+
+  /* game day date, from config */
+  if(C.gameDay){
+    var d = new Date(C.gameDay);
+    if(!isNaN(d)) S('gday').textContent = d.toLocaleDateString('en-US',
+      {weekday:'long', month:'long', day:'numeric', year:'numeric'});
+  }
+})();
+</script>
+</body>
+</html>
