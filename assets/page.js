@@ -150,6 +150,8 @@
   /* reveal-on-scroll */
   var revObs = new IntersectionObserver(function(en){ en.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); revObs.unobserve(e.target); } }); }, {threshold:.12});
   document.querySelectorAll('.reveal').forEach(function(el){ revObs.observe(el); });
+  /* the 4s safety net lives in each page's <head> script, outside this file, so an
+     error in here cannot leave .reveal content permanently invisible */
 
   /* page-specific content */
   if(typeof window.renderPage === 'function') window.renderPage(C);

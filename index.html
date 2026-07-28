@@ -3,6 +3,21 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!-- Opt in to scroll-reveal animations ONLY if this browser can actually run them.
+     Everything in a .reveal starts hidden, so if this line never runs the content
+     simply stays visible instead of disappearing. Must be in <head>, before paint. -->
+<script>
+if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)){
+  document.documentElement.className+=' js-anim';
+  /* Safety net lives HERE, not in the main script at the end of <body>, so that a
+     JavaScript error anywhere else on the page can't take it down with it. After 4s
+     anything still unrevealed is shown regardless. */
+  setTimeout(function(){
+    var e=document.querySelectorAll('.reveal:not(.in)');
+    for(var i=0;i<e.length;i++){ e[i].className+=' in'; }
+  },4000);
+}
+</script>
 <title>Week of Sports 26-27 · Andrew Walker Memorial Scholarship</title>
 <meta name="description" content="The Andrew Walker Memorial Scholarship fundraiser at Liberty-Benton. Game day is Saturday, January 9, 2027 — join the class-vs-class donation challenge, grab this year's gear, and carry Andrew's legacy forward.">
 <meta property="og:type" content="website">
@@ -693,6 +708,8 @@
   new IntersectionObserver(function(en){ en.forEach(function(e){ if(e.isIntersecting) Challenge.onShown(); }); },{threshold:.25}).observe(S('board'));
   var revObs = new IntersectionObserver(function(en){ en.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); revObs.unobserve(e.target);} }); },{threshold:.15});
   document.querySelectorAll('.reveal').forEach(function(el){ revObs.observe(el); });
+  /* the 4s safety net that guarantees these appear lives in the <head> script,
+     deliberately outside this block so an error in here cannot disable it */
 
   /* ---- video modal ---- */
   function embedUrl(u){
