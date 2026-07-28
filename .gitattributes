@@ -1,0 +1,4 @@
+# Calendar files must keep CRLF line endings — the iCalendar spec (RFC 5545) requires
+# them, and this machine has core.autocrlf=true, which would otherwise rewrite them to
+# LF on commit and ship a file some calendar apps refuse to import.
+*.ics -text
