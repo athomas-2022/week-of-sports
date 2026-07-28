@@ -156,7 +156,7 @@
     <div class="games" id="games"></div>
     <div class="gd-meta">
       <span class="gd-where" id="gd-where"></span>
-      <a class="btn btn-primary" id="cal-link" target="_blank">Add to calendar</a>
+      <a class="btn btn-primary" id="cal-link" href="/week-of-sports.ics">Add all dates to calendar</a>
       <a class="btn btn-ghost" id="dir-link" target="_blank">Directions</a>
     </div>
   </div>
@@ -401,16 +401,15 @@
   /* ---- add to calendar + directions ---- */
   (function(){
     S('dir-link').href = 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(C.mapsQuery||C.location);
+    /* The button links straight to /week-of-sports.ics — a real file, not a generated
+       Google Calendar URL, because a Google TEMPLATE link can only ever carry ONE event
+       and this schedule has eleven. Tapping it on a phone offers "Add All to Calendar";
+       on a desktop it downloads. To change the dates, edit week-of-sports.ics. */
     if(C.gameDay){
-      var d = new Date(C.gameDay), end = new Date(d.getTime()+7*3600*1000);
-      function z(n){return (n<10?'0':'')+n;}
-      function f(x){return x.getFullYear()+z(x.getMonth()+1)+z(x.getDate())+'T'+z(x.getHours())+z(x.getMinutes())+'00';}
-      var text = encodeURIComponent('Week of Sports '+C.year+' — Game Day');
-      S('cal-link').href = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='+text+'&dates='+f(d)+'/'+f(end)+'&location='+encodeURIComponent(C.location);
+      var d = new Date(C.gameDay);
       S('gd-eyebrow').textContent = d.toLocaleDateString('en-US',{weekday:'long', month:'long', day:'numeric'}) + ' · game day';
     } else {
       S('gd-eyebrow').textContent = 'Game day · date coming soon';
-      S('cal-link').style.display = 'none';
     }
   })();
 

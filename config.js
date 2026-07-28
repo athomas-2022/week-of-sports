@@ -11,9 +11,12 @@
    ======================================================================= */
 window.WOS = {
 
-  /* ---------- the event ---------- */
+  /* ---------- the event ----------
+     NOTE: the "Add all dates to calendar" button does NOT read this file. All eleven
+     dates (shirt sales, gift baskets, gear pickup, spirit week, game day) live in
+     Website/week-of-sports.ics. Ask me to change them and I'll regenerate that file. */
   year:      "26-27",
-  gameDay:   "2027-01-09T12:00:00",       /* game day — January 9, 2027, noon (blank = "coming soon") */
+  gameDay:   "2027-01-09T12:00:00",       /* game day — January 9, 2027, noon (blank = "coming soon"). Drives the countdown and the "Saturday · game day" label, NOT the calendar file. */
   location:  "Liberty-Benton High School",
   mapsQuery: "Liberty-Benton High School, Findlay, OH",
   contactEmail: "info@weekofsports.com",
