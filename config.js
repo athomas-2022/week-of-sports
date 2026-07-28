@@ -68,8 +68,17 @@ window.WOS = {
     refreshSeconds: 45    /* how often the page checks the sheet for new totals */
   },
 
-  /* ---------- game-day schedule (fill in when the lineup is set; empty = "coming soon") ---------- */
-  gameDayEvents: [],
+  /* ---------- game-day schedule (fill in when the lineup is set; empty = "coming soon")
+     "time" showing an actual clock time prints big; any word (e.g. "Next") prints small,
+     so you can list a game that follows another without inventing a start time. */
+  gameDayEvents: [
+    { time: "12:00pm", title: "JV Girls",        sub: "Girls session tips off" },
+    { time: "Next",    title: "Varsity Girls",   sub: "Follows the JV girls game" },
+    { time: "4:45pm",  title: "JVB Boys",        sub: "Boys session tips off" },
+    { time: "Next",    title: "JVA Boys",        sub: "Follows the JVB boys game" },
+    { time: "Next",    title: "Varsity Boys",    sub: "Follows the JVA boys game" },
+    { time: "Next",    title: "Student v Staff", sub: "Follows the varsity boys game" }
+  ],
 
   /* ---------- spirit week (add this year's dates + themes when set; empty = "coming soon") ---------- */
   spiritWeek: [],

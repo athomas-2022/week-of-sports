@@ -149,6 +149,8 @@ h1 .yr{color:var(--sky);white-space:nowrap}
 .game{background:linear-gradient(180deg,var(--navy2),rgba(14,47,84,.4));border:1px solid var(--line);border-radius:16px;padding:30px 26px;transition:transform .2s,border-color .2s}
 .game:hover{transform:translateY(-6px);border-color:var(--sky)}
 .game .time{font-family:'Oswald',system-ui,sans-serif;font-weight:700;font-size:40px;color:var(--sky);line-height:1}
+/* "Next" instead of a clock time — same slot, quieter, so the real start times lead */
+.game .time.time-word{font-size:17px;letter-spacing:.14em;text-transform:uppercase;color:#8fb8e8;padding:11px 0 12px}
 .game .gt{font-family:'Oswald',system-ui,sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.04em;font-size:21px;margin:10px 0 6px}
 .game .gs{color:#aebfd6;font-size:14px}
 .gd-meta{display:flex;gap:14px;justify-content:center;align-items:center;flex-wrap:wrap;color:#cdd9ea}

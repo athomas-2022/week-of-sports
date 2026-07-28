@@ -166,12 +166,16 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
 <section class="gameday on-dark" id="gameday">
   <div class="wrap">
     <div class="sec-eyebrow" id="gd-eyebrow">Saturday · game day</div>
-    <h2 class="sec-h">Three games. One gym. All heart.</h2>
+    <h2 class="sec-h">Six games. One gym. All heart.</h2>
     <p class="sec-sub">Come for the Student vs Staff showdown, stay for the Eagles. Free to attend — powered by gear, raffles, and the donation challenge.</p>
     <div class="games" id="games"></div>
     <div class="gd-meta">
       <span class="gd-where" id="gd-where"></span>
-      <a class="btn btn-primary" id="cal-link" href="/week-of-sports.ics">Add all dates to calendar</a>
+      <!-- Google can't take 11 events from a link, but it CAN subscribe to a calendar
+           feed by URL — that pulls in every date at once and keeps them updated. -->
+      <a class="btn btn-primary" id="gcal-link" target="_blank" rel="noopener"
+         href="https://calendar.google.com/calendar/render?cid=webcal%3A%2F%2Fweekofsports.com%2Fweek-of-sports.ics">Add to Google Calendar</a>
+      <a class="btn btn-ghost" id="cal-link" href="/week-of-sports.ics">Apple or Outlook</a>
       <a class="btn btn-ghost" id="dir-link" target="_blank">Directions</a>
     </div>
   </div>
@@ -410,7 +414,10 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
 
   /* ---- game-day cards (or coming soon) ---- */
   S('games').innerHTML = (C.gameDayEvents||[]).length ? (C.gameDayEvents).map(function(g){
-    return '<div class="game"><div class="time">'+g.time+'</div><div class="gt">'+g.title+'</div><div class="gs">'+(g.sub||'')+'</div></div>';
+    /* a real clock time prints big; a word like "Next" prints small, so a game that
+       simply follows another doesn't need an invented start time */
+    var word = !/\d/.test(g.time||'');
+    return '<div class="game"><div class="time'+(word?' time-word':'')+'">'+g.time+'</div><div class="gt">'+g.title+'</div><div class="gs">'+(g.sub||'')+'</div></div>';
   }).join('') : '<div class="game" style="grid-column:1/-1;text-align:center"><div class="gt">Schedule coming soon</div><div class="gs">Game-day times will be announced closer to the event.</div></div>';
 
   /* ---- add to calendar + directions ---- */
