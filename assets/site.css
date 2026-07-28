@@ -200,13 +200,20 @@ h1 .yr{color:var(--sky);white-space:nowrap}
 .gear{background:var(--navy2);padding:92px 0;overflow:hidden}
 .gear::before{content:"";position:absolute;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(127,177,240,.18),transparent 70%);top:-160px;right:-120px}
 .gear-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;position:relative}
+/* a 1fr track is minmax(auto,1fr), so its min size is min-content — without this the
+   price chips push the column wider than the phone and .gear's overflow:hidden
+   silently clips the last one off-screen instead of wrapping it. */
+.gear-grid>*{min-width:0}
 .gear-grid img{width:100%;max-width:420px;display:block;margin:0 auto;filter:drop-shadow(0 22px 40px rgba(0,0,0,.45));animation:float 6s ease-in-out infinite}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
 .gear h2{font-family:'Anton',Impact,system-ui,sans-serif;text-transform:uppercase;font-size:clamp(32px,4.4vw,52px);line-height:1;margin-bottom:14px}
 .gear p{color:#cdd9ea;font-size:17px;margin-bottom:24px;max-width:460px}
-.price-chips{display:flex;gap:12px;margin-bottom:28px}
-.pchip{font-family:'Oswald',system-ui,sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.05em;font-size:14px;background:rgba(255,255,255,.07);border:1px solid var(--line);border-radius:10px;padding:12px 18px}
-.pchip b{color:var(--sky);font-size:22px;display:block;font-weight:700}
+/* a grid, not flex-wrap: this list is built from every product in config, so the
+   count varies — grid keeps every chip the same width instead of stretching the
+   last row to fill, which is what flex:1 does when 6 items wrap to 4 + 2. */
+.price-chips{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:10px;margin-bottom:28px;max-width:520px}
+.pchip{font-family:'Oswald',system-ui,sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.05em;font-size:13px;background:rgba(255,255,255,.07);border:1px solid var(--line);border-radius:10px;padding:10px 12px;text-align:center}
+.pchip b{color:var(--sky);font-size:20px;display:block;font-weight:700;margin-top:2px}
 
 /* ---------- GALLERY ---------- */
 .gallery{background:var(--paper);color:var(--ink);padding:96px 0}
@@ -377,7 +384,7 @@ footer img{height:46px;margin-bottom:14px}
 @media (max-width:980px){
   .hero-grid{grid-template-columns:1fr;gap:30px;padding:110px 0 64px}
   .cause-grid,.gear-grid{grid-template-columns:1fr;gap:32px;text-align:center}
-  .gear-grid .gear-copy{order:2} .price-chips{justify-content:center}
+  .gear-grid .gear-copy{order:2} .price-chips{margin-inline:auto}
   .games{grid-template-columns:1fr} .grid{columns:3} .sgrid{grid-template-columns:repeat(3,1fr)}
   .crest-card{max-width:380px;margin:0 auto}
   .baskets{grid-template-columns:repeat(2,1fr)}

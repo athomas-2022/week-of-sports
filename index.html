@@ -193,11 +193,9 @@
     <div class="gear-copy reveal">
       <div class="eyebrow">This year's gear</div>
       <h2>Wear the legacy</h2>
-      <p>Every shirt and hoodie puts money straight toward the scholarship — and turns the whole community into a walking billboard for game day.</p>
-      <div class="price-chips">
-        <div class="pchip">T-shirt <b id="shirt-price"></b></div>
-        <div class="pchip">Hoodie <b id="hoodie-price"></b></div>
-      </div>
+      <p>Every purchase puts money straight toward the scholarship — and turns the whole community into a walking billboard for game day.</p>
+      <!-- built from gearOrder.products so this can never drift from the order page -->
+      <div class="price-chips" id="price-chips"></div>
       <div class="cta">
         <a class="btn btn-white" id="gear-link" target="_blank">Order gear</a>
         <a class="btn btn-ghost" href="/gear/">See the collection</a>
@@ -333,12 +331,26 @@
     S('aboutev-hl').innerHTML = (C.aboutEvent.highlights||[]).map(function(h){return '<div class="hlc"><div class="hk">'+h.k+'</div><div class="hv">'+h.v+'</div></div>';}).join('');
   }
   S('shirt-img').src = C.gearImage || C.shirt;
+  /* One price list, one source of truth: gearOrder.products. Falls back to the old
+     shirtPrice/hoodiePrice pair only if that list is missing. */
+  (function(){
+    var chips = S('price-chips'); if(!chips) return;
+    var prods = (C.gearOrder && C.gearOrder.products) || [];
+    if(!prods.length){
+      prods = [{name:'T-shirt', price:C.shirtPrice}, {name:'Hoodie', price:C.hoodiePrice}]
+                .filter(function(p){ return p.price != null; });
+    }
+    var esc = function(s){ return String(s==null?'':s).replace(/[&<>"]/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); };
+    var money = function(n){ return '$' + (n % 1 ? Number(n).toFixed(2) : n); };
+    chips.innerHTML = prods.map(function(p){
+      var val = C.gearReady ? money(p.price) : 'Soon';
+      return '<div class="pchip">' + esc(p.name) + ' <b>' + val + '</b></div>';
+    }).join('');
+  })();
   if(C.gearReady){
-    S('shirt-price').textContent = '$'+C.shirtPrice;
-    S('hoodie-price').textContent = '$'+C.hoodiePrice;
     S('gear-link').href = '/gear/';
   } else {
-    S('shirt-price').textContent = 'Soon'; S('hoodie-price').textContent = 'Soon';
     S('gear-link').textContent = 'Coming soon'; S('gear-link').removeAttribute('href'); S('gear-link').style.cursor = 'default';
   }
   if(C.fundraisingGoal>0) S('goal').textContent = 'Goal  ' + money(C.fundraisingGoal);
