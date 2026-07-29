@@ -171,13 +171,15 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
     <div class="games" id="games"></div>
     <div class="gd-meta">
       <span class="gd-where" id="gd-where"></span>
-      <!-- Google's "add by URL" settings page. NOT render?cid= — that endpoint treats
-           cid as a Google calendar ID and mangles an external .ics URL into a random
-           string, which shows up as a garbage calendar name. addbyurl reads the file's
-           X-WR-CALNAME ("Week of Sports 26-27") and adds all 11 dates as one calendar. -->
-      <a class="btn btn-primary" id="gcal-link" target="_blank" rel="noopener"
-         href="https://calendar.google.com/calendar/r/settings/addbyurl?url=https%3A%2F%2Fweekofsports.com%2Fweek-of-sports.ics">Add to Google Calendar</a>
-      <a class="btn btn-ghost" id="cal-link" href="/week-of-sports.ics">Apple or Outlook</a>
+      <!-- The .ics link is the PRIMARY action: it's the only thing that pops the phone's
+           calendar open automatically. iPhone opens it straight in Calendar with an
+           "Add All" prompt; Android downloads it, then a tap opens it in the calendar app
+           (Google Calendar included). Served as text/calendar so the OS handles it. -->
+      <a class="btn btn-primary" id="cal-link" href="/week-of-sports.ics">Add to calendar</a>
+      <!-- Google Calendar has NO link that adds all 11 dates on a phone — its add-by-URL
+           subscribe only works on a computer — so it's the secondary, honestly labelled. -->
+      <a class="btn btn-ghost" id="gcal-link" target="_blank" rel="noopener"
+         href="https://calendar.google.com/calendar/r/settings/addbyurl?url=https%3A%2F%2Fweekofsports.com%2Fweek-of-sports.ics">Google Calendar (on a computer)</a>
       <a class="btn btn-ghost" id="dir-link" target="_blank">Directions</a>
     </div>
   </div>
