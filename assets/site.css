@@ -120,7 +120,7 @@ h1 .yr{color:var(--sky);white-space:nowrap}
 .crest-card img{width:100%;max-width:300px;border-radius:12px}
 /* memorial photo of Andrew — a framed portrait on the same navy card */
 .cause-photo-card{background:var(--navy);border-radius:20px;padding:14px;box-shadow:0 24px 50px rgba(10,35,66,.25)}
-.cause-photo-card .cause-photo{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;object-position:center 28%;border-radius:14px;background:#0e2f54}
+.cause-photo-card .cause-photo{display:block;width:100%;aspect-ratio:1/1;object-fit:cover;object-position:center 20%;border-radius:14px;background:#0e2f54}
 .cause-photo-card .cause-cap{margin:14px 4px 4px;text-align:center;font-family:'Oswald',system-ui,sans-serif;font-weight:600;letter-spacing:.04em;font-size:15px;color:#fff}
 
 /* ---------- SCHOLARSHIP RECIPIENTS ---------- */
