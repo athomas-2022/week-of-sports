@@ -217,7 +217,9 @@ h1 .yr{color:var(--sky);white-space:nowrap}
 /* a grid, not flex-wrap: this list is built from every product in config, so the
    count varies — grid keeps every chip the same width instead of stretching the
    last row to fill, which is what flex:1 does when 6 items wrap to 4 + 2. */
-.price-chips{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:10px;margin-bottom:28px;max-width:520px}
+/* fixed 3 columns so the six products always read 3 over 3 — beanie leads the bottom
+   row next to the hat, instead of auto-fit dropping to 4+2 on wider screens */
+.price-chips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:28px;max-width:460px}
 .pchip{font-family:'Oswald',system-ui,sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.05em;font-size:13px;background:rgba(255,255,255,.07);border:1px solid var(--line);border-radius:10px;padding:10px 12px;text-align:center}
 .pchip b{color:var(--sky);font-size:20px;display:block;font-weight:700;margin-top:2px}
 
