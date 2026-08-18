@@ -406,14 +406,36 @@ footer img{height:46px;margin-bottom:14px}
   .nav-links{display:none} .ticker{top:66px}
   .wrap{padding:0 20px}
   h1{font-size:clamp(40px,12vw,62px)}
-  .tag{font-size:16px}
-  .hero-grid{padding:92px 0 48px}
+  .tag{font-size:16px;margin-bottom:22px}
+  /* hero was pinned to 86vh, forcing a near-full-screen height even when its content
+     is shorter; let it size to content so the first scroll reaches real content sooner */
+  .hero{min-height:auto}
+  .hero-grid{padding:84px 0 30px}
   .cd .cell{min-width:0;flex:1} .cd .num{font-size:34px}
-  /* tighter vertical rhythm so more fits on a phone */
-  .cause,.give,.gameday,.challenge,.spirit,.gear,.gallery,.sponsors,.about-ev,.contact{padding:60px 0}
-  .cause{padding:38px 0}   /* Andrew section runs tighter than the rest, per request */
-  .volunteer{padding:54px 0}
-  .sec-sub{font-size:15px;margin-bottom:34px}
+  /* tighter vertical rhythm so the whole page is less to scroll on a phone */
+  .cause,.give,.gameday,.challenge,.spirit,.gear,.gallery,.sponsors,.about-ev,.contact{padding:42px 0}
+  .cause{padding:30px 0}
+  .volunteer{padding:42px 0}
+  .countdown-sec{padding:34px 0}
+  .sec-sub{font-size:15px;margin-bottom:20px}
+  .sec-h{margin-bottom:6px}
+  /* game-day schedule: two cards per row and more compact, instead of six tall rows */
+  .games{grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:24px}
+  .game{padding:16px 14px}
+  .game .time{font-size:30px}
+  .game .time.time-word{font-size:14px;padding:8px 0 9px}
+  .game .gt{font-size:16px;margin:8px 0 4px}
+  .game .gs{font-size:13px}
+  /* recipients + gallery: smaller photos + trimmed gaps so these tall photo
+     sections aren't half the scroll on their own */
+  .scholar-grid{gap:16px;max-width:360px}
+  .scholar-photo{aspect-ratio:3/2}
+  .scholar figcaption{padding:14px 16px 16px}
+  .gear-grid img{max-width:280px}
+  .cf{height:clamp(220px,58vw,300px)}
+  .moments-head{margin:26px auto 12px}
+  .moments-grid .mcell.feature{aspect-ratio:16/9}
+  .moments-grid .mcell.wide{aspect-ratio:21/9}
   /* stack multi-column card grids so long labels can't push the page wide */
   .hl{grid-template-columns:1fr;gap:12px}
   .ways{grid-template-columns:1fr 1fr}
