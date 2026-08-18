@@ -118,6 +118,10 @@ h1 .yr{color:var(--sky);white-space:nowrap}
 .value{font-family:'Oswald',system-ui,sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.06em;font-size:14px;color:var(--royal);background:#eaf2fd;border-radius:30px;padding:9px 18px}
 .crest-card{background:var(--navy);border-radius:20px;padding:34px;text-align:center;box-shadow:0 24px 50px rgba(10,35,66,.25)}
 .crest-card img{width:100%;max-width:300px;border-radius:12px}
+/* memorial photo of Andrew — a framed portrait on the same navy card */
+.cause-photo-card{background:var(--navy);border-radius:20px;padding:14px;box-shadow:0 24px 50px rgba(10,35,66,.25)}
+.cause-photo-card .cause-photo{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;object-position:center 28%;border-radius:14px;background:#0e2f54}
+.cause-photo-card .cause-cap{margin:14px 4px 4px;text-align:center;font-family:'Oswald',system-ui,sans-serif;font-weight:600;letter-spacing:.04em;font-size:15px;color:#fff}
 
 /* ---------- SCHOLARSHIP RECIPIENTS ---------- */
 .scholars{background:var(--paper);color:var(--ink);padding:88px 0}
@@ -393,7 +397,7 @@ footer img{height:46px;margin-bottom:14px}
   .cause-grid,.gear-grid{grid-template-columns:1fr;gap:32px;text-align:center}
   .gear-grid .gear-copy{order:2} .price-chips{margin-inline:auto}
   .games{grid-template-columns:1fr} .grid{columns:3} .sgrid{grid-template-columns:repeat(3,1fr)}
-  .crest-card{max-width:380px;margin:0 auto}
+  .crest-card,.cause-photo-card{max-width:340px;margin:0 auto}
   .baskets{grid-template-columns:repeat(2,1fr)}
 }
 @media (max-width:760px){

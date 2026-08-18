@@ -87,7 +87,9 @@ window.WOS = {
   cause: {
     title: "In honor of Andrew Walker",
     body:  "Week of Sports celebrates the legacy of Andrew Walker — a passionate sports enthusiast whose love for the game touched everyone who knew him. His energy and dedication lifted up teammates, coaches, and fans alike. The week supports the Andrew Walker Memorial Scholarship, carrying his spirit forward for the students who come next.",
-    values: ["Be kind", "Be connected", "Be brave"]
+    values: ["Be kind", "Be connected", "Be brave"],
+    photo:        "/assets/andrew-walker.jpg",  /* photo shown in the "In his memory" card. Leave blank ("") to show the scholarship crest instead. */
+    photoCaption: ""                             /* optional line under the photo, e.g. "Andrew Walker". Blank = no caption. */
   },
 
   /* ---------- scholarship recipients ----------

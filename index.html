@@ -115,7 +115,7 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
       <p id="cause-body"></p>
       <div class="values" id="cause-values"></div>
     </div>
-    <div class="crest-card reveal"><img id="cause-crest" alt="Andrew Walker Memorial Scholarship crest" /></div>
+    <div class="crest-card reveal" id="cause-card"><img id="cause-crest" alt="Andrew Walker Memorial Scholarship crest" /></div>
   </div>
 </section>
 
@@ -339,7 +339,18 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
   S('hero-year').textContent = C.year;
   S('cause-title').textContent = C.cause.title;
   S('cause-body').textContent = C.cause.body;
-  S('cause-crest').src = C.crest;
+  /* memorial card: a real photo of Andrew if one is set, otherwise the scholarship crest */
+  (function(){
+    var e = function(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); };
+    var card = S('cause-card');
+    if(C.cause && C.cause.photo){
+      var cap = C.cause.photoCaption ? '<figcaption class="cause-cap">'+e(C.cause.photoCaption)+'</figcaption>' : '';
+      card.className = card.className.replace('crest-card','cause-photo-card');
+      card.innerHTML = '<img class="cause-photo" src="'+e(C.cause.photo)+'" alt="Andrew Walker" loading="lazy" decoding="async">'+cap;
+    } else {
+      S('cause-crest').src = C.crest;
+    }
+  })();
   S('cause-values').innerHTML = C.cause.values.map(function(x){return '<span class="value">'+x+'</span>';}).join('');
   S('scholars').innerHTML = (C.scholars||[]).map(function(s){
     return '<figure class="scholar reveal">'+
