@@ -110,7 +110,7 @@ h1 .yr{color:var(--sky);white-space:nowrap}
 .play-ico{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:#fff;color:var(--navy);font-size:10px;padding-left:2px}
 
 /* ---------- CAUSE ---------- */
-.cause{background:#fff;color:var(--ink);padding:96px 0}
+.cause{background:#fff;color:var(--ink);padding:56px 0}
 .cause-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:56px;align-items:center}
 .cause h2{font-family:'Anton',Impact,system-ui,sans-serif;text-transform:uppercase;font-size:clamp(32px,4.6vw,54px);line-height:1;color:var(--navy);margin-bottom:20px}
 .cause p{font-size:18px;line-height:1.75;color:#3c4d63;margin-bottom:26px}
@@ -409,6 +409,7 @@ footer img{height:46px;margin-bottom:14px}
   .cd .cell{min-width:0;flex:1} .cd .num{font-size:34px}
   /* tighter vertical rhythm so more fits on a phone */
   .cause,.give,.gameday,.challenge,.spirit,.gear,.gallery,.sponsors,.about-ev,.contact{padding:60px 0}
+  .cause{padding:38px 0}   /* Andrew section runs tighter than the rest, per request */
   .volunteer{padding:54px 0}
   .sec-sub{font-size:15px;margin-bottom:34px}
   /* stack multi-column card grids so long labels can't push the page wide */
