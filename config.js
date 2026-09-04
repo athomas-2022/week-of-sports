@@ -33,7 +33,7 @@ window.WOS = {
   venmoHandle:     "AndrewThomas24",      /* real — venmo.com/u/AndrewThomas24 */
   fundraisingGoal: 0,                     /* set the $ goal when known (0 = challenge "coming soon") */
   raisedTotal:     0,                     /* update during the campaign */
-  donationFormUrl: "https://docs.google.com/document/d/1i5dRrSKtfrdR7aWloMK7MWNfTNFrIzXb/edit?usp=sharing",  /* real donation form */
+  donationFormUrl: "/assets/sponsor-form.pdf",  /* the branded donation/sponsor form PDF (same file the sponsors-section button downloads) */
   scholarshipUrl:  "https://www.community-foundation.com/scholarships/andrew-walker-memorial-scholarship",   /* real scholarship page */
   giveWays: [
     { title: "Donate directly", text: "Give straight to the scholarship fund by Venmo or our donation form." },
