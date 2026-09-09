@@ -123,7 +123,9 @@ window.WOS = {
   momentsPics: [2, 7, 9, 28, 6, 21, 22],
 
   /* ---------- sponsors (add { name, logo, url }; empty shows placeholders) ---------- */
-  sponsors: [],
+  sponsors: [
+    { name: "J. Elchert Wealth Management", logo: "/assets/sponsor-jelchert.png", url: "" }   /* add their website in url:"" to make the logo clickable */
+  ],
 
   /* ---------- raffle baskets (add this year's baskets when announced; empty = "coming soon") ---------- */
   raffleBaskets: [],

@@ -662,12 +662,21 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
   })();
 
   /* ---- sponsors (placeholders if empty) ---- */
-  var sp = C.sponsors && C.sponsors.length ? C.sponsors.map(function(s){
+  var realSponsors = C.sponsors && C.sponsors.length;
+  var sp = realSponsors ? C.sponsors.map(function(s){
     /* real logos get a white tile — most business logos are dark ink on white and
        would vanish against the navy sponsor band. Name-only tiles stay translucent. */
-    return '<a class="slogo'+(s.logo?' has-logo':'')+'" href="'+(s.url||'#')+'" target="_blank" rel="noopener">'+(s.logo?'<img src="'+s.logo+'" alt="'+s.name+'" loading="lazy">':'<span>'+s.name+'</span>')+'</a>';
+    var inner = s.logo ? '<img src="'+s.logo+'" alt="'+s.name+'" loading="lazy">' : '<span>'+s.name+'</span>';
+    var cls = 'slogo'+(s.logo?' has-logo':'');
+    /* only wrap in a link when a url is actually given — otherwise "#" just jumps the page */
+    return s.url ? '<a class="'+cls+'" href="'+s.url+'" target="_blank" rel="noopener">'+inner+'</a>'
+                 : '<div class="'+cls+'">'+inner+'</div>';
   }) : Array.apply(null,{length:6}).map(function(){ return '<div class="slogo"><span>Your logo here</span></div>'; });
-  S('strack').innerHTML = sp.join('') + sp.join('');
+  /* a marquee needs enough tiles to look continuous. With only a few real sponsors,
+     show them centred and still rather than scrolling one logo past on repeat. */
+  var few = realSponsors && C.sponsors.length < 4;
+  S('strack').className = 'strack' + (few ? ' static' : '');
+  S('strack').innerHTML = few ? sp.join('') : sp.join('') + sp.join('');
 
   /* ---- sticky nav ---- */
   var hdr = S('hdr');

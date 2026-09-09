@@ -325,11 +325,16 @@ footer img{height:46px;margin-bottom:14px}
 .smarquee{overflow:hidden;width:100%;padding:6px 0;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
 .strack{display:inline-flex;gap:18px;padding:0 9px;width:max-content;animation:smarq 30s linear infinite}
 .smarquee:hover .strack{animation-play-state:paused}
+/* a handful of sponsors: centred and still, instead of one logo looping past */
+.strack.static{animation:none;width:100%;justify-content:center;flex-wrap:wrap;gap:18px}
 @keyframes smarq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 .slogo{flex:none;width:180px;height:94px;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:14px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.55);font-family:'Oswald',system-ui,sans-serif;letter-spacing:.05em;text-transform:uppercase;font-size:14px;text-align:center;padding:0 10px}
 .slogo img{max-width:78%;max-height:70%;object-fit:contain}
 /* a real sponsor logo sits on white so dark-ink marks read against the navy band */
 .slogo.has-logo{background:#fff;border-color:rgba(255,255,255,.34);padding:10px}
+.slogo.has-logo img{max-width:100%;max-height:100%}   /* fill the tile; padding is the margin */
+/* one or two sponsors show larger, since they're centred rather than scrolling past */
+.strack.static .slogo{width:230px;height:116px}
 
 /* ---------- GEAR PROMO POPUP ---------- */
 .promo{position:fixed;inset:0;z-index:120;background:rgba(4,14,28,.6);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;padding:20px}
