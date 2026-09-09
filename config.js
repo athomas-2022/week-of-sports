@@ -124,7 +124,9 @@ window.WOS = {
 
   /* ---------- sponsors (add { name, logo, url }; empty shows placeholders) ---------- */
   sponsors: [
-    { name: "J. Elchert Wealth Management", logo: "/assets/sponsor-jelchert.png", url: "" }   /* add their website in url:"" to make the logo clickable */
+    /* add their website in url:"" to make a logo clickable */
+    { name: "J. Elchert Wealth Management", logo: "/assets/sponsor-jelchert.png",    url: "" },
+    { name: "Lion's Share Company",         logo: "/assets/sponsor-lions-share.png", url: "" }
   ],
 
   /* ---------- raffle baskets (add this year's baskets when announced; empty = "coming soon") ---------- */
