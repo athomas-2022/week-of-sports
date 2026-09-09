@@ -327,7 +327,9 @@ footer img{height:46px;margin-bottom:14px}
 .smarquee:hover .strack{animation-play-state:paused}
 @keyframes smarq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 .slogo{flex:none;width:180px;height:94px;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:14px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.55);font-family:'Oswald',system-ui,sans-serif;letter-spacing:.05em;text-transform:uppercase;font-size:14px;text-align:center;padding:0 10px}
-.slogo img{max-width:74%;max-height:62%;object-fit:contain}
+.slogo img{max-width:78%;max-height:70%;object-fit:contain}
+/* a real sponsor logo sits on white so dark-ink marks read against the navy band */
+.slogo.has-logo{background:#fff;border-color:rgba(255,255,255,.34);padding:10px}
 
 /* ---------- GEAR PROMO POPUP ---------- */
 .promo{position:fixed;inset:0;z-index:120;background:rgba(4,14,28,.6);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;padding:20px}

@@ -663,7 +663,9 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
 
   /* ---- sponsors (placeholders if empty) ---- */
   var sp = C.sponsors && C.sponsors.length ? C.sponsors.map(function(s){
-    return '<a class="slogo" href="'+(s.url||'#')+'" target="_blank">'+(s.logo?'<img src="'+s.logo+'" alt="'+s.name+'">':'<span>'+s.name+'</span>')+'</a>';
+    /* real logos get a white tile — most business logos are dark ink on white and
+       would vanish against the navy sponsor band. Name-only tiles stay translucent. */
+    return '<a class="slogo'+(s.logo?' has-logo':'')+'" href="'+(s.url||'#')+'" target="_blank" rel="noopener">'+(s.logo?'<img src="'+s.logo+'" alt="'+s.name+'" loading="lazy">':'<span>'+s.name+'</span>')+'</a>';
   }) : Array.apply(null,{length:6}).map(function(){ return '<div class="slogo"><span>Your logo here</span></div>'; });
   S('strack').innerHTML = sp.join('') + sp.join('');
 
