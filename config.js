@@ -137,9 +137,13 @@ window.WOS = {
   volunteerUrl:  "https://docs.google.com/spreadsheets/d/1GHON5g2QmFFZ7DXIFw4bid8InBzlzmE4Jw2GdTTLgUg/edit?usp=sharing",  /* real volunteer sign-up sheet */
   volunteerText: "Volunteers are crucial to the success of the event — from running raffle tables to working the doors. Everyone gets a role that matters, and hours count toward NHS and other service requirements.",
 
-  /* ---------- assets (swap these each year — paths are site-root absolute) ---------- */
-  logo:          "/assets/logo-lb.png",   /* LB word-cloud badge (Andrew Walker / Week of Sports) */
-  gearImage:     "/assets/gear-lb.png",   /* big image in the homepage "This year's gear" section */
+  /* ---------- assets (swap these each year — paths are site-root absolute) ----------
+     The "?v=2" on the end is a version tag, not part of the file name. If you ever
+     replace one of these images but keep the same file name, add 1 to its number
+     (?v=3, ?v=4 …). That is what tells phones and browsers to fetch the new picture
+     instead of showing the old one they already saved. */
+  logo:          "/assets/logo-lb.png?v=2",   /* LB word-cloud badge (Andrew Walker / Week of Sports) */
+  gearImage:     "/assets/gear-lb.png?v=2",   /* big image in the homepage "This year's gear" section */
   crest:         "/assets/crest.png",
   shirt:         "/assets/shirt.png",
   heroYouTubeId: "-3iifoMWy7U",            /* fundraising video — plays muted as the looping hero background */

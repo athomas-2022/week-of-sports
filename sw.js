@@ -3,11 +3,13 @@
    Strategy is NETWORK-FIRST on purpose: the site updates often (leaderboard,
    config, content), so we always try the network and only fall back to the
    cached copy when the device is offline. This avoids serving stale pages. */
-var CACHE = 'wos-v1';
+/* Bump this whenever an asset is replaced under the same filename: the old
+   cache is deleted on activate, so installed phones can't keep serving it. */
+var CACHE = 'wos-v2';
 var CORE = [
   '/', '/index.html', '/config.js',
   '/assets/site.css', '/assets/page.js',
-  '/assets/favicon-192.png', '/assets/favicon-512.png'
+  '/assets/favicon-192.png?v=2', '/assets/favicon-512.png?v=2'
 ];
 
 self.addEventListener('install', function (e) {
