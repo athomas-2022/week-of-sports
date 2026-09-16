@@ -165,7 +165,7 @@ window.WOS = {
     formAction: "https://docs.google.com/forms/d/e/1FAIpQLSczCeztwhRGkF1yNF-_s5qwtswnmxbeR5XegwyNtJyx8PqkNg/formResponse",  /* legacy Google Form — no longer used */
     deadline: "November 22, 2026",          /* gear order-by date */
     orderingOpen: false,                    /* false = people can BROWSE the gear but can't place an order yet. Set to true to open ordering. */
-    orderingClosedMsg: "ordering isn't open yet. Browse this year's gear, then check back soon to place your order.",   /* shown after "Preview —", so start it lowercase */
+    orderingClosedMsg: "ordering opens Oct 25. Browse this year's gear until then.",   /* shown after "Preview —", so start it lowercase. Update the date if opening day moves. */
     maxPerType: 0,                          /* max shirts (and, separately, max hoodies) per order; 0 = no limit */
     shirtPhoto:  "/assets/product-shirt.jpg",
     hoodiePhoto: "/assets/product-hoodie.jpg",
