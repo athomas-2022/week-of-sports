@@ -168,6 +168,12 @@ window.WOS = {
     maxPerType: 0,                          /* max shirts (and, separately, max hoodies) per order; 0 = no limit */
     shirtPhoto:  "/assets/product-shirt.jpg",
     hoodiePhoto: "/assets/product-hoodie.jpg",
+    /* GEAR PHOTOS FROM YOUR PHONE — no code needed. Put photos in the Google Drive folder
+       "Week of Sports — Gear Photos", then paste each photo's link into the Google Sheet
+       below (it's in that same folder). The gear page and the homepage popup use those
+       photos within a minute. Blank rows keep the photos listed further down in this file.
+       The folder must be shared as "Anyone with the link" for the website to see it. */
+    photoSheet: "https://docs.google.com/spreadsheets/d/1Y0tK0BeDAVSQnjR8WhuGItfU7msqOIgiNM-w3pwYhMc/edit",
     colors: [                                 /* default color choices for apparel (any product without its own "colors" list uses these) */
       { name: "Blue", hex: "#2f74d0" },
       { name: "Red",  hex: "#c8202f" },

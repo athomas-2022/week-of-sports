@@ -29,6 +29,7 @@
 <script src="/assets/pwa.js" defer></script>
 <link rel="stylesheet" href="/assets/site.css">
 <script src="/config.js"></script>
+<script src="/assets/gear-photos.js"></script>
 <style>
   .order{max-width:780px;margin:0 auto}
   .o-h{font-family:'Oswald',system-ui,sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.06em;font-size:18px;color:var(--navy);margin:38px 0 14px;display:flex;align-items:center;gap:10px}
@@ -66,6 +67,7 @@
   /* tidy placeholder shown for products that don't have a photo yet */
   .prod .ph{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;color:#5d6d82;background:linear-gradient(135deg,#f3f7fc,#e9f0f9);border:1px dashed #cdd9ea}
   .prod .ph svg{width:34px;height:34px;opacity:.7}
+  .prod .ph.wait{border-color:transparent}   /* blank tile while photos load from the Sheet */
   .prod .ph span{font-family:'Oswald',system-ui,sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.08em;font-size:10px}
   .o-empty{text-align:center;color:#5d6d82;font-size:15px;padding:22px;border:1.5px dashed #dbe4f0;border-radius:14px;margin-top:14px}
   .item{background:#fff;border:1px solid #e3e9f1;border-radius:14px;padding:16px 18px;margin-top:12px}
@@ -221,73 +223,105 @@
       return '<span class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="10" r="1.8"/><path d="M21 16l-5-5-9 9"/></svg><span>'+esc(name)+'</span></span>';
     }
     function reduceMotion(){ return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); }
-    function photosOf(p){
-      if(p.photos && p.photos.length) return p.photos.filter(Boolean);
-      return p.photo ? [p.photo] : [];
+    /* Photos come from config.js, unless a Google Sheet is set (gearOrder.photoSheet):
+       then any item with links in the Sheet shows those instead. See assets/gear-photos.js. */
+    function configPhotos(p){
+      var list = (p.photos && p.photos.length) ? p.photos.filter(Boolean) : (p.photo ? [p.photo] : []);
+      var names = colorsOf(p).map(function(c){ return c.name; });
+      var mapped = names.length > 0 && list.length === names.length;   /* one photo per color → show its name */
+      return list.map(function(src, i){ return { src:src, alt:'', color: mapped ? names[i] : '' }; });
+    }
+    function imgHTML(ph, p, inTrack){
+      return '<img loading="lazy" decoding="async" src="'+esc(ph.src)+'"'+(ph.alt?' data-alt="'+esc(ph.alt)+'"':'')+
+             ' alt="'+esc(p.name+(ph.color?' — '+ph.color:''))+'"'+(inTrack?'':' data-ph="'+esc(p.name)+'"')+'>';
     }
     /* apparel with several photos → an auto-scrolling color slideshow tile */
     function carouselHTML(p, photos){
-      var names = colorsOf(p).map(function(c){ return c.name; });
-      var mapped = names.length > 0 && photos.length === names.length;   /* one photo per color → show its name */
-      var imgs = photos.map(function(src){ return '<img loading="lazy" decoding="async" src="'+esc(src)+'" alt="'+esc(p.name)+'">'; }).join('');
+      var labeled = photos.some(function(ph){ return ph.color; });
+      var imgs = photos.map(function(ph){ return imgHTML(ph, p, true); }).join('');
       var dots = photos.map(function(_,i){ return '<i'+(i===0?' class="on"':'')+'></i>'; }).join('');
-      return '<span class="pcar" data-ph="'+esc(p.name)+'"'+(mapped?' data-colors="'+esc(names.join('|'))+'"':'')+'>'+
+      return '<span class="pcar" data-ph="'+esc(p.name)+'"'+(labeled?' data-colors="'+esc(photos.map(function(ph){ return ph.color; }).join('|'))+'"':'')+'>'+
                '<span class="ptrack">'+imgs+'</span>'+
                '<span class="pdots">'+dots+'</span>'+
-               (mapped?'<span class="pclabel">'+esc(names[0])+'</span>':'')+
+               (labeled?'<span class="pclabel">'+esc(photos[0].color)+'</span>':'')+
              '</span>';
     }
-    function mediaHTML(p){
-      var photos = photosOf(p);
+    function mediaHTML(p, photos){
       if(photos.length > 1) return carouselHTML(p, photos);
-      if(photos.length === 1) return '<img loading="lazy" decoding="async" src="'+esc(photos[0])+'" alt="'+esc(p.name)+'" data-ph="'+esc(p.name)+'">';
+      if(photos.length === 1) return imgHTML(photos[0], p, false);
       return phHTML(p.name);
     }
+
     S('addbar').innerHTML = products.map(function(p){
-      return '<button type="button" class="prod" data-add="'+esc(p.key)+'">'+mediaHTML(p)+
+      return '<button type="button" class="prod" data-add="'+esc(p.key)+'"><span class="ph wait"></span>'+
         '<span class="prow"><span class="pn">'+esc(p.name)+'</span><span class="pp">'+money(p.price)+'</span></span>'+
         '<span class="pa">＋ Add</span></button>';
     }).join('');
-    /* if a photo path is wrong or the image isn’t uploaded yet, fall back to the placeholder tile */
-    Array.prototype.forEach.call(S('addbar').querySelectorAll('img[data-ph]'), function(im){
-      im.addEventListener('error', function(){ im.outerHTML = phHTML(im.getAttribute('data-ph')); });
-    });
-    Array.prototype.forEach.call(S('addbar').querySelectorAll('.prod'), function(b){
+    var tiles = S('addbar').querySelectorAll('.prod');
+    Array.prototype.forEach.call(tiles, function(b){
       b.addEventListener('click', function(){ addItem(b.dataset.add); });
     });
 
-    /* gently auto-scroll each multi-photo tile through its colors */
-    function initCarousels(){
-      Array.prototype.forEach.call(S('addbar').querySelectorAll('.pcar'), function(car, ci){
-        var track = car.querySelector('.ptrack'), dotsWrap = car.querySelector('.pdots'), label = car.querySelector('.pclabel');
-        var names = (car.getAttribute('data-colors')||'').split('|').filter(Boolean);
-        var idx = 0;
-        function slides(){ return Array.prototype.slice.call(track.children); }
-        function show(i){
-          var n = slides().length; if(!n) return;
-          idx = (i%n+n)%n;
-          track.style.transform = 'translateX(-'+(idx*100)+'%)';
-          if(dotsWrap) Array.prototype.forEach.call(dotsWrap.children, function(d,di){ d.classList.toggle('on', di===idx); });
-          if(label){ if(names[idx]){ label.textContent = names[idx]; label.hidden = false; } else { label.hidden = true; } }
-        }
-        /* a color photo that isn't uploaded yet just drops out of the rotation */
-        slides().forEach(function(im){
-          im.addEventListener('error', function(){
-            var di = slides().indexOf(im);
-            if(im.parentNode) im.parentNode.removeChild(im);
-            if(dotsWrap && dotsWrap.children[di]) dotsWrap.removeChild(dotsWrap.children[di]);
-            if(names.length) names.splice(di,1);
-            if(!slides().length){ car.outerHTML = phHTML(car.getAttribute('data-ph')||''); return; }
-            show(idx >= slides().length ? slides().length-1 : idx);
-          });
+    /* a Drive photo gets a second route (Google's thumbnail server) before we give up on it.
+       Registered before the other error handlers so it can quietly take the first failure. */
+    function wireFallback(imgs){
+      Array.prototype.forEach.call(imgs, function(im){
+        im.addEventListener('error', function(e){
+          var alt = im.getAttribute('data-alt');
+          if(alt){ im.removeAttribute('data-alt'); e.stopImmediatePropagation(); im.src = alt; }
         });
-        show(0);
-        if(slides().length > 1 && !reduceMotion()){
-          setTimeout(function(){ car._t = setInterval(function(){ show(idx+1); }, 2400); }, ci*500);   /* stagger so tiles don't flip in unison */
-        }
       });
     }
-    initCarousels();
+
+    /* gently auto-scroll a multi-photo tile through its colors */
+    function initCarousel(car, ci){
+      var track = car.querySelector('.ptrack'), dotsWrap = car.querySelector('.pdots'), label = car.querySelector('.pclabel');
+      var names = (car.getAttribute('data-colors')||'').split('|');
+      var idx = 0;
+      function slides(){ return Array.prototype.slice.call(track.children); }
+      function show(i){
+        var n = slides().length; if(!n) return;
+        idx = (i%n+n)%n;
+        track.style.transform = 'translateX(-'+(idx*100)+'%)';
+        if(dotsWrap) Array.prototype.forEach.call(dotsWrap.children, function(d,di){ d.classList.toggle('on', di===idx); });
+        if(label){ if(names[idx]){ label.textContent = names[idx]; label.hidden = false; } else { label.hidden = true; } }
+      }
+      /* a color photo that can't load just drops out of the rotation */
+      slides().forEach(function(im){
+        im.addEventListener('error', function(){
+          var di = slides().indexOf(im);
+          if(im.parentNode) im.parentNode.removeChild(im);
+          if(dotsWrap && dotsWrap.children[di]) dotsWrap.removeChild(dotsWrap.children[di]);
+          names.splice(di,1);
+          if(!slides().length){ clearInterval(car._t); car.outerHTML = phHTML(car.getAttribute('data-ph')||''); return; }
+          show(idx >= slides().length ? slides().length-1 : idx);
+        });
+      });
+      show(0);
+      if(slides().length > 1 && !reduceMotion()){
+        car._s = setTimeout(function(){ car._t = setInterval(function(){ show(idx+1); }, 2400); }, ci*500);   /* stagger so tiles don't flip in unison */
+      }
+    }
+
+    /* put a product's photos into its tile */
+    function setMedia(btn, p, photos, ci){
+      var old = btn.firstElementChild;
+      if(old){ clearTimeout(old._s); clearInterval(old._t); }
+      var tmp = document.createElement('span'); tmp.innerHTML = mediaHTML(p, photos);
+      var m = tmp.firstElementChild;
+      btn.replaceChild(m, old);
+      wireFallback(m.tagName === 'IMG' ? [m] : m.querySelectorAll('img[data-alt]'));
+      if(m.tagName === 'IMG') m.addEventListener('error', function(){ m.outerHTML = phHTML(p.name); });   /* wrong path / not uploaded yet */
+      else if(m.classList.contains('pcar')) initCarousel(m, ci);
+    }
+    function fillPhotos(rows){
+      products.forEach(function(p, i){
+        var fromSheet = rows ? WOSGearPhotos.photosFor(p, colorsOf(p), rows) : [];
+        setMedia(tiles[i], p, fromSheet.length ? fromSheet : configPhotos(p), i);
+      });
+    }
+    if(window.WOSGearPhotos && WOSGearPhotos.csvUrl(G.photoSheet)) WOSGearPhotos.load(C, fillPhotos);
+    else fillPhotos(null);
 
     function surcharge(size){ var m=/\+\$(\d+)/.exec(size||''); return m?+m[1]:0; }
     function priceOf(it){ var p=prod(it.key); return (p?p.price:0) + surcharge(it.size); }

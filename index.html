@@ -46,6 +46,7 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
 <script src="/assets/pwa.js" defer></script>
 <link rel="stylesheet" href="/assets/site.css">
 <script src="/config.js"></script>
+<script src="/assets/gear-photos.js"></script>
 <script>
   (function(){ var W=window.WOS||{}, c=W.colors||{}, r=document.documentElement.style;
     for(var k in c){ r.setProperty('--'+k, c[k]); }
@@ -786,6 +787,16 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
     try{ if(sessionStorage.getItem('wos_gear_promo')) return; }catch(e){}
     var img=(C.gearOrder && C.gearOrder.shirtPhoto) || C.shirt;
     if(img) S('promo-img').src=img;
+    /* a T-shirt photo in the gear photo Sheet takes over (it loads before the popup opens) */
+    if(window.WOSGearPhotos && C.gearOrder) WOSGearPhotos.load(C, function(rows){
+      var tee = (C.gearOrder.products||[]).filter(function(p){ return p.key==='tshirt'; })[0];
+      var ph = tee && WOSGearPhotos.photosFor(tee, tee.colors || C.gearOrder.colors, rows)[0];
+      if(!ph) return;
+      var im = S('promo-img');
+      var backups = [ph.alt, img].filter(Boolean);   /* Google's second route, then config's photo */
+      im.onerror = function(){ var next = backups.shift(); if(next) im.src = next; else im.onerror = null; };
+      im.src = ph.src;
+    });
     setTimeout(function(){ p.hidden=false; requestAnimationFrame(function(){ p.classList.add('open'); }); }, 1600);
     function done(){ p.classList.remove('open'); setTimeout(function(){ p.hidden=true; }, 260); try{ sessionStorage.setItem('wos_gear_promo','1'); }catch(e){} }
     S('promo-x').onclick=done; S('promo-no').onclick=done;
