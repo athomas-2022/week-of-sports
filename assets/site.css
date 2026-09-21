@@ -149,7 +149,9 @@ h1 .yr{color:var(--sky);white-space:nowrap}
 
 /* ---------- GAME DAY ---------- */
 .gameday{background:var(--navy);padding:96px 0}
-.games{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:40px}
+/* flex, not grid: an uneven lineup (5 games) centres its last row instead of leaving an empty slot */
+.games{display:flex;flex-wrap:wrap;justify-content:center;gap:20px;margin-bottom:40px}
+.games>.game{flex:0 0 calc((100% - 40px) / 3);min-width:0}
 .game{background:linear-gradient(180deg,var(--navy2),rgba(14,47,84,.4));border:1px solid var(--line);border-radius:16px;padding:30px 26px;transition:transform .2s,border-color .2s}
 .game:hover{transform:translateY(-6px);border-color:var(--sky)}
 .game .time{font-family:'Oswald',system-ui,sans-serif;font-weight:700;font-size:40px;color:var(--sky);line-height:1}
@@ -405,7 +407,7 @@ footer img{height:46px;margin-bottom:14px}
   .hero-grid{grid-template-columns:1fr;gap:30px;padding:110px 0 64px}
   .cause-grid,.gear-grid{grid-template-columns:1fr;gap:32px;text-align:center}
   .gear-grid .gear-copy{order:2} .price-chips{margin-inline:auto}
-  .games{grid-template-columns:1fr} .grid{columns:3} .sgrid{grid-template-columns:repeat(3,1fr)}
+  .games>.game{flex-basis:100%} .grid{columns:3} .sgrid{grid-template-columns:repeat(3,1fr)}
   .crest-card,.cause-photo-card{max-width:340px;margin:0 auto}
   .baskets{grid-template-columns:repeat(2,1fr)}
 }
@@ -427,7 +429,7 @@ footer img{height:46px;margin-bottom:14px}
   .sec-sub{font-size:15px;margin-bottom:14px}
   .sec-h{font-size:clamp(28px,7vw,44px);margin-bottom:4px}
   /* game-day schedule: two cards per row and more compact, instead of six tall rows */
-  .games{grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:24px}
+  .games{gap:12px;margin-bottom:24px} .games>.game{flex-basis:calc((100% - 12px) / 2)}
   .game{padding:16px 14px}
   .game .time{font-size:30px}
   .game .time.time-word{font-size:14px;padding:8px 0 9px}

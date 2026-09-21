@@ -166,7 +166,7 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
 <section class="gameday on-dark" id="gameday">
   <div class="wrap">
     <div class="sec-eyebrow" id="gd-eyebrow">Saturday · game day</div>
-    <h2 class="sec-h">Six games. One gym. All heart.</h2>
+    <h2 class="sec-h" id="gd-head">Five games. One gym. All heart.</h2>
     <p class="sec-sub">Come for the Student vs Staff showdown, stay for the Eagles. Free to attend — powered by gear, raffles, and the donation challenge.</p>
     <div class="games" id="games"></div>
     <div class="gd-meta">
@@ -433,7 +433,13 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
        simply follows another doesn't need an invented start time */
     var word = !/\d/.test(g.time||'');
     return '<div class="game"><div class="time'+(word?' time-word':'')+'">'+g.time+'</div><div class="gt">'+g.title+'</div><div class="gs">'+(g.sub||'')+'</div></div>';
-  }).join('') : '<div class="game" style="grid-column:1/-1;text-align:center"><div class="gt">Schedule coming soon</div><div class="gs">Game-day times will be announced closer to the event.</div></div>';
+  }).join('') : '<div class="game" style="flex-basis:100%;text-align:center"><div class="gt">Schedule coming soon</div><div class="gs">Game-day times will be announced closer to the event.</div></div>';
+  /* headline counts the lineup, so adding or dropping a game in config.js can't leave it saying the wrong number */
+  (function(){
+    var n = (C.gameDayEvents||[]).length;
+    var w = ['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten'][n];
+    if(w) S('gd-head').textContent = w + (n===1 ? ' game' : ' games') + '. One gym. All heart.';
+  })();
 
   /* ---- add to calendar + directions ---- */
   (function(){

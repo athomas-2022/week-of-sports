@@ -106,14 +106,15 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:wos2627-gameday@weekofsports.com
-DTSTAMP:20260726T120000Z
+DTSTAMP:20260921T133049Z
+LAST-MODIFIED:20260921T133049Z
+SEQUENCE:1
 DTSTART;TZID=America/New_York:20270109T120000
 DTEND;TZID=America/New_York:20270109T210000
 SUMMARY:Week of Sports - Event / Basketball Game
-DESCRIPTION:12:00pm JV Girls Basketball Game\nVarsity Girls Basketball Ga
- me following\n4:45pm JVB Boys Basketball Game\nJVA Boys Basketball Game 
- following\nVarsity Boys Basketball Game following\nStudent v Staff Game 
- following
+DESCRIPTION:12:00pm JV Girls Basketball Game\nVarsity Girls Basketball Game
+  following\n5:00pm JV Boys Basketball Game\nVarsity Boys Basketball Game f
+ ollowing\nStudent v Staff Game following
 LOCATION:Liberty-Benton High School\, Findlay\, OH
 URL:https://weekofsports.com/
 END:VEVENT

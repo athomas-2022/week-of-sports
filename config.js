@@ -74,9 +74,8 @@ window.WOS = {
   gameDayEvents: [
     { time: "12:00pm", title: "JV Girls",        sub: "Girls session tips off" },
     { time: "Next",    title: "Varsity Girls",   sub: "Follows the JV girls game" },
-    { time: "4:45pm",  title: "JVB Boys",        sub: "Boys session tips off" },
-    { time: "Next",    title: "JVA Boys",        sub: "Follows the JVB boys game" },
-    { time: "Next",    title: "Varsity Boys",    sub: "Follows the JVA boys game" },
+    { time: "5:00pm",  title: "JV Boys",         sub: "Boys session tips off" },
+    { time: "Next",    title: "Varsity Boys",    sub: "Follows the JV boys game" },
     { time: "Next",    title: "Student v Staff", sub: "Follows the varsity boys game" }
   ],
 
