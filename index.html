@@ -567,7 +567,8 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
   Challenge.init();
 
   /* ---- spirit week (highlight today) or coming soon ---- */
-  var todayStr = new Date().toISOString().slice(0,10);
+  /* the viewer's own date: toISOString() is UTC, which in Ohio rolls over to "tomorrow" at 7-8pm */
+  var now = new Date(), todayStr = now.getFullYear()+'-'+('0'+(now.getMonth()+1)).slice(-2)+'-'+('0'+now.getDate()).slice(-2);
   S('days').innerHTML = (C.spiritWeek||[]).length ? (C.spiritWeek).map(function(s,i){
     var isToday = s.date===todayStr;
     var badge = isToday ? 'Today' : new Date(s.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});

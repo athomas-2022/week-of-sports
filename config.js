@@ -80,7 +80,13 @@ window.WOS = {
   ],
 
   /* ---------- spirit week (add this year's dates + themes when set; empty = "coming soon") ---------- */
-  spiritWeek: [],
+  spiritWeek: [
+    { date: "2027-01-04", day: "Monday",    theme: "Pajama Day" },
+    { date: "2027-01-05", day: "Tuesday",   theme: "Week of Sports Gear Day" },
+    { date: "2027-01-06", day: "Wednesday", theme: "Hat Day" },
+    { date: "2027-01-07", day: "Thursday",  theme: "Jersey Day" },
+    { date: "2027-01-08", day: "Friday",    theme: "LB Spirit Day" }
+  ],
 
   /* ---------- the cause ---------- */
   cause: {
