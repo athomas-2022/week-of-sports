@@ -165,6 +165,11 @@ window.WOS = {
   /* ---------- gear order page (/gear) — submits straight into your Google Sheet ----------
      orderEndpoint = the Apps Script web-app URL bound to the "Week of Sports 2026 Orders"
      sheet (athomas@liberty-benton.org). Orders append as rows there. */
+  /* ORGANIZER ORDERS PAGE (weekofsports.com/orders), password-protected.
+     Paste the Web app URL of the "Orders API" Apps Script between the quotes. That script
+     checks the password on Google's side, so the password never appears on the website. */
+  ordersApiUrl: "",
+
   gearOrder: {
     orderEndpoint: "https://script.google.com/macros/s/AKfycbwv2GFGDBbg1N4RU9CzNQyGK6316Qz7tlMjatnxHj9ctymETVc5gXAgrw12OuT9SuK-kQ/exec",
     formAction: "https://docs.google.com/forms/d/e/1FAIpQLSczCeztwhRGkF1yNF-_s5qwtswnmxbeR5XegwyNtJyx8PqkNg/formResponse",  /* legacy Google Form — no longer used */
