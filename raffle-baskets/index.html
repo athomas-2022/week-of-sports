@@ -52,7 +52,8 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
     <div class="wrap">
       <div class="baskets" id="baskets"></div>
       <p class="note" id="raffle-note"></p>
-      <div class="center-cta"><button class="btn btn-primary" onclick="openVenmo()">Buy tickets via Venmo</button></div>
+      <!-- Raffle tickets are sold in person only (where/when is the raffleNote in config.js), so no online buy button -->
+      <div class="center-cta"><a class="btn btn-primary" href="/#gameday">See the Game Day schedule</a></div>
     </div>
   </section>
 </main>
