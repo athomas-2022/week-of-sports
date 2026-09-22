@@ -136,7 +136,7 @@ window.WOS = {
 
   /* ---------- raffle baskets (add this year's baskets when announced; empty = "coming soon") ---------- */
   raffleBaskets: [],
-  raffleNote: "Raffle tickets are sold in person only, at Game Day on Saturday, January 9, at Liberty-Benton High School.",   /* shown under the baskets on the raffle page */
+  raffleNote: "Raffle tickets are sold in person only, at Game Day on Saturday, January 9, at Liberty-Benton High School. You don't need to be present for the drawing to win.",   /* shown under the baskets on the raffle page */
 
   /* ---------- volunteer ---------- */
   volunteerUrl:  "https://docs.google.com/spreadsheets/d/1GHON5g2QmFFZ7DXIFw4bid8InBzlzmE4Jw2GdTTLgUg/edit?usp=sharing",  /* real volunteer sign-up sheet */
