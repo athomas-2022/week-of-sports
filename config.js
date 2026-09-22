@@ -168,7 +168,7 @@ window.WOS = {
   /* ORGANIZER ORDERS PAGE (weekofsports.com/orders), password-protected.
      Paste the Web app URL of the "Orders API" Apps Script between the quotes. That script
      checks the password on Google's side, so the password never appears on the website. */
-  ordersApiUrl: "",
+  ordersApiUrl: "https://script.google.com/macros/s/AKfycbyNxc1US9SYZOXYf0tM0osk7D2QHKHv6j8LeJbkjmJZifTpEkmCCtOIIYkvU7LQWx56/exec",
 
   gearOrder: {
     orderEndpoint: "https://script.google.com/macros/s/AKfycbwv2GFGDBbg1N4RU9CzNQyGK6316Qz7tlMjatnxHj9ctymETVc5gXAgrw12OuT9SuK-kQ/exec",
