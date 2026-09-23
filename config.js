@@ -186,9 +186,9 @@ window.WOS = {
        The folder must be shared as "Anyone with the link" for the website to see it. */
     photoSheet: "https://docs.google.com/spreadsheets/d/1Y0tK0BeDAVSQnjR8WhuGItfU7msqOIgiNM-w3pwYhMc/edit",
     colors: [                                 /* default color choices for apparel (any product without its own "colors" list uses these) */
-      { name: "Blue", hex: "#2f74d0" },
-      { name: "Red",  hex: "#c8202f" },
-      { name: "Grey", hex: "#9aa3ad" }
+      { name: "Blue",  hex: "#2f74d0" },
+      { name: "Black", hex: "#141414" },
+      { name: "Gray",  hex: "#9aa3ad" }
     ],
 
     /* ---------- THIS YEAR'S PRODUCTS ----------
@@ -200,23 +200,23 @@ window.WOS = {
                    image in /assets and put its path here. No photo yet = a tidy
                    placeholder tile shows until you add one.
          photos  – (optional) SEVERAL picture paths, one per color, in the same order as
-                   the colors below (Blue, Red, Grey). The tile auto-scrolls through them
+                   the colors below (Blue, Black, Gray). The tile auto-scrolls through them
                    so shoppers see every color, with the color name shown. Use this
                    instead of "photo" for apparel once you have a shot of each color, e.g.
-                   photos: ["/assets/tshirt-blue.jpg","/assets/tshirt-red.jpg","/assets/tshirt-grey.jpg"]
+                   photos: ["/assets/tshirt-blue.jpg","/assets/tshirt-black.jpg","/assets/tshirt-gray.jpg"]
          sizes   – (optional) list of sizes. Leave it off for one-size items (hat,
                    beanie, sticker). A size like "2XL (+$1.00)" adds that surcharge.
          colors  – (optional) list of {name,hex}. Leave it off to use the default
                    colors above; use  colors: []  for an item with no color choice. */
     products: [
       { key: "tshirt",     name: "T-Shirt",     price: 15,
-        photos: ["/assets/product-shirt.jpg"],   /* one per color → ["/assets/tshirt-blue.jpg","/assets/tshirt-red.jpg","/assets/tshirt-grey.jpg"] */
+        photos: ["/assets/product-shirt.jpg"],   /* one per color (Blue, Black, Gray) → ["/assets/tshirt-blue.jpg","/assets/tshirt-black.jpg","/assets/tshirt-gray.jpg"] */
         sizes: ["Youth XS","Youth S","Youth M","Youth L","Youth XL","S","M","L","XL","2XL (+$1.00)","3XL (+$2.00)","4XL (+$4.00)","5XL (+$6.00)"] },
       { key: "longsleeve", name: "Long Sleeve", price: 18,
-        /* photos: ["/assets/longsleeve-blue.jpg","/assets/longsleeve-red.jpg","/assets/longsleeve-grey.jpg"], */
+        /* photos: ["/assets/longsleeve-blue.jpg","/assets/longsleeve-black.jpg","/assets/longsleeve-gray.jpg"], */
         sizes: ["Youth XS","Youth S","Youth M","Youth L","Youth XL","S","M","L","XL","2XL (+$1.00)","3XL (+$2.00)","4XL (+$4.00)","5XL (+$6.00)"] },
       { key: "hoodie",     name: "Hoodie",      price: 30,
-        photos: ["/assets/product-hoodie.jpg"],  /* one per color → ["/assets/hoodie-blue.jpg","/assets/hoodie-red.jpg","/assets/hoodie-grey.jpg"] */
+        photos: ["/assets/product-hoodie.jpg"],  /* one per color → ["/assets/hoodie-blue.jpg","/assets/hoodie-black.jpg","/assets/hoodie-gray.jpg"] */
         sizes: ["Youth L","Youth XL","S","M","L","XL","2XL (+$1.00)","3XL (+$2.00)","4XL (+$3.00)"] },
       { key: "beanie",     name: "Beanie",      price: 20, colors: [] },
       { key: "hat",        name: "Hat",         price: 25, colors: [] },
