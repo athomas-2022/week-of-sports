@@ -182,18 +182,22 @@
     .rc-page:last-child{page-break-after:auto}
     .rc-page .receipt{max-width:100%;margin:0;border:1px solid #cbd5e6;border-radius:10px;break-inside:avoid;page-break-inside:avoid}
     /* compact so six fit cleanly on one sheet */
-    .rc-page .r-head{padding:8px 11px}
-    .rc-page .r-org{font-size:15px}
-    .rc-page .r-sub{font-size:8px;margin-top:3px}
-    .rc-page .r-body{padding:9px 11px}
-    .rc-page .r-meta{gap:2px;margin-bottom:8px}
-    .rc-page .rm{font-size:10px}
-    .rc-page .rm span{font-size:8px}
-    .rc-page .r-list{padding:7px 0}
-    .rc-page .r-list li{font-size:10px;padding:1px 0}
-    .rc-page .r-total{font-size:13px;padding-top:7px}
-    .rc-page .r-stamp{font-size:10px;padding:5px;margin-top:7px}
-    .rc-page .r-note{font-size:8px;margin-top:6px;line-height:1.45}
+    .rc-page .r-head{padding:6px 10px}
+    .rc-page .r-org{font-size:13.5px}
+    .rc-page .r-sub{font-size:7.5px;margin-top:2px}
+    .rc-page .r-body{padding:8px 10px}
+    .rc-page .r-meta{gap:1px;margin-bottom:6px}
+    .rc-page .rm{font-size:9px}
+    .rc-page .rm span{font-size:7.5px}
+    .rc-page .r-list{padding:6px 0}
+    .rc-page .r-list li{font-size:9px;padding:0}
+    .rc-page .r-total{font-size:12px;padding-top:6px}
+    .rc-page .r-stamp{font-size:9px;padding:4px;margin-top:6px}
+    .rc-page .r-note{font-size:7.5px;margin-top:5px;line-height:1.4}
+    /* a big order (8+ items) lists in two columns, so it stays the height of a normal
+       receipt and six still fit. Sizes above are tuned so even six six-item orders fit. */
+    .rc-page .r-list:has(li:nth-child(8)){column-count:2;column-gap:11px}
+    .rc-page .r-list:has(li:nth-child(8)) li{font-size:8.5px;break-inside:avoid}
   }
 
   footer{color:var(--muted);font-size:12.5px;text-align:center;padding:26px 22px 34px;line-height:1.6}
