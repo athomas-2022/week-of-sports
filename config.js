@@ -177,12 +177,25 @@ window.WOS = {
     orderingOpen: false,                    /* false = people can BROWSE the gear but can't place an order yet. Set to true to open ordering. */
     orderingClosedMsg: "ordering opens Oct 25. Browse this year's gear until then.",   /* shown after "Preview —", so start it lowercase. Update the date if opening day moves. */
     maxPerType: 0,                          /* max shirts (and, separately, max hoodies) per order; 0 = no limit */
-    shirtPhoto:  "/assets/gear/tshirt-blue-f-popup.jpg",   /* the homepage gear popup's photo (a larger copy of the first T-shirt photo) */
+    /* HOMEPAGE "GRAB YOUR GEAR" POPUP — scrolls through these photos in this order:
+       one of each item, alternating the two models, ending on the sticker on the cup.
+       The -popup copies are 1000×667 so they stay sharp at the popup's larger size.
+       Remove a line to drop a photo; one photo = no scrolling. */
+    promoPhotos: [
+      "/assets/gear/tshirt-blue-f-popup.jpg",
+      "/assets/gear/hoodie-black-m-popup.jpg",
+      "/assets/gear/longsleeve-gray-f-popup.jpg",
+      "/assets/gear/hat-m-popup.jpg",
+      "/assets/gear/beanie-f-popup.jpg",
+      "/assets/gear/sticker-tumbler-popup.jpg"
+    ],
+    shirtPhoto:  "/assets/gear/tshirt-blue-f-popup.jpg",   /* popup photo if promoPhotos above is empty */
     hoodiePhoto: "/assets/product-hoodie.jpg",
     /* GEAR PHOTOS FROM YOUR PHONE — no code needed. Put photos in the Google Drive folder
        "Week of Sports — Gear Photos", then paste each photo's link into the Google Sheet
-       below (it's in that same folder). The gear page and the homepage popup use those
-       photos within a minute. Blank rows keep the photos listed further down in this file.
+       below (it's in that same folder). The gear page uses those photos within a minute
+       (the homepage popup uses promoPhotos above). Blank rows keep the photos listed
+       further down in this file.
        The folder must be shared as "Anyone with the link" for the website to see it. */
     photoSheet: "https://docs.google.com/spreadsheets/d/1Y0tK0BeDAVSQnjR8WhuGItfU7msqOIgiNM-w3pwYhMc/edit",
     colors: [                                 /* default color choices for apparel (any product without its own "colors" list uses these) */
