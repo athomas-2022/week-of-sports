@@ -5,7 +5,7 @@
    cached copy when the device is offline. This avoids serving stale pages. */
 /* Bump this whenever an asset is replaced under the same filename: the old
    cache is deleted on activate, so installed phones can't keep serving it. */
-var CACHE = 'wos-v2';
+var CACHE = 'wos-v3';
 var CORE = [
   '/', '/index.html', '/config.js',
   '/assets/site.css', '/assets/page.js',
@@ -29,9 +29,15 @@ self.addEventListener('activate', function (e) {
 self.addEventListener('fetch', function (e) {
   var req = e.request;
   if (req.method !== 'GET') return;
-  if (new URL(req.url).origin !== self.location.origin) return; // ignore Google/YouTube/etc.
+  var url = new URL(req.url);
+  if (url.origin !== self.location.origin) return; // ignore Google/YouTube/etc.
+  /* GitHub Pages lets browsers reuse a file for 10 minutes, so a plain fetch() could still
+     hand back the old page after an update. Pages, scripts, styles and the calendar check
+     with the server every time instead: a tiny "not modified" when nothing changed, the new
+     file when something did. Images keep the normal cache. */
+  var fresh = req.mode === 'navigate' || /\.(js|css|ics|json)$/.test(url.pathname);
   e.respondWith(
-    fetch(req).then(function (res) {
+    fetch(req, fresh ? { cache: 'no-cache' } : undefined).then(function (res) {
       /* Only whole, successful, same-origin responses are cacheable. cache.put()
          rejects on a 206 (the hero video's range requests) and can reject when the
          phone is out of storage — either way, never let that break the page. */
