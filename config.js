@@ -189,6 +189,7 @@ window.WOS = {
       "/assets/gear/beanie-f-popup.jpg",
       "/assets/gear/sticker-tumbler-popup.jpg"
     ],
+    promoSecondsPerPhoto: 1.6,   /* how long each popup photo shows before sliding to the next (smaller = faster) */
     shirtPhoto:  "/assets/gear/tshirt-blue-f-popup.jpg",   /* popup photo if promoPhotos above is empty */
     hoodiePhoto: "/assets/product-hoodie.jpg",
     /* GEAR PHOTOS FROM YOUR PHONE — no code needed. Put photos in the Google Drive folder

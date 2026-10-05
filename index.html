@@ -810,7 +810,8 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
     }); });
     paintDots();
     var still = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-    function startScroll(){ if(!still && !timer && slides().length>1) timer=setInterval(function(){ show(idx+1); }, 2600); }
+    var every = Math.max(0.8, +G.promoSecondsPerPhoto || 2.6) * 1000;   /* never faster than the slide itself */
+    function startScroll(){ if(!still && !timer && slides().length>1) timer=setInterval(function(){ show(idx+1); }, every); }
     setTimeout(function(){ p.hidden=false; requestAnimationFrame(function(){ p.classList.add('open'); startScroll(); }); }, 1600);
     function done(){ clearInterval(timer); timer=null; p.classList.remove('open'); setTimeout(function(){ p.hidden=true; }, 260); try{ sessionStorage.setItem('wos_gear_promo','1'); }catch(e){} }
     S('promo-x').onclick=done; S('promo-no').onclick=done;
