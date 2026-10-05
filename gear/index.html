@@ -55,15 +55,14 @@
   .o-total b.bump{display:inline-block;animation:total-bump .42s ease-out}
   .prod>img,.prod>.ph,.prod>.pcar{width:100%;height:130px;border-radius:10px;margin-bottom:12px;display:block;background:#eef2f8}
   .prod>img{object-fit:cover;object-position:center 26%}
-  /* color carousel: apparel tiles auto-scroll through one photo per color */
-  .prod>.pcar{position:relative;overflow:hidden}
+  /* photo carousel: still until hovered (mouse) or swiped sideways (touch); pan-y keeps page scrolling */
+  .prod>.pcar{position:relative;overflow:hidden;touch-action:pan-y}
   .pcar .ptrack{display:flex;width:100%;height:100%;transition:transform .6s cubic-bezier(.22,.61,.36,1)}
   .pcar .ptrack img{flex:0 0 100%;width:100%;height:100%;object-fit:cover;object-position:center 26%;display:block;margin:0;border-radius:0}
-  .pcar .pdots{position:absolute;left:0;right:0;bottom:7px;display:flex;justify-content:center;gap:5px;pointer-events:none}
+  /* dots bottom-right: clear of the color tag (bottom-left) and off the faces in the hat and beanie shots */
+  .pcar .pdots{position:absolute;right:9px;bottom:7px;display:flex;gap:5px;pointer-events:none}
   .pcar .pdots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.55);box-shadow:0 0 0 1px rgba(10,35,66,.25)}
   .pcar .pdots i.on{background:#fff}
-  /* a tile with a color tag (bottom-left) keeps its dots bottom-right, so six dots can't run into it on a phone */
-  .pcar[data-colors] .pdots{left:auto;right:9px}
   .pcar .pclabel{position:absolute;left:8px;bottom:6px;font-family:'Oswald',system-ui,sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.05em;font-size:10px;line-height:1;color:#fff;background:rgba(10,35,66,.6);padding:4px 8px;border-radius:999px}
   @media (prefers-reduced-motion:reduce){.pcar .ptrack{transition:none}}
   /* tidy placeholder shown for products that don't have a photo yet */
@@ -272,7 +271,10 @@
     }).join('');
     var tiles = S('addbar').querySelectorAll('.prod');
     Array.prototype.forEach.call(tiles, function(b){
-      b.addEventListener('click', function(){ addItem(b.dataset.add); });
+      b.addEventListener('click', function(){
+        if(b._swipedAt && Date.now() - b._swipedAt < 600) return;   /* that tap ended a photo swipe, not an Add */
+        addItem(b.dataset.add);
+      });
     });
 
     /* a Drive photo gets a second route (Google's thumbnail server) before we give up on it.
@@ -286,8 +288,10 @@
       });
     }
 
-    /* gently auto-scroll a multi-photo tile through its colors */
-    function initCarousel(car, ci){
+    /* a multi-photo tile sits still until someone shows interest: hovering it with a mouse
+       flips through its photos, and on a phone a sideways swipe across the photo does.
+       (Every tile scrolling on its own all the time was distracting.) The dots show there's more. */
+    function initCarousel(car, tile){
       var track = car.querySelector('.ptrack'), dotsWrap = car.querySelector('.pdots'), label = car.querySelector('.pclabel');
       var names = (car.getAttribute('data-colors')||'').split('|');
       var idx = 0;
@@ -311,21 +315,43 @@
         });
       });
       show(0);
-      if(slides().length > 1 && !reduceMotion()){
-        car._s = setTimeout(function(){ car._t = setInterval(function(){ show(idx+1); }, 2400); }, ci*500);   /* stagger so tiles don't flip in unison */
+      if(slides().length < 2) return;
+
+      /* mouse: show the next photo right away, then keep flipping while the pointer stays.
+         Pointer events, not mouseenter, so a phone's tap can't start a loop that never ends. */
+      function stop(){ clearInterval(car._t); car._t = null; }
+      function enter(e){
+        if(e.pointerType !== 'mouse' || car._t || !car.isConnected) return;
+        show(idx+1);
+        car._t = setInterval(function(){ show(idx+1); }, 1100);
       }
+      /* touch: a mostly-sideways swipe of 28px+ moves one photo; vertical drags still scroll */
+      var sx = null, sy = 0;
+      function down(e){ if(e.pointerType !== 'mouse'){ sx = e.clientX; sy = e.clientY; } }
+      function up(e){
+        if(sx === null) return;
+        var dx = e.clientX - sx, dy = e.clientY - sy; sx = null;
+        if(Math.abs(dx) > 28 && Math.abs(dx) > Math.abs(dy) * 1.2){ show(idx + (dx < 0 ? 1 : -1)); tile._swipedAt = Date.now(); }
+      }
+      function cancel(){ sx = null; }
+      tile.addEventListener('pointerenter', enter);
+      tile.addEventListener('pointerleave', stop);
+      car.addEventListener('pointerdown', down);
+      car.addEventListener('pointerup', up);
+      car.addEventListener('pointercancel', cancel);
+      tile._carOff = function(){ stop(); tile.removeEventListener('pointerenter', enter); tile.removeEventListener('pointerleave', stop); };
     }
 
     /* put a product's photos into its tile */
     function setMedia(btn, p, photos, ci){
       var old = btn.firstElementChild;
-      if(old){ clearTimeout(old._s); clearInterval(old._t); }
+      if(btn._carOff){ btn._carOff(); btn._carOff = null; }   /* drop the old photos' hover/swipe handlers */
       var tmp = document.createElement('span'); tmp.innerHTML = mediaHTML(p, photos);
       var m = tmp.firstElementChild;
       btn.replaceChild(m, old);
       wireFallback(m.tagName === 'IMG' ? [m] : m.querySelectorAll('img[data-alt]'));
       if(m.tagName === 'IMG') m.addEventListener('error', function(){ m.outerHTML = phHTML(p.name); });   /* wrong path / not uploaded yet */
-      else if(m.classList.contains('pcar')) initCarousel(m, ci);
+      else if(m.classList.contains('pcar')) initCarousel(m, btn);
     }
     function fillPhotos(rows){
       products.forEach(function(p, i){
