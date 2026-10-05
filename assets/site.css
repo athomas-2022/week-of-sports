@@ -192,9 +192,12 @@ h1 .yr{color:var(--sky);white-space:nowrap}
 .center-cta{text-align:center;margin-top:46px}
 
 /* ---------- SPIRIT WEEK ---------- */
-.spirit{background:#fff;color:var(--ink);padding:96px 0}
+/* sits right under the white "Support the scholarship" section, so it takes the paper band
+   (and white cards) to read as its own section */
+.spirit{background:var(--paper);color:var(--ink);padding:96px 0}
 .days{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
 .day{background:var(--paper);border:1px solid #e3e9f1;border-radius:16px;padding:26px 18px;text-align:center;transition:transform .2s}
+.spirit .day{background:#fff}
 .day:hover{transform:translateY(-5px)}
 .day .dnum{width:42px;height:42px;border-radius:50%;background:#e7f0fc;color:var(--royal);font-family:'Oswald',system-ui,sans-serif;font-weight:700;font-size:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
 .day .dname{font-family:'Oswald',system-ui,sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#52617a;font-size:13px;margin-bottom:6px}
