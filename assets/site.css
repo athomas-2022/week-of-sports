@@ -382,7 +382,7 @@ footer img{height:46px;margin-bottom:14px}
 .lb-x{position:absolute;top:22px;right:26px;background:transparent;border:0;color:#fff;font-size:34px;cursor:pointer}
 
 /* ---------- SUBPAGES (slug pages) ---------- */
-.page-head{background:var(--navy);color:#fff;padding:150px 0 70px;text-align:center;position:relative;overflow:hidden}
+.page-head{background:var(--navy);color:#fff;padding:117px 0 70px;text-align:center;position:relative;overflow:hidden}
 .page-head::before{content:"";position:absolute;width:560px;height:560px;border-radius:50%;background:radial-gradient(circle,rgba(47,116,208,.22),transparent 70%);top:-200px;left:50%;transform:translateX(-50%)}
 .page-head .inner{position:relative;z-index:2}
 .page-head .eyebrow{color:var(--sky);text-align:center}
