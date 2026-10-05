@@ -62,6 +62,8 @@
   .pcar .pdots{position:absolute;left:0;right:0;bottom:7px;display:flex;justify-content:center;gap:5px;pointer-events:none}
   .pcar .pdots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.55);box-shadow:0 0 0 1px rgba(10,35,66,.25)}
   .pcar .pdots i.on{background:#fff}
+  /* a tile with a color tag (bottom-left) keeps its dots bottom-right, so six dots can't run into it on a phone */
+  .pcar[data-colors] .pdots{left:auto;right:9px}
   .pcar .pclabel{position:absolute;left:8px;bottom:6px;font-family:'Oswald',system-ui,sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.05em;font-size:10px;line-height:1;color:#fff;background:rgba(10,35,66,.6);padding:4px 8px;border-radius:999px}
   @media (prefers-reduced-motion:reduce){.pcar .ptrack{transition:none}}
   /* tidy placeholder shown for products that don't have a photo yet */
@@ -225,11 +227,22 @@
     function reduceMotion(){ return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); }
     /* Photos come from config.js, unless a Google Sheet is set (gearOrder.photoSheet):
        then any item with links in the Sheet shows those instead. See assets/gear-photos.js. */
+    /* the color named in a photo's file name, e.g. "tshirt-blue-f.jpg" → "Blue" */
+    function colorInFile(src, names){
+      var f = String(src).split('/').pop().toLowerCase().replace(/grey/g, 'gray');
+      for(var i=0; i<names.length; i++){
+        var n = names[i].toLowerCase().replace(/grey/g, 'gray').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        if(new RegExp('(^|[^a-z])'+n+'([^a-z]|$)').test(f)) return names[i];
+      }
+      return '';
+    }
     function configPhotos(p){
       var list = (p.photos && p.photos.length) ? p.photos.filter(Boolean) : (p.photo ? [p.photo] : []);
       var names = colorsOf(p).map(function(c){ return c.name; });
-      var mapped = names.length > 0 && list.length === names.length;   /* one photo per color → show its name */
-      return list.map(function(src, i){ return { src:src, alt:'', color: mapped ? names[i] : '' }; });
+      var named = list.map(function(src){ return colorInFile(src, names); });
+      var byFile = named.some(Boolean);                                   /* color in the file name → show it */
+      var mapped = !byFile && names.length > 0 && list.length === names.length;   /* else one photo per color, in order */
+      return list.map(function(src, i){ return { src:src, alt:'', color: byFile ? named[i] : (mapped ? names[i] : '') }; });
     }
     function imgHTML(ph, p, inTrack){
       return '<img loading="lazy" decoding="async" src="'+esc(ph.src)+'"'+(ph.alt?' data-alt="'+esc(ph.alt)+'"':'')+

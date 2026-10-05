@@ -177,7 +177,7 @@ window.WOS = {
     orderingOpen: false,                    /* false = people can BROWSE the gear but can't place an order yet. Set to true to open ordering. */
     orderingClosedMsg: "ordering opens Oct 25. Browse this year's gear until then.",   /* shown after "Preview —", so start it lowercase. Update the date if opening day moves. */
     maxPerType: 0,                          /* max shirts (and, separately, max hoodies) per order; 0 = no limit */
-    shirtPhoto:  "/assets/product-shirt.jpg",
+    shirtPhoto:  "/assets/gear/tshirt-blue-f-popup.jpg",   /* the homepage gear popup's photo (a larger copy of the first T-shirt photo) */
     hoodiePhoto: "/assets/product-hoodie.jpg",
     /* GEAR PHOTOS FROM YOUR PHONE — no code needed. Put photos in the Google Drive folder
        "Week of Sports — Gear Photos", then paste each photo's link into the Google Sheet
@@ -199,28 +199,35 @@ window.WOS = {
          photo   – (optional) ONE picture path, e.g. "/assets/product-hat.jpg". Drop the
                    image in /assets and put its path here. No photo yet = a tidy
                    placeholder tile shows until you add one.
-         photos  – (optional) SEVERAL picture paths, one per color, in the same order as
-                   the colors below (Blue, Black, Gray). The tile auto-scrolls through them
-                   so shoppers see every color, with the color name shown. Use this
-                   instead of "photo" for apparel once you have a shot of each color, e.g.
-                   photos: ["/assets/tshirt-blue.jpg","/assets/tshirt-black.jpg","/assets/tshirt-gray.jpg"]
+         photos  – (optional) SEVERAL picture paths. The tile auto-scrolls through them in
+                   the order listed. Put the color in the file name ("tshirt-blue-f.jpg")
+                   and the tile shows that color's name on the photo. Any number per
+                   color is fine. Gear photos live in /assets/gear, sized 720×480 (3:2).
          sizes   – (optional) list of sizes. Leave it off for one-size items (hat,
                    beanie, sticker). A size like "2XL (+$1.00)" adds that surcharge.
          colors  – (optional) list of {name,hex}. Leave it off to use the default
                    colors above; use  colors: []  for an item with no color choice. */
     products: [
+      /* photo order runs Blue, Black, Gray twice, alternating the two models, so the
+         first three slides already show every color.  -f = female model, -m = male model */
       { key: "tshirt",     name: "T-Shirt",     price: 15,
-        photos: ["/assets/product-shirt.jpg"],   /* one per color (Blue, Black, Gray) → ["/assets/tshirt-blue.jpg","/assets/tshirt-black.jpg","/assets/tshirt-gray.jpg"] */
+        photos: ["/assets/gear/tshirt-blue-f.jpg",  "/assets/gear/tshirt-black-m.jpg", "/assets/gear/tshirt-gray-f.jpg",
+                 "/assets/gear/tshirt-blue-m.jpg",  "/assets/gear/tshirt-black-f.jpg", "/assets/gear/tshirt-gray-m.jpg"],
         sizes: ["Youth XS","Youth S","Youth M","Youth L","Youth XL","S","M","L","XL","2XL (+$1.00)","3XL (+$2.00)","4XL (+$4.00)","5XL (+$6.00)"] },
       { key: "longsleeve", name: "Long Sleeve", price: 18,
-        /* photos: ["/assets/longsleeve-blue.jpg","/assets/longsleeve-black.jpg","/assets/longsleeve-gray.jpg"], */
+        photos: ["/assets/gear/longsleeve-blue-m.jpg", "/assets/gear/longsleeve-black-f.jpg", "/assets/gear/longsleeve-gray-m.jpg",
+                 "/assets/gear/longsleeve-blue-f.jpg", "/assets/gear/longsleeve-black-m.jpg", "/assets/gear/longsleeve-gray-f.jpg"],
         sizes: ["Youth XS","Youth S","Youth M","Youth L","Youth XL","S","M","L","XL","2XL (+$1.00)","3XL (+$2.00)","4XL (+$4.00)","5XL (+$6.00)"] },
       { key: "hoodie",     name: "Hoodie",      price: 30,
-        photos: ["/assets/product-hoodie.jpg"],  /* one per color → ["/assets/hoodie-blue.jpg","/assets/hoodie-black.jpg","/assets/hoodie-gray.jpg"] */
+        photos: ["/assets/gear/hoodie-blue-f.jpg",  "/assets/gear/hoodie-black-m.jpg", "/assets/gear/hoodie-gray-f.jpg",
+                 "/assets/gear/hoodie-blue-m.jpg",  "/assets/gear/hoodie-black-f.jpg", "/assets/gear/hoodie-gray-m.jpg"],
         sizes: ["Youth L","Youth XL","S","M","L","XL","2XL (+$1.00)","3XL (+$2.00)","4XL (+$3.00)"] },
-      { key: "beanie",     name: "Beanie",      price: 20, colors: [] },
-      { key: "hat",        name: "Hat",         price: 25, colors: [] },
-      { key: "sticker",    name: "Sticker",     price:  3, colors: [] }
+      { key: "beanie",     name: "Beanie",      price: 20, colors: [],
+        photos: ["/assets/gear/beanie-f.jpg", "/assets/gear/beanie-m.jpg"] },
+      { key: "hat",        name: "Hat",         price: 25, colors: [],
+        photos: ["/assets/gear/hat-m.jpg", "/assets/gear/hat-f.jpg", "/assets/gear/hat-m-back.jpg"] },
+      { key: "sticker",    name: "Sticker",     price:  3, colors: [],
+        photos: ["/assets/gear/sticker-laptop.jpg", "/assets/gear/sticker-tumbler.jpg"] }
     ],
     delivery: [
       "I will have my order dropped off in my homeroom (Elementary and Middle School)",
