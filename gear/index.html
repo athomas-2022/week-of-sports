@@ -57,7 +57,20 @@
   .prod>img{object-fit:cover;object-position:center 26%}
   /* photo carousel: tiles take turns scrolling, one at a time; hover (mouse) or a sideways swipe
      (touch) browses a tile. pan-y keeps vertical page scrolling working on phones. */
-  .prod>.pcar{position:relative;overflow:hidden;touch-action:pan-y}
+  .prod>.pcar{position:relative;overflow:hidden;touch-action:pan-y;-webkit-user-select:none;user-select:none}
+  .pcar .ptrack img{-webkit-user-drag:none;-webkit-touch-callout:none}
+  .pcar.dragging{cursor:grabbing}
+  /* ‹ › arrows: only for a mouse (hover), shown while pointing at the tile, hidden at either end */
+  .pcar .parr{position:absolute;top:50%;width:26px;height:26px;margin-top:-13px;border-radius:50%;display:none;align-items:center;justify-content:center;
+    background:rgba(255,255,255,.94);color:var(--navy);box-shadow:0 1px 5px rgba(10,35,66,.28);opacity:0;transition:opacity .2s;cursor:pointer}
+  .pcar .parr.prev{left:6px} .pcar .parr.prev svg{transform:scaleX(-1)}
+  .pcar .parr.next{right:6px}
+  @media (hover:hover) and (pointer:fine){
+    .pcar .parr{display:flex}
+    .prod:hover .pcar .parr{opacity:1}
+    .pcar .parr:hover{background:#fff;color:var(--royal)}
+  }
+  .pcar .parr[hidden]{display:none}
   .pcar .ptrack{display:flex;width:100%;height:100%;transition:transform .6s cubic-bezier(.22,.61,.36,1)}
   .pcar .ptrack img{flex:0 0 100%;width:100%;height:100%;object-fit:cover;object-position:center 26%;display:block;margin:0;border-radius:0}
   /* dots bottom-right: clear of the color tag (bottom-left) and off the faces in the hat and beanie shots */
@@ -245,16 +258,19 @@
       return list.map(function(src, i){ return { src:src, alt:'', color: byFile ? named[i] : (mapped ? names[i] : '') }; });
     }
     function imgHTML(ph, p, inTrack){
-      return '<img loading="lazy" decoding="async" src="'+esc(ph.src)+'"'+(ph.alt?' data-alt="'+esc(ph.alt)+'"':'')+
+      return '<img loading="lazy" decoding="async"'+(inTrack?' draggable="false"':'')+' src="'+esc(ph.src)+'"'+(ph.alt?' data-alt="'+esc(ph.alt)+'"':'')+
              ' alt="'+esc(p.name+(ph.color?' — '+ph.color:''))+'"'+(inTrack?'':' data-ph="'+esc(p.name)+'"')+'>';
     }
-    /* apparel with several photos → an auto-scrolling color slideshow tile */
+    /* a tile with several photos: a strip you can swipe or drag, with ‹ › on mouse hover */
+    var CHEV = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
     function carouselHTML(p, photos){
       var labeled = photos.some(function(ph){ return ph.color; });
       var imgs = photos.map(function(ph){ return imgHTML(ph, p, true); }).join('');
       var dots = photos.map(function(_,i){ return '<i'+(i===0?' class="on"':'')+'></i>'; }).join('');
       return '<span class="pcar" data-ph="'+esc(p.name)+'"'+(labeled?' data-colors="'+esc(photos.map(function(ph){ return ph.color; }).join('|'))+'"':'')+'>'+
                '<span class="ptrack">'+imgs+'</span>'+
+               '<span class="parr prev" aria-hidden="true" hidden>'+CHEV+'</span>'+
+               '<span class="parr next" aria-hidden="true">'+CHEV+'</span>'+
                '<span class="pdots">'+dots+'</span>'+
                (labeled?'<span class="pclabel">'+esc(photos[0].color)+'</span>':'')+
              '</span>';
@@ -289,21 +305,35 @@
       });
     }
 
-    /* one tile's photo strip. Three things can move it: the one-at-a-time sequence below,
-       a mouse hovering the tile, and a sideways swipe on a phone. All go through show()/step(),
-       so they share one position. car._ctl is the handle the sequence uses. */
-    var seqHold = { mouse: null, until: 0 };   /* what's pausing the sequence: a hovered tile, or a recent swipe */
+    /* one tile's photo strip. The one-at-a-time sequence below moves it on its own; a shopper
+       can browse it back and forth by dragging or swiping the photo, with the ‹ › arrows, a
+       trackpad's sideways swipe, or the arrow keys. Everything goes through show(), so they
+       share one position. car._ctl is the handle the sequence uses. */
+    var seqHold = { mouse: null, until: 0 };   /* what's pausing the sequence: a hovered tile, or recent browsing */
     function initCarousel(car, tile){
       var track = car.querySelector('.ptrack'), dotsWrap = car.querySelector('.pdots'), label = car.querySelector('.pclabel');
+      var prevA = car.querySelector('.parr.prev'), nextA = car.querySelector('.parr.next');
       var names = (car.getAttribute('data-colors')||'').split('|');
       var idx = 0;
       function slides(){ return Array.prototype.slice.call(track.querySelectorAll('img:not([data-clone])')); }
       function paint(){
         if(dotsWrap) Array.prototype.forEach.call(dotsWrap.children, function(d,di){ d.classList.toggle('on', di===idx); });
         if(label){ if(names[idx]){ label.textContent = names[idx]; label.hidden = false; } else { label.hidden = true; } }
+        var n = slides().length;
+        if(prevA) prevA.hidden = idx <= 0;
+        if(nextA) nextA.hidden = idx >= n - 1;
+      }
+      /* a forward wrap still in flight (strip parked on the copy of the first photo): finish it now */
+      function settle(){
+        if(car._wrapT == null) return;
+        clearTimeout(car._wrapT); car._wrapT = null;
+        track.style.transition = 'none';
+        track.style.transform = 'translateX(-'+(idx*100)+'%)';
+        void track.offsetWidth;
+        track.style.transition = '';
       }
       function show(i){
-        clearTimeout(car._wrapT);
+        settle();
         var n = slides().length; if(!n) return;
         idx = (i%n+n)%n;
         track.style.transform = 'translateX(-'+(idx*100)+'%)';
@@ -326,6 +356,7 @@
         track.style.transform = 'translateX(-'+(n*100)+'%)';
         clearTimeout(car._wrapT);
         car._wrapT = setTimeout(function(){
+          car._wrapT = null;
           track.style.transition = 'none';
           track.style.transform = 'translateX(0%)';
           void track.offsetWidth;                                  /* commit the jump before animations return */
@@ -350,34 +381,104 @@
                    eager: function(){ slides().forEach(function(im){ im.loading = 'eager'; }); } };
       if(slides().length < 2) return;
 
-      /* mouse: show the next photo right away, then keep flipping while the pointer stays.
-         Pointer events, not mouseenter, so a phone's tap can't start a loop that never ends. */
-      function stop(){ clearInterval(car._t); car._t = null; if(seqHold.mouse === tile) seqHold.mouse = null; }
-      function enter(e){
-        if(e.pointerType !== 'mouse' || car._t || !car.isConnected) return;
-        seqHold.mouse = tile;
-        step();
-        car._t = setInterval(step, 1100);
+      /* manual browsing stops at the first and last photo, and pauses the sequence 8s */
+      function go(i){
+        var n = slides().length; if(n < 2) return;
+        show(Math.max(0, Math.min(n - 1, i)));
+        seqHold.until = Date.now() + 8000;
       }
-      /* touch: a mostly-sideways swipe of 28px+ moves one photo; vertical drags still scroll */
-      var sx = null, sy = 0;
-      function down(e){ if(e.pointerType !== 'mouse'){ sx = e.clientX; sy = e.clientY; } }
-      function up(e){
-        if(sx === null) return;
-        var dx = e.clientX - sx, dy = e.clientY - sy; sx = null;
-        if(Math.abs(dx) > 28 && Math.abs(dx) > Math.abs(dy) * 1.2){
-          if(dx < 0) step(); else show(idx - 1);
-          tile._swipedAt = Date.now();
-          seqHold.until = Date.now() + 8000;                       /* let them look before the sequence moves on */
+
+      /* a mouse on the tile pauses the sequence, so the tile holds still while they browse it.
+         Pointer events, so a phone's tap never counts as a hover. */
+      function enter(e){ if(e.pointerType === 'mouse') seqHold.mouse = tile; }
+      function leave(){ if(seqHold.mouse === tile) seqHold.mouse = null; }
+
+      /* drag / swipe: the photo follows the finger (or mouse), then settles on the next or
+         previous photo if it moved a fifth of the way or was flicked; at either end it gives a
+         little and springs back. A plain tap or click still adds the item. pan-y in the CSS
+         leaves up-and-down scrolling to the page. */
+      var drag = null;
+      function down(e){
+        if(e.button > 0 || slides().length < 2) return;
+        /* a drag may start anywhere on the photo, the arrows included: a press there that
+           doesn't move is still an arrow click. For a mouse, no text selection or image drag. */
+        if(e.pointerType === 'mouse') e.preventDefault();
+        drag = { id: e.pointerId, x: e.clientX, y: e.clientY, dx: 0, vx: 0, lx: e.clientX, lt: e.timeStamp, on: false };
+      }
+      function move(e){
+        if(!drag || e.pointerId !== drag.id) return;
+        var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+        if(!drag.on){
+          if(Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx)){ drag = null; return; }   /* they're scrolling the page */
+          if(Math.abs(dx) < 8) return;                                     /* not a drag yet: could still be a click */
+          drag.on = true;
+          settle();
+          try{ car.setPointerCapture(e.pointerId); }catch(err){}
+          car.classList.add('dragging');
+          track.style.transition = 'none';
+          seqHold.until = Date.now() + 8000;
         }
+        var n = slides().length;
+        if((idx === 0 && dx > 0) || (idx === n - 1 && dx < 0)) dx *= 0.3;   /* the ends give a little */
+        var dt = Math.max(1, e.timeStamp - drag.lt);
+        drag.vx = (e.clientX - drag.lx) / dt; drag.lx = e.clientX; drag.lt = e.timeStamp;
+        drag.dx = dx;
+        track.style.transform = 'translateX(calc(-'+(idx*100)+'% + '+dx+'px))';
       }
-      function cancel(){ sx = null; }
+      function up(e){
+        if(!drag || e.pointerId !== drag.id) return;
+        var d = drag; drag = null;
+        if(!d.on) return;                                                  /* a tap or click: the Add goes ahead */
+        car.classList.remove('dragging');
+        track.style.transition = '';
+        try{ car.releasePointerCapture(e.pointerId); }catch(err){}
+        var w = car.clientWidth || 1;
+        var flick = Math.abs(d.vx) > 0.35 && Math.abs(d.dx) > 12;
+        var to = (Math.abs(d.dx) > w * 0.2 || flick) ? idx + (d.dx < 0 ? 1 : -1) : idx;
+        tile._swipedAt = Date.now();                                       /* the click this ends with isn't an Add */
+        go(to);
+      }
+      function cancel(e){
+        if(!drag || e.pointerId !== drag.id) return;
+        var d = drag; drag = null;
+        if(d.on){ car.classList.remove('dragging'); track.style.transition = ''; show(idx); }
+      }
+
+      /* ‹ › arrows (mouse only; the click must not also add the item) */
+      function arrow(dir){ return function(e){ e.stopPropagation(); e.preventDefault(); go(idx + dir); }; }
+      if(prevA) prevA.addEventListener('click', arrow(-1));
+      if(nextA) nextA.addEventListener('click', arrow(1));
+
+      /* trackpad: a two-finger sideways swipe moves one photo per gesture, and doesn't
+         trigger the browser's back/forward swipe; up-and-down scrolling is left alone */
+      var wAcc = 0, wLock = false, wEnd = null;
+      function wheel(e){
+        if(Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
+        e.preventDefault();
+        clearTimeout(wEnd); wEnd = setTimeout(function(){ wAcc = 0; wLock = false; }, 220);
+        if(wLock) return;
+        wAcc += e.deltaX;
+        if(Math.abs(wAcc) > 40){ go(idx + (wAcc > 0 ? 1 : -1)); wLock = true; wAcc = 0; }
+      }
+
+      /* keyboard: ← → browse the focused tile */
+      function key(e){
+        if(e.key === 'ArrowRight'){ go(idx + 1); e.preventDefault(); }
+        else if(e.key === 'ArrowLeft'){ go(idx - 1); e.preventDefault(); }
+      }
+
       tile.addEventListener('pointerenter', enter);
-      tile.addEventListener('pointerleave', stop);
+      tile.addEventListener('pointerleave', leave);
+      tile.addEventListener('keydown', key);
       car.addEventListener('pointerdown', down);
+      car.addEventListener('pointermove', move);
       car.addEventListener('pointerup', up);
       car.addEventListener('pointercancel', cancel);
-      tile._carOff = function(){ stop(); clearTimeout(car._wrapT); tile.removeEventListener('pointerenter', enter); tile.removeEventListener('pointerleave', stop); };
+      car.addEventListener('wheel', wheel, { passive: false });
+      tile._carOff = function(){
+        leave(); clearTimeout(car._wrapT); car._wrapT = null;
+        tile.removeEventListener('pointerenter', enter); tile.removeEventListener('pointerleave', leave); tile.removeEventListener('keydown', key);
+      };
     }
 
     /* ONE TILE AT A TIME: the first tile steps through every photo and settles back on its
