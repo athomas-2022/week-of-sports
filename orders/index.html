@@ -160,7 +160,9 @@
   .receipt .rm span{color:#52617a;font-family:'Oswald',system-ui,sans-serif;text-transform:uppercase;font-size:10.5px;letter-spacing:.06em}
   .receipt .rm b{color:#0c2240;text-align:right}
   .receipt .r-list{list-style:none;margin:0;padding:14px 0;border-top:1px solid #e3e9f1}
-  .receipt .r-list li{display:flex;justify-content:space-between;gap:12px;font-size:14.5px;padding:4px 0;color:#0c2240}
+  .receipt .r-list li{display:flex;justify-content:space-between;gap:12px;font-size:14.5px;padding:5px 0;color:#0c2240;
+    border-bottom:1px solid #edf1f6}   /* faint rule under each item, so the eye can follow it across to its ×count */
+  .receipt .r-list li:last-child{border-bottom:0}
   .receipt .r-list li .rq{color:#0c2240;font-weight:700;white-space:nowrap}   /* "×5": how many of that exact item */
   .receipt .r-total{display:flex;justify-content:space-between;border-top:2px solid #0a2342;padding-top:12px;font-family:'Oswald',system-ui,sans-serif;font-weight:700;font-size:20px;color:#0a2342}
   .receipt .r-stamp{margin-top:16px;text-align:center;font-family:'Oswald',system-ui,sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:15px;padding:11px;border-radius:10px}
@@ -190,14 +192,15 @@
     .rc-page .rm{font-size:9px}
     .rc-page .rm span{font-size:7.5px}
     .rc-page .r-list{padding:6px 0}
-    .rc-page .r-list li{font-size:9px;padding:0}
+    .rc-page .r-list li{font-size:9px;line-height:1.3;padding:0.5px 0;border-bottom-width:0.5px;border-bottom-color:#dde4ee}
     .rc-page .r-total{font-size:12px;padding-top:6px}
     .rc-page .r-stamp{font-size:9px;padding:4px;margin-top:6px}
     .rc-page .r-note{font-size:7.5px;margin-top:5px;line-height:1.4}
-    /* a big order (8+ items) lists in two columns, so it stays the height of a normal
-       receipt and six still fit. Sizes above are tuned so even six six-item orders fit. */
-    .rc-page .r-list:has(li:nth-child(8)){column-count:2;column-gap:11px}
-    .rc-page .r-list:has(li:nth-child(8)) li{font-size:8.5px;break-inside:avoid}
+    /* a bigger order (6+ different items) lists in two columns, so it stays the height of a
+       normal receipt and six still fit, with a faint rule under every item. Tested: six
+       15-line bulk receipts, and six of the tallest one-column receipt, each fit one sheet. */
+    .rc-page .r-list:has(li:nth-child(6)){column-count:2;column-gap:11px}
+    .rc-page .r-list:has(li:nth-child(6)) li{font-size:8.5px;break-inside:avoid}
   }
 
   footer{color:var(--muted);font-size:12.5px;text-align:center;padding:26px 22px 34px;line-height:1.6}
