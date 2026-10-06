@@ -55,7 +55,8 @@
   .o-total b.bump{display:inline-block;animation:total-bump .42s ease-out}
   .prod>img,.prod>.ph,.prod>.pcar{width:100%;height:130px;border-radius:10px;margin-bottom:12px;display:block;background:#eef2f8}
   .prod>img{object-fit:cover;object-position:center 26%}
-  /* photo carousel: still until hovered (mouse) or swiped sideways (touch); pan-y keeps page scrolling */
+  /* photo carousel: tiles take turns scrolling, one at a time; hover (mouse) or a sideways swipe
+     (touch) browses a tile. pan-y keeps vertical page scrolling working on phones. */
   .prod>.pcar{position:relative;overflow:hidden;touch-action:pan-y}
   .pcar .ptrack{display:flex;width:100%;height:100%;transition:transform .6s cubic-bezier(.22,.61,.36,1)}
   .pcar .ptrack img{flex:0 0 100%;width:100%;height:100%;object-fit:cover;object-position:center 26%;display:block;margin:0;border-radius:0}
@@ -288,42 +289,75 @@
       });
     }
 
-    /* a multi-photo tile sits still until someone shows interest: hovering it with a mouse
-       flips through its photos, and on a phone a sideways swipe across the photo does.
-       (Every tile scrolling on its own all the time was distracting.) The dots show there's more. */
+    /* one tile's photo strip. Three things can move it: the one-at-a-time sequence below,
+       a mouse hovering the tile, and a sideways swipe on a phone. All go through show()/step(),
+       so they share one position. car._ctl is the handle the sequence uses. */
+    var seqHold = { mouse: null, until: 0 };   /* what's pausing the sequence: a hovered tile, or a recent swipe */
     function initCarousel(car, tile){
       var track = car.querySelector('.ptrack'), dotsWrap = car.querySelector('.pdots'), label = car.querySelector('.pclabel');
       var names = (car.getAttribute('data-colors')||'').split('|');
       var idx = 0;
-      function slides(){ return Array.prototype.slice.call(track.children); }
+      function slides(){ return Array.prototype.slice.call(track.querySelectorAll('img:not([data-clone])')); }
+      function paint(){
+        if(dotsWrap) Array.prototype.forEach.call(dotsWrap.children, function(d,di){ d.classList.toggle('on', di===idx); });
+        if(label){ if(names[idx]){ label.textContent = names[idx]; label.hidden = false; } else { label.hidden = true; } }
+      }
       function show(i){
+        clearTimeout(car._wrapT);
         var n = slides().length; if(!n) return;
         idx = (i%n+n)%n;
         track.style.transform = 'translateX(-'+(idx*100)+'%)';
-        if(dotsWrap) Array.prototype.forEach.call(dotsWrap.children, function(d,di){ d.classList.toggle('on', di===idx); });
-        if(label){ if(names[idx]){ label.textContent = names[idx]; label.hidden = false; } else { label.hidden = true; } }
+        paint();
+      }
+      /* past the last photo, keep sliding forward onto a copy of the first, then swap to the
+         real first with no animation, instead of sweeping backwards across every photo */
+      function cloneFirst(){
+        var old = track.querySelector('[data-clone]'); if(old) old.parentNode.removeChild(old);
+        var first = slides()[0]; if(!first || slides().length < 2) return;
+        var c = first.cloneNode(); c.setAttribute('data-clone', ''); c.alt = ''; c.removeAttribute('data-alt');
+        c.addEventListener('error', function(){ if(c.parentNode) c.parentNode.removeChild(c); });
+        track.appendChild(c);
+      }
+      function step(){
+        var n = slides().length; if(n < 2) return;
+        if(idx + 1 < n){ show(idx + 1); return; }
+        if(reduceMotion() || !track.querySelector('[data-clone]')){ show(0); return; }
+        idx = 0; paint();
+        track.style.transform = 'translateX(-'+(n*100)+'%)';
+        clearTimeout(car._wrapT);
+        car._wrapT = setTimeout(function(){
+          track.style.transition = 'none';
+          track.style.transform = 'translateX(0%)';
+          void track.offsetWidth;                                  /* commit the jump before animations return */
+          track.style.transition = '';
+        }, 650);
       }
       /* a color photo that can't load just drops out of the rotation */
       slides().forEach(function(im){
         im.addEventListener('error', function(){
-          var di = slides().indexOf(im);
+          var di = slides().indexOf(im); if(di < 0) return;
           if(im.parentNode) im.parentNode.removeChild(im);
           if(dotsWrap && dotsWrap.children[di]) dotsWrap.removeChild(dotsWrap.children[di]);
           names.splice(di,1);
           if(!slides().length){ clearInterval(car._t); car.outerHTML = phHTML(car.getAttribute('data-ph')||''); return; }
+          if(di === 0) cloneFirst();
           show(idx >= slides().length ? slides().length-1 : idx);
         });
       });
+      cloneFirst();
       show(0);
+      car._ctl = { size: function(){ return slides().length; }, at: function(){ return idx; }, step: step, show: show,
+                   eager: function(){ slides().forEach(function(im){ im.loading = 'eager'; }); } };
       if(slides().length < 2) return;
 
       /* mouse: show the next photo right away, then keep flipping while the pointer stays.
          Pointer events, not mouseenter, so a phone's tap can't start a loop that never ends. */
-      function stop(){ clearInterval(car._t); car._t = null; }
+      function stop(){ clearInterval(car._t); car._t = null; if(seqHold.mouse === tile) seqHold.mouse = null; }
       function enter(e){
         if(e.pointerType !== 'mouse' || car._t || !car.isConnected) return;
-        show(idx+1);
-        car._t = setInterval(function(){ show(idx+1); }, 1100);
+        seqHold.mouse = tile;
+        step();
+        car._t = setInterval(step, 1100);
       }
       /* touch: a mostly-sideways swipe of 28px+ moves one photo; vertical drags still scroll */
       var sx = null, sy = 0;
@@ -331,7 +365,11 @@
       function up(e){
         if(sx === null) return;
         var dx = e.clientX - sx, dy = e.clientY - sy; sx = null;
-        if(Math.abs(dx) > 28 && Math.abs(dx) > Math.abs(dy) * 1.2){ show(idx + (dx < 0 ? 1 : -1)); tile._swipedAt = Date.now(); }
+        if(Math.abs(dx) > 28 && Math.abs(dx) > Math.abs(dy) * 1.2){
+          if(dx < 0) step(); else show(idx - 1);
+          tile._swipedAt = Date.now();
+          seqHold.until = Date.now() + 8000;                       /* let them look before the sequence moves on */
+        }
       }
       function cancel(){ sx = null; }
       tile.addEventListener('pointerenter', enter);
@@ -339,8 +377,35 @@
       car.addEventListener('pointerdown', down);
       car.addEventListener('pointerup', up);
       car.addEventListener('pointercancel', cancel);
-      tile._carOff = function(){ stop(); tile.removeEventListener('pointerenter', enter); tile.removeEventListener('pointerleave', stop); };
+      tile._carOff = function(){ stop(); clearTimeout(car._wrapT); tile.removeEventListener('pointerenter', enter); tile.removeEventListener('pointerleave', stop); };
     }
+
+    /* ONE TILE AT A TIME: the first tile steps through every photo and settles back on its
+       first, then the next tile does the same, and so on, looping. Starts once the tiles are
+       on screen; pauses while a mouse is on a tile, for 8s after a swipe, and while the tab or
+       the tiles are out of sight. Off for anyone whose device asks for reduced motion. */
+    (function(){
+      if(reduceMotion() || !window.IntersectionObserver) return;
+      var every = Math.max(0.8, +G.tileSecondsPerPhoto || 1.6) * 1000;
+      var cur = 0, onScreen = false, timer = null;
+      function cars(){
+        return Array.prototype.map.call(tiles, function(t){ var c = t.querySelector('.pcar'); return c && c._ctl && c._ctl.size() > 1 ? c : null; })
+          .filter(Boolean);
+      }
+      function tick(){
+        if(!onScreen || document.hidden || seqHold.mouse || Date.now() < seqHold.until) return;
+        var list = cars(); if(!list.length) return;
+        list.forEach(function(c){ c._ctl.eager(); });              /* load hidden photos before their turn (no-op once loaded) */
+        cur %= list.length;
+        var ctl = list[cur]._ctl;
+        if(ctl.at() + 1 >= ctl.size()) cur = (cur + 1) % list.length;   /* this step brings it home: next tile goes next */
+        ctl.step();
+      }
+      new IntersectionObserver(function(en){
+        onScreen = en[0].isIntersecting;
+        if(onScreen && !timer) timer = setInterval(tick, every);
+      }, { threshold: 0.35 }).observe(S('addbar'));
+    })();
 
     /* put a product's photos into its tile */
     function setMedia(btn, p, photos, ci){

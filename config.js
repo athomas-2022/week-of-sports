@@ -190,6 +190,7 @@ window.WOS = {
       "/assets/gear/sticker-tumbler-popup.jpg"
     ],
     promoSecondsPerPhoto: 1.6,   /* how long each popup photo shows before sliding to the next (smaller = faster) */
+    tileSecondsPerPhoto: 1.6,    /* gear page: tiles take turns, one at a time; how long each photo shows (smaller = faster) */
     shirtPhoto:  "/assets/gear/tshirt-blue-f-popup.jpg",   /* popup photo if promoPhotos above is empty */
     hoodiePhoto: "/assets/product-hoodie.jpg",
     /* GEAR PHOTOS FROM YOUR PHONE — no code needed. Put photos in the Google Drive folder
@@ -213,8 +214,9 @@ window.WOS = {
          photo   – (optional) ONE picture path, e.g. "/assets/product-hat.jpg". Drop the
                    image in /assets and put its path here. No photo yet = a tidy
                    placeholder tile shows until you add one.
-         photos  – (optional) SEVERAL picture paths. The tile auto-scrolls through them in
-                   the order listed. Put the color in the file name ("tshirt-blue-f.jpg")
+         photos  – (optional) SEVERAL picture paths. The tiles take turns scrolling through
+                   them in the order listed, one tile at a time (speed: tileSecondsPerPhoto
+                   above). Put the color in the file name ("tshirt-blue-f.jpg")
                    and the tile shows that color's name on the photo. Any number per
                    color is fine. Gear photos live in /assets/gear, sized 720×480 (3:2).
          sizes   – (optional) list of sizes. Leave it off for one-size items (hat,
