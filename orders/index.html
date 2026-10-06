@@ -161,7 +161,7 @@
   .receipt .rm b{color:#0c2240;text-align:right}
   .receipt .r-list{list-style:none;margin:0;padding:14px 0;border-top:1px solid #e3e9f1}
   .receipt .r-list li{display:flex;justify-content:space-between;gap:12px;font-size:14.5px;padding:4px 0;color:#0c2240}
-  .receipt .r-list li .rq{color:#52617a}
+  .receipt .r-list li .rq{color:#0c2240;font-weight:700;white-space:nowrap}   /* "×5": how many of that exact item */
   .receipt .r-total{display:flex;justify-content:space-between;border-top:2px solid #0a2342;padding-top:12px;font-family:'Oswald',system-ui,sans-serif;font-weight:700;font-size:20px;color:#0a2342}
   .receipt .r-stamp{margin-top:16px;text-align:center;font-family:'Oswald',system-ui,sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:15px;padding:11px;border-radius:10px}
   .receipt .r-stamp.paid{background:#e6f4ec;color:#15683e}
@@ -614,10 +614,21 @@
   }
 
   /* ---- receipts ---- */
-  function buildReceipt(r){
-    var items=r.items.length?r.items.map(function(it){
+  /* identical items share one line with a count ("T-Shirt · Blue · M  ×5"), in the order they
+     were first ordered, so a big order still fits its spot on a 6-per-sheet printout */
+  function receiptLines(items){
+    var lines=[], at={};
+    items.forEach(function(it){
       var parts=[it.type]; if(it.color) parts.push(it.color); if(it.size) parts.push(it.size);
-      return '<li><span>'+esc(parts.join(' · '))+'</span></li>';
+      var label=parts.join(' · ');
+      if(at[label]==null){ at[label]=lines.length; lines.push({label:label,qty:0}); }
+      lines[at[label]].qty++;
+    });
+    return lines;
+  }
+  function buildReceipt(r){
+    var items=r.items.length?receiptLines(r.items).map(function(l){
+      return '<li><span>'+esc(l.label)+'</span>'+(l.qty>1?'<span class="rq">×'+l.qty+'</span>':'')+'</li>';
     }).join(''):'<li><span>'+esc(r.order||'—')+'</span></li>';
     var totalTxt=(r.totalRaw&&String(r.totalRaw).charAt(0)==='$')?esc(r.totalRaw):money(r.total);
     var pay=classifyPayment(r.payment);
@@ -634,7 +645,7 @@
         '<ul class="r-list">'+items+'</ul>'+
         '<div class="r-total"><span>Total</span><span>'+totalTxt+'</span></div>'+
         stamp+payline+
-        '<div class="r-note">Thank you for supporting the Andrew Walker Memorial Scholarship. 100% of profit goes to the scholarship.</div>'+
+        '<div class="r-note">Thank you for supporting the Andrew Walker Memorial Scholarship.</div>'+
       '</div></div>';
   }
   var receiptCurrent=null;
