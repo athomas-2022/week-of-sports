@@ -308,8 +308,8 @@
     /* one tile's photo strip. The one-at-a-time sequence below moves it on its own; a shopper
        can browse it back and forth by dragging or swiping the photo, with the ‹ › arrows, a
        trackpad's sideways swipe, or the arrow keys. Everything goes through show(), so they
-       share one position. car._ctl is the handle the sequence uses. */
-    var seqHold = { mouse: null, until: 0 };   /* what's pausing the sequence: a hovered tile, or recent browsing */
+       share one position. car._ctl is the handle the sequence uses. A tile someone is using
+       is "held" (car._holdUntil): the sequence skips it and carries on with the other tiles. */
     function initCarousel(car, tile){
       var track = car.querySelector('.ptrack'), dotsWrap = car.querySelector('.pdots'), label = car.querySelector('.pclabel');
       var prevA = car.querySelector('.parr.prev'), nextA = car.querySelector('.parr.next');
@@ -378,20 +378,25 @@
       cloneFirst();
       show(0);
       car._ctl = { size: function(){ return slides().length; }, at: function(){ return idx; }, step: step, show: show,
+                   held: function(){ return Date.now() < (car._holdUntil || 0); },
                    eager: function(){ slides().forEach(function(im){ im.loading = 'eager'; }); } };
       if(slides().length < 2) return;
 
-      /* manual browsing stops at the first and last photo, and pauses the sequence 8s */
+      /* hold just this tile for a while; the sequence keeps going on the others */
+      function hold(ms){ car._holdUntil = Math.max(car._holdUntil || 0, Date.now() + ms); }
+
+      /* manual browsing stops at the first and last photo, and holds this tile 8s */
       function go(i){
         var n = slides().length; if(n < 2) return;
         show(Math.max(0, Math.min(n - 1, i)));
-        seqHold.until = Date.now() + 8000;
+        hold(8000);
       }
 
-      /* a mouse on the tile pauses the sequence, so the tile holds still while they browse it.
-         Pointer events, so a phone's tap never counts as a hover. */
-      function enter(e){ if(e.pointerType === 'mouse') seqHold.mouse = tile; }
-      function leave(){ if(seqHold.mouse === tile) seqHold.mouse = null; }
+      /* a mouse moving over the tile holds it still (so a photo never swaps under the cursor
+         as they go for an arrow). It's a short rolling hold, renewed while the mouse moves,
+         rather than waiting for a "mouse left" event, which can go missing when the cursor
+         leaves the window. Pointer events, so a phone's tap never counts as a hover. */
+      function near(e){ if(e.pointerType === 'mouse') hold(3000); }
 
       /* drag / swipe: the photo follows the finger (or mouse), then settles on the next or
          previous photo if it moved a fifth of the way or was flicked; at either end it gives a
@@ -416,7 +421,7 @@
           try{ car.setPointerCapture(e.pointerId); }catch(err){}
           car.classList.add('dragging');
           track.style.transition = 'none';
-          seqHold.until = Date.now() + 8000;
+          hold(8000);
         }
         var n = slides().length;
         if((idx === 0 && dx > 0) || (idx === n - 1 && dx < 0)) dx *= 0.3;   /* the ends give a little */
@@ -467,8 +472,8 @@
         else if(e.key === 'ArrowLeft'){ go(idx - 1); e.preventDefault(); }
       }
 
-      tile.addEventListener('pointerenter', enter);
-      tile.addEventListener('pointerleave', leave);
+      tile.addEventListener('pointerenter', near);
+      tile.addEventListener('pointermove', near);
       tile.addEventListener('keydown', key);
       car.addEventListener('pointerdown', down);
       car.addEventListener('pointermove', move);
@@ -476,15 +481,16 @@
       car.addEventListener('pointercancel', cancel);
       car.addEventListener('wheel', wheel, { passive: false });
       tile._carOff = function(){
-        leave(); clearTimeout(car._wrapT); car._wrapT = null;
-        tile.removeEventListener('pointerenter', enter); tile.removeEventListener('pointerleave', leave); tile.removeEventListener('keydown', key);
+        clearTimeout(car._wrapT); car._wrapT = null;
+        tile.removeEventListener('pointerenter', near); tile.removeEventListener('pointermove', near); tile.removeEventListener('keydown', key);
       };
     }
 
     /* ONE TILE AT A TIME: the first tile steps through every photo and settles back on its
        first, then the next tile does the same, and so on, looping. Starts once the tiles are
-       on screen; pauses while a mouse is on a tile, for 8s after a swipe, and while the tab or
-       the tiles are out of sight. Off for anyone whose device asks for reduced motion. */
+       on screen and rests while the tab or the tiles are out of sight. A tile someone is
+       browsing is skipped (never the whole sequence stopped); it rejoins a few seconds after
+       they stop. Off for anyone whose device asks for reduced motion. */
     (function(){
       if(reduceMotion() || !window.IntersectionObserver) return;
       var every = Math.max(0.8, +G.tileSecondsPerPhoto || 1.6) * 1000;
@@ -494,13 +500,17 @@
           .filter(Boolean);
       }
       function tick(){
-        if(!onScreen || document.hidden || seqHold.mouse || Date.now() < seqHold.until) return;
+        if(!onScreen || document.hidden) return;
         var list = cars(); if(!list.length) return;
         list.forEach(function(c){ c._ctl.eager(); });              /* load hidden photos before their turn (no-op once loaded) */
         cur %= list.length;
-        var ctl = list[cur]._ctl;
-        if(ctl.at() + 1 >= ctl.size()) cur = (cur + 1) % list.length;   /* this step brings it home: next tile goes next */
-        ctl.step();
+        for(var tries = 0; tries < list.length; tries++){
+          var ctl = list[cur]._ctl;
+          if(ctl.held()){ cur = (cur + 1) % list.length; continue; }   /* someone's browsing this one: move on */
+          if(ctl.at() + 1 >= ctl.size()) cur = (cur + 1) % list.length; /* this step brings it home: next tile goes next */
+          ctl.step();
+          return;
+        }
       }
       new IntersectionObserver(function(en){
         onScreen = en[0].isIntersecting;
