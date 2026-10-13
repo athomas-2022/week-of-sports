@@ -95,12 +95,19 @@
   @keyframes item-in{from{box-shadow:0 0 0 0 rgba(47,116,208,.5);border-color:var(--royal)}to{box-shadow:0 0 0 7px rgba(47,116,208,0);border-color:#e3e9f1}}
   .item.just-added{animation:item-in 1.3s ease-out}
   .field .flabel{display:block;font-family:'Oswald',system-ui,sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.08em;font-size:11px;color:#5d6d82;margin-bottom:7px}
-  .swatches{display:flex;gap:10px}
+  /* the chosen color is unmistakable: its name in the label, a bold royal ring + lift on the
+     swatch, and a check mark (outlined so it reads on gray as well as blue and black) */
+  .field .flabel .cname{color:var(--navy);letter-spacing:.05em}
+  .swatches{display:flex;gap:12px;padding:3px}
   .sw{position:relative;cursor:pointer}
-  .sw input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer}
-  .sw .dot{display:block;width:34px;height:34px;border-radius:50%;background:var(--c);border:2px solid #fff;box-shadow:0 0 0 2px #dbe4f0;transition:box-shadow .15s}
-  .sw input:checked + .dot{box-shadow:0 0 0 3px var(--navy)}
-  .sw input:focus-visible + .dot{box-shadow:0 0 0 3px var(--royal)}
+  .sw input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer;z-index:1}
+  .sw .dot{position:relative;display:block;width:34px;height:34px;border-radius:50%;background:var(--c);border:2px solid #fff;box-shadow:0 0 0 1.5px #cfdbea;transition:box-shadow .15s,transform .15s}
+  .sw:hover .dot{box-shadow:0 0 0 2px #9fb6d6}
+  .sw input:checked + .dot{box-shadow:0 0 0 3px var(--royal),0 4px 12px rgba(47,116,208,.38);transform:scale(1.12)}
+  .sw input:checked + .dot::after{content:"";position:absolute;left:50%;top:45%;width:7px;height:13px;border:solid #fff;border-width:0 3px 3px 0;
+    transform:translate(-50%,-50%) rotate(45deg);filter:drop-shadow(0 0 1px rgba(10,35,66,.75))}
+  .sw input:focus-visible + .dot{box-shadow:0 0 0 3px var(--royal),0 0 0 6px rgba(47,116,208,.28)}
+  @media (prefers-reduced-motion:reduce){.sw .dot{transition:none}}
   select.size,input.tin{width:100%;min-height:46px;border:1.5px solid #dbe4f0;border-radius:10px;padding:0 12px;font-family:'Inter',system-ui,sans-serif;font-size:16px;color:var(--ink);background:#fff}
   select.size:focus,input.tin:focus{outline:none;border-color:var(--royal);box-shadow:0 0 0 3px rgba(47,116,208,.18)}
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
@@ -129,6 +136,29 @@
   .sum{text-align:left;background:var(--paper);border:1px solid #e3e9f1;border-radius:12px;padding:16px 18px;margin:20px 0;font-size:15px}
   .sum .li{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #e7edf4}
   .sum .li:last-child{border-bottom:0;font-family:'Oswald',system-ui,sans-serif;font-weight:700;color:var(--navy)}
+
+  /* "Order placed!" pop-up listing what they ordered */
+  .opop{margin:auto;border:0;border-radius:18px;padding:26px 24px 22px;   /* margin:auto = centered (the site's reset zeroes it) */width:min(440px,calc(100vw - 32px));max-height:calc(100vh - 40px);overflow:auto;
+    box-shadow:0 30px 80px rgba(4,14,28,.45);text-align:center;color:var(--ink);font-family:'Inter',system-ui,sans-serif}
+  .opop::backdrop{background:rgba(4,14,28,.6);backdrop-filter:blur(3px)}
+  .opop[open]{animation:opop-in .3s cubic-bezier(.2,.8,.2,1)}
+  @keyframes opop-in{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.opop[open]{animation:none}}
+  .opop-ck{width:58px;height:58px;border-radius:50%;background:#e7f6ec;color:#1f9d57;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 12px}
+  .opop h2{font-family:'Anton',Impact,system-ui,sans-serif;text-transform:uppercase;font-size:30px;color:var(--navy);margin:0 0 6px;font-weight:400}
+  .opop-msg{color:#46566b;font-size:15px;line-height:1.5;margin:0 0 14px}
+  .opop-list{list-style:none;margin:0;padding:0;text-align:left;border-top:1px solid #e3e9f1}
+  .opop-list li{display:flex;align-items:center;gap:10px;padding:9px 2px;border-bottom:1px solid #edf1f6;font-size:15px}
+  .opop-list .opop-dot{width:14px;height:14px;border-radius:50%;flex:none;background:var(--c);box-shadow:0 0 0 1px rgba(10,35,66,.25)}
+  .opop-list .opop-dot.none{background:none;box-shadow:none}
+  .opop-list .q{margin-left:auto;font-weight:700;color:var(--navy);white-space:nowrap}
+  .opop-list .pr{min-width:58px;text-align:right;font-variant-numeric:tabular-nums;color:#46566b}
+  .opop-total{display:flex;justify-content:space-between;padding:12px 2px 2px;font-family:'Oswald',system-ui,sans-serif;font-weight:700;font-size:20px;color:var(--navy)}
+  .opop-note{font-size:13.5px;color:#46566b;line-height:1.5;margin:12px 0 0}
+  .opop-pay{margin-top:14px}
+  .opop-pay .btn{width:100%;justify-content:center}
+  .opop-pay p{font-size:14px;color:#46566b;margin:8px 0 0;line-height:1.45}
+  #opop-done{margin-top:12px;width:100%;justify-content:center}
   @media (max-width:620px){
     .grid2{grid-template-columns:1fr}
     /* two per row on phones, compact so the cart shows without much scrolling */
@@ -197,6 +227,17 @@
         <div id="success-venmo"></div>
         <button class="btn btn-outline" id="another" style="margin-top:18px">Place another order</button>
       </div>
+
+      <dialog class="opop" id="order-pop" aria-labelledby="opop-h">
+        <div class="opop-ck" aria-hidden="true">&#10003;</div>
+        <h2 id="opop-h">Order placed!</h2>
+        <p class="opop-msg" id="opop-msg"></p>
+        <ul class="opop-list" id="opop-list"></ul>
+        <div class="opop-total"><span>Total</span><span id="opop-total"></span></div>
+        <p class="opop-note" id="opop-note"></p>
+        <div class="opop-pay" id="opop-pay"></div>
+        <button type="button" class="btn btn-outline" id="opop-done">Done</button>
+      </dialog>
     </div>
   </section>
 </main>
@@ -611,7 +652,7 @@
           var sw = cols.map(function(c){
             return '<label class="sw" style="--c:'+c.hex+'"><input type="radio" name="color-'+it.id+'" value="'+esc(c.name)+'"'+(c.name===it.color?' checked':'')+' aria-label="'+esc(c.name)+'"><span class="dot"></span></label>';
           }).join('');
-          row += '<div class="field"><span class="flabel">Color</span><div class="swatches">'+sw+'</div></div>';
+          row += '<div class="field"><span class="flabel">Color <span class="cname">· '+esc(it.color||'')+'</span></span><div class="swatches">'+sw+'</div></div>';
         }
         if(sizes.length){
           var opts = sizes.map(function(s){ return '<option'+(s===it.size?' selected':'')+'>'+esc(s)+'</option>'; }).join('');
@@ -651,7 +692,10 @@
       if(e.target.classList.contains('size')) it.size = e.target.value;
       else if(e.target.name && e.target.name.indexOf('color-')===0) it.color = e.target.value;
       var row = e.target.closest('.item');
-      if(row) row.querySelector('.item-price').textContent = money(priceOf(it));
+      if(row){
+        row.querySelector('.item-price').textContent = money(priceOf(it));
+        var cn = row.querySelector('.cname'); if(cn) cn.textContent = '· '+(it.color||'');   /* "COLOR · BLUE" */
+      }
       updateTotal();
     });
     S('items').addEventListener('click', function(e){
@@ -741,7 +785,51 @@
       }
       S('order-success').hidden=false;
       S('order-success').scrollIntoView({behavior:'smooth',block:'start'});
+      showOrderPopup(t, pay);
     }
+
+    /* quick "Order placed!" pop-up: what they ordered (identical items combined, ×count), the
+       total, where the receipt went, and how to pay. Done closes it; the page underneath keeps
+       the same confirmation. */
+    function showOrderPopup(t, pay){
+      var dlg = S('order-pop'); if(!dlg) return;
+      var lines = [], at = {};
+      items.forEach(function(it){
+        var p = prod(it.key), parts = descParts(it);
+        var label = p.name + (parts.length ? ' · '+parts.join(' · ') : '');
+        if(at[label]==null){
+          var c = colorsOf(p).filter(function(x){ return x.name===it.color; })[0];
+          at[label] = lines.length; lines.push({label:label, hex:c?c.hex:'', qty:0, each:priceOf(it)});
+        }
+        lines[at[label]].qty++;
+      });
+      S('opop-list').innerHTML = lines.map(function(l){
+        return '<li><span class="opop-dot'+(l.hex?'':' none')+'"'+(l.hex?' style="--c:'+l.hex+'"':'')+'></span>'+
+               '<span>'+esc(l.label)+'</span>'+
+               '<span class="q">'+(l.qty>1?'×'+l.qty:'')+'</span>'+
+               '<span class="pr">'+money(l.each*l.qty)+'</span></li>';
+      }).join('');
+      S('opop-total').textContent = money(t);
+      var name = S('f-name').value.trim().split(/\s+/)[0];
+      var n = items.length;
+      S('opop-msg').textContent = 'Thanks'+(name?', '+name:'')+'! Here '+(n===1?'is the item':'are the '+n+' items')+' you ordered:';
+      var email = (S('f-email') && S('f-email').value.trim()) || '';
+      S('opop-note').textContent = email ? 'A receipt is on its way to '+email+'.' : '';
+      S('opop-pay').innerHTML = pay===G.payment[0]
+        ? '<a class="btn btn-primary" target="_blank" rel="noopener" href="'+venmoLink(t)+'">Pay '+money(t)+' on Venmo</a><p>Send to @'+esc(C.venmoHandle)+' and put your name in the note.</p>'
+        : '<p><b>Payment:</b> '+esc(pay)+'</p>';
+      if(typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open', '');
+    }
+    (function(){
+      var dlg = S('order-pop'); if(!dlg) return;
+      function close(){ if(typeof dlg.close === 'function') dlg.close(); else dlg.removeAttribute('open'); }
+      S('opop-done').addEventListener('click', close);
+      /* a click on the dimmed backdrop (outside the box) closes it too; Esc works natively */
+      dlg.addEventListener('click', function(e){
+        var r = dlg.getBoundingClientRect();
+        if(e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) close();
+      });
+    })();
 
     S('another').addEventListener('click', function(){ location.reload(); });
 
