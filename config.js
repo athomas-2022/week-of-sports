@@ -131,7 +131,8 @@ window.WOS = {
   sponsors: [
     /* add their website in url:"" to make a logo clickable */
     { name: "J. Elchert Wealth Management", logo: "/assets/sponsor-jelchert.png",    url: "" },
-    { name: "Lion's Share Company",         logo: "/assets/sponsor-lions-share.png", url: "" }
+    { name: "Lion's Share Company",         logo: "/assets/sponsor-lions-share.png", url: "" },
+    { name: "Blanchard Valley Pediatric Dentistry", logo: "/assets/sponsor-blanchard-valley-dentistry.png", url: "" }
   ],
 
   /* ---------- raffle baskets (add this year's baskets when announced; empty = "coming soon") ---------- */
