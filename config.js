@@ -175,7 +175,7 @@ window.WOS = {
     orderEndpoint: "https://script.google.com/macros/s/AKfycbwv2GFGDBbg1N4RU9CzNQyGK6316Qz7tlMjatnxHj9ctymETVc5gXAgrw12OuT9SuK-kQ/exec",
     formAction: "https://docs.google.com/forms/d/e/1FAIpQLSczCeztwhRGkF1yNF-_s5qwtswnmxbeR5XegwyNtJyx8PqkNg/formResponse",  /* legacy Google Form — no longer used */
     deadline: "November 22, 2026",          /* gear order-by date */
-    orderingOpen: false,                    /* false = people can BROWSE the gear but can't place an order yet. Set to true to open ordering. */
+    orderingOpen: true,                     /* false = people can BROWSE the gear but can't place an order yet. Set to true to open ordering. (Opened temporarily 2026-10-13.) */
     orderingClosedMsg: "ordering opens Oct 25. Browse this year's gear until then.",   /* shown after "Preview —", so start it lowercase. Update the date if opening day moves. */
     maxPerType: 0,                          /* max shirts (and, separately, max hoodies) per order; 0 = no limit */
     /* HOMEPAGE "GRAB YOUR GEAR" POPUP — scrolls through these photos in this order:
