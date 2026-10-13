@@ -3,6 +3,10 @@
   --paper:#f4f7fc; --ink:#0c2240; --muted:rgba(255,255,255,.74); --line:rgba(255,255,255,.16);
 }
 *{box-sizing:border-box;margin:0;padding:0}
+/* "hidden" always wins. A class or id that sets display (e.g. #venmo-box{display:flex}) would
+   otherwise override it: the Venmo button showed before Venmo was chosen, with no link (a dead
+   button), and the homepage showed "Live totals" with no live scores. */
+[hidden]{display:none !important}
 html{scroll-behavior:smooth;overflow-x:hidden}
 body{font-family:'Inter',system-ui,sans-serif;color:#fff;background:var(--navy);-webkit-font-smoothing:antialiased;overflow-x:hidden}
 .wrap{max-width:1240px;margin:0 auto;padding:0 28px}
