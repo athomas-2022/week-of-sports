@@ -152,10 +152,10 @@ window.WOS = {
   gearImage:     "/assets/gear-lb.png?v=2",   /* big image in the homepage "This year's gear" section */
   crest:         "/assets/crest.png",
   shirt:         "/assets/shirt.png",
-  heroYouTubeId: "-3iifoMWy7U",            /* fundraising video — plays muted as the looping hero background */
+  heroYouTubeId: "56wgZEADMqc",            /* fundraising video — plays muted as the looping hero background, and on the /fundraising-video/ page */
   heroVideo:     "/assets/hero.mp4",       /* fallback loop used if heroYouTubeId is blank */
   heroPoster:    "/assets/hero-poster.jpg",/* shows instantly while the video loads */
-  heroVideoUrl:  "https://youtu.be/-3iifoMWy7U",  /* "Watch our story" popup — plays with sound */
+  heroVideoUrl:  "https://youtu.be/56wgZEADMqc",  /* "Watch our story" popup — plays with sound */
 
   /* ---------- gear ---------- */
   gearReady:   true,                       /* set true when this year's gear + order form are ready (false = "coming soon") */
