@@ -153,7 +153,7 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
 
 <section class="spirit on-light" id="spirit">
   <div class="wrap">
-    <div class="sec-eyebrow">Dates coming soon</div>
+    <div class="sec-eyebrow" id="spirit-when">Dates coming soon</div>
     <h2 class="sec-h">Spirit week</h2>
     <p class="sec-sub">A new theme every day leading up to game day. Today's theme lights up automatically.</p>
     <div class="days" id="days"></div>
@@ -321,6 +321,12 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
   var C = window.WOS || {};
   function S(id){ return document.getElementById(id); }
   function money(n){ return '$'+Math.round(n).toLocaleString('en-US'); }
+  /* "Jan 4–8, 2027" from the first and last spirit week dates in config.js */
+  function spiritRange(list){
+    var a = new Date(list[0].date+'T12:00:00'), b = new Date(list[list.length-1].date+'T12:00:00');
+    var mon = function(d){ return d.toLocaleDateString('en-US',{month:'short'}); };
+    return mon(a)+' '+a.getDate()+'–'+(mon(a)===mon(b) ? '' : mon(b)+' ')+b.getDate()+', '+b.getFullYear();
+  }
 
   /* ---- hero background: YouTube fundraising video (muted loop), or mp4 fallback ---- */
   var v = S('hero-vid');
@@ -575,8 +581,10 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
   S('days').innerHTML = (C.spiritWeek||[]).length ? (C.spiritWeek).map(function(s,i){
     var isToday = s.date===todayStr;
     var badge = isToday ? 'Today' : new Date(s.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
-    return '<div class="day'+(isToday?' today':'')+'"><div class="dnum">'+(i+1)+'</div><div class="dname">'+s.day+'</div><div class="dtheme">'+s.theme+'</div><div class="badge">'+badge+'</div></div>';
+    var photo = s.photo ? '<div class="dphoto"><img src="'+s.photo+'" alt="'+s.theme+': example outfits" width="640" height="800" loading="lazy"></div>' : '';
+    return '<div class="day'+(isToday?' today':'')+'">'+photo+'<div class="dnum">'+(i+1)+'</div><div class="dname">'+s.day+'</div><div class="dtheme">'+s.theme+'</div><div class="badge">'+badge+'</div></div>';
   }).join('') : '<p style="grid-column:1/-1;text-align:center;color:#6a7a8f;font-size:16px">This year’s spirit week themes are coming soon!</p>';
+  if((C.spiritWeek||[]).length) S('spirit-when').textContent = spiritRange(C.spiritWeek);
 
   /* ---- previous years: rotating carousel (blur-fill so every photo fits) ---- */
   var imgs = [];

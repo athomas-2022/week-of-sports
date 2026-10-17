@@ -79,13 +79,15 @@ window.WOS = {
     { time: "Next",    title: "Student v Staff", sub: "Follows the varsity boys game" }
   ],
 
-  /* ---------- spirit week (add this year's dates + themes when set; empty = "coming soon") ---------- */
+  /* ---------- spirit week (add this year's dates + themes when set; empty = "coming soon") ----------
+     photo = an example outfit for that day, shown on the homepage and the Spirit Week Themes page.
+     These are stills from the Spirit Week video, 640x800 (4:5). Leave photo off ("") for no picture. */
   spiritWeek: [
-    { date: "2027-01-04", day: "Monday",    theme: "Pajama Day" },
-    { date: "2027-01-05", day: "Tuesday",   theme: "Week of Sports Gear Day" },
-    { date: "2027-01-06", day: "Wednesday", theme: "Hat Day" },
-    { date: "2027-01-07", day: "Thursday",  theme: "Jersey Day" },
-    { date: "2027-01-08", day: "Friday",    theme: "LB Spirit Day" }
+    { date: "2027-01-04", day: "Monday",    theme: "Pajama Day",              photo: "/assets/spirit/pajama.jpg" },
+    { date: "2027-01-05", day: "Tuesday",   theme: "Week of Sports Gear Day", photo: "/assets/spirit/gear.jpg" },
+    { date: "2027-01-06", day: "Wednesday", theme: "Hat Day",                 photo: "/assets/spirit/hat.jpg" },
+    { date: "2027-01-07", day: "Thursday",  theme: "Jersey Day",              photo: "/assets/spirit/jersey.jpg" },
+    { date: "2027-01-08", day: "Friday",    theme: "LB Spirit Day",           photo: "/assets/spirit/spirit.jpg" }
   ],
 
   /* ---------- the cause ---------- */

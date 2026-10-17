@@ -33,7 +33,7 @@
 <body>
 <main>
   <section class="page-head"><div class="wrap inner">
-    <div class="eyebrow">Dates coming soon</div>
+    <div class="eyebrow" id="spirit-when">Dates coming soon</div>
     <h1>Spirit Week Themes</h1>
     <p>Dress the part every day of the week. Today's theme lights up automatically — show your spirit and tag @weekofsports.</p>
   </div></section>
@@ -50,11 +50,19 @@
   window.renderPage = function(C){
     /* the viewer's own date: toISOString() is UTC, which in Ohio rolls over to "tomorrow" at 7-8pm */
     var now = new Date(), todayStr = now.getFullYear()+'-'+('0'+(now.getMonth()+1)).slice(-2)+'-'+('0'+now.getDate()).slice(-2);
-    document.getElementById('days').innerHTML = (C.spiritWeek||[]).length ? (C.spiritWeek).map(function(s,i){
+    var list = C.spiritWeek || [];
+    document.getElementById('days').innerHTML = list.length ? list.map(function(s,i){
       var isToday = s.date===todayStr;
       var badge = isToday ? 'Today' : new Date(s.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
-      return '<div class="day'+(isToday?' today':'')+'"><div class="dnum">'+(i+1)+'</div><div class="dname">'+s.day+'</div><div class="dtheme">'+s.theme+'</div><div class="badge">'+badge+'</div></div>';
+      var photo = s.photo ? '<div class="dphoto"><img src="'+s.photo+'" alt="'+s.theme+': example outfits" width="640" height="800" loading="lazy"></div>' : '';
+      return '<div class="day'+(isToday?' today':'')+'">'+photo+'<div class="dnum">'+(i+1)+'</div><div class="dname">'+s.day+'</div><div class="dtheme">'+s.theme+'</div><div class="badge">'+badge+'</div></div>';
     }).join('') : '<p style="grid-column:1/-1;text-align:center;color:#6a7a8f;font-size:16px">Spirit week themes are coming soon — check back closer to the event!</p>';
+    /* "Jan 4–8, 2027" from the first and last dates above */
+    if(list.length){
+      var a = new Date(list[0].date+'T12:00:00'), b = new Date(list[list.length-1].date+'T12:00:00');
+      var mon = function(d){ return d.toLocaleDateString('en-US',{month:'short'}); };
+      document.getElementById('spirit-when').textContent = mon(a)+' '+a.getDate()+'–'+(mon(a)===mon(b) ? '' : mon(b)+' ')+b.getDate()+', '+b.getFullYear();
+    }
   };
 </script>
 <script src="/assets/page.js"></script>
