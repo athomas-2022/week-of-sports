@@ -277,7 +277,7 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
     <img id="foot-logo" alt="Week of Sports" />
     <div class="f-links">
       <a href="https://www.instagram.com/weekofsports" target="_blank">Instagram</a>
-      <a href="https://www.facebook.com/week.of.sports/" target="_blank">Facebook</a>
+      <a id="foot-fb" href="https://www.facebook.com/profile.php?id=61595107397935" target="_blank">Facebook</a>
       <a href="#donate">Donate</a>
       <a href="/gear/">Gear</a>
       <a href="/spirit-week-themes/">Spirit week</a>
@@ -346,6 +346,7 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
 
   /* ---- assets & text ---- */
   S('nav-logo').src = C.logo; S('foot-logo').src = C.logo;
+  if(C.facebookUrl) S('foot-fb').href = C.facebookUrl;
   S('hero-year').textContent = C.year;
   S('cause-title').textContent = C.cause.title;
   S('cause-body').textContent = C.cause.body;

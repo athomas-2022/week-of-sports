@@ -46,7 +46,7 @@
     '<img src="'+C.logo+'" alt="Week of Sports">'+
     '<div class="f-links">'+
       '<a href="https://www.instagram.com/weekofsports" target="_blank">Instagram</a>'+
-      '<a href="https://www.facebook.com/week.of.sports/" target="_blank">Facebook</a>'+
+      '<a href="'+C.facebookUrl+'" target="_blank">Facebook</a>'+
       '<a href="/#donate">Donate</a>'+
       '<a href="/gear/">Gear</a>'+
       '<a href="/spirit-week-themes/">Spirit week</a>'+

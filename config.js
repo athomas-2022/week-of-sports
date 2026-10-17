@@ -21,7 +21,7 @@ window.WOS = {
   mapsQuery: "Liberty-Benton High School, Findlay, OH",
   contactEmail: "info@weekofsports.com",
   instagramUrl: "https://www.instagram.com/weekofsports",
-  facebookUrl:  "https://www.facebook.com/week.of.sports/",
+  facebookUrl:  "https://www.facebook.com/profile.php?id=61595107397935",   /* the Week of Sports Page (made 2026-10-17). Once its username is set, this can become "https://www.facebook.com/weekofsports" */
 
   /* ---------- analytics ----------
      Paste your Cloudflare Web Analytics token here to turn on analytics
