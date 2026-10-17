@@ -687,7 +687,7 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
     /* real logos get a white tile — most business logos are dark ink on white and
        would vanish against the navy sponsor band. Name-only tiles stay translucent. */
     var inner = s.logo ? '<img src="'+s.logo+'" alt="'+s.name+'" loading="lazy">' : '<span>'+s.name+'</span>';
-    var cls = 'slogo'+(s.logo?' has-logo':'');
+    var cls = 'slogo'+(s.logo?' has-logo':'')+(s.tile==='dark'?' dark':'');
     /* only wrap in a link when a url is actually given — otherwise "#" just jumps the page */
     return s.url ? '<a class="'+cls+'" href="'+s.url+'" target="_blank" rel="noopener">'+inner+'</a>'
                  : '<div class="'+cls+'">'+inner+'</div>';

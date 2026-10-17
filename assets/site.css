@@ -347,6 +347,7 @@ footer img{height:46px;margin-bottom:14px}
 /* a real sponsor logo sits on white so dark-ink marks read against the navy band */
 .slogo.has-logo{background:#fff;border-color:rgba(255,255,255,.34);padding:10px}
 .slogo.has-logo img{max-width:100%;max-height:100%}   /* fill the tile; padding is the margin */
+.slogo.has-logo.dark{background:#000}                 /* config tile:"dark", for logos made on black */
 /* one or two sponsors show larger, since they're centred rather than scrolling past */
 .strack.static .slogo{width:230px;height:116px}
 

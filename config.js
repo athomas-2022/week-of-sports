@@ -129,12 +129,16 @@ window.WOS = {
      order: [feature, 4 squares, 2 wide]. empty = auto spread. */
   momentsPics: [2, 7, 9, 28, 6, 21, 22],
 
-  /* ---------- sponsors (add { name, logo, url }; empty shows placeholders) ---------- */
+  /* ---------- sponsors (add { name, logo, url }; empty shows placeholders) ----------
+     Logos sit on a white tile. For a logo made on a black background, add  tile: "dark"
+     so its tile is black too. With 4 or more sponsors the strip scrolls. */
   sponsors: [
     /* add their website in url:"" to make a logo clickable */
     { name: "J. Elchert Wealth Management", logo: "/assets/sponsor-jelchert.png",    url: "" },
     { name: "Lion's Share Company",         logo: "/assets/sponsor-lions-share.png", url: "" },
-    { name: "Blanchard Valley Pediatric Dentistry", logo: "/assets/sponsor-blanchard-valley-dentistry.png", url: "" }
+    { name: "Blanchard Valley Pediatric Dentistry", logo: "/assets/sponsor-blanchard-valley-dentistry.png", url: "" },
+    { name: "Hixon Zuercher Capital Management",    logo: "/assets/sponsor-hixon-zuercher.png",            url: "" },
+    { name: "Blessings & Ball Cards",               logo: "/assets/sponsor-blessings-ball-cards.jpg",      url: "", tile: "dark" }
   ],
 
   /* ---------- raffle baskets (add this year's baskets when announced; empty = "coming soon") ---------- */
