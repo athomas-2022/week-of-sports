@@ -65,7 +65,10 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
       <a href="#contact">Contact</a>
       <a href="#volunteer">Volunteer</a>
     </nav>
-    <a class="nav-ig" href="https://www.instagram.com/weekofsports" target="_blank" rel="noopener" aria-label="Follow Week of Sports on Instagram"><svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5.5"></rect><circle cx="12" cy="12" r="4.2"></circle><circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none"></circle></svg></a>
+    <div class="nav-social">
+      <a class="nav-ig" href="https://www.instagram.com/weekofsports" target="_blank" rel="noopener" aria-label="Follow Week of Sports on Instagram"><svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5.5"></rect><circle cx="12" cy="12" r="4.2"></circle><circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none"></circle></svg></a>
+      <a class="nav-ig" id="nav-fb" href="https://www.facebook.com/profile.php?id=61595107397935" target="_blank" rel="noopener" aria-label="Follow Week of Sports on Facebook"><svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a>
+    </div>
     <button class="btn btn-primary hdr-cta" onclick="openVenmo()">Donate</button>
     <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="mnav"><span class="bars"></span></button>
   </div>
@@ -82,7 +85,10 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
   </nav>
   <div class="mnav-cta">
     <button class="btn btn-primary" id="mnavDonate">Donate via Venmo</button>
-    <a class="mnav-ig" href="https://www.instagram.com/weekofsports" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5.5"></rect><circle cx="12" cy="12" r="4.2"></circle><circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none"></circle></svg> Follow along</a>
+    <div class="mnav-social">
+      <a class="mnav-ig" href="https://www.instagram.com/weekofsports" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5.5"></rect><circle cx="12" cy="12" r="4.2"></circle><circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none"></circle></svg> Instagram</a>
+      <a class="mnav-ig" id="mnav-fb" href="https://www.facebook.com/profile.php?id=61595107397935" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg> Facebook</a>
+    </div>
   </div>
 </div>
 <div class="ticker"><div class="ticker-track" id="ticker"></div></div>
@@ -346,7 +352,7 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
 
   /* ---- assets & text ---- */
   S('nav-logo').src = C.logo; S('foot-logo').src = C.logo;
-  if(C.facebookUrl) S('foot-fb').href = C.facebookUrl;
+  if(C.facebookUrl){ S('foot-fb').href = C.facebookUrl; S('nav-fb').href = C.facebookUrl; S('mnav-fb').href = C.facebookUrl; }
   S('hero-year').textContent = C.year;
   S('cause-title').textContent = C.cause.title;
   S('cause-body').textContent = C.cause.body;

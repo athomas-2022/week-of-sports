@@ -17,13 +17,17 @@
   if(C.cfBeaconToken){ var cfb = document.createElement('script'); cfb.defer = true; cfb.src = 'https://static.cloudflareinsights.com/beacon.min.js'; cfb.setAttribute('data-cf-beacon', JSON.stringify({token: C.cfBeaconToken})); document.head.appendChild(cfb); }
 
   /* ---- header ---- */
-  var links = [['Home','/#top'],['About','/#about'],['Gear','/gear/'],['Donate','/#donate'],['Contact','/#contact'],['Volunteer','/#volunteer']];
+  function FB_ICON(size){ return '<svg viewBox="0 0 24 24" width="'+size+'" height="'+size+'" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>'; }
+  var links =[['Home','/#top'],['About','/#about'],['Gear','/gear/'],['Donate','/#donate'],['Contact','/#contact'],['Volunteer','/#volunteer']];
   var header = document.createElement('header');
   header.id = 'hdr';
   header.innerHTML = '<div class="wrap nav">'+
     '<a class="brand" href="/"><img src="'+C.logo+'" alt="Week of Sports logo"> Week of Sports</a>'+
     '<nav class="nav-links">'+links.map(function(l){return '<a href="'+l[1]+'">'+l[0]+'</a>';}).join('')+'</nav>'+
-    '<a class="nav-ig" href="'+(C.instagramUrl||'https://www.instagram.com/weekofsports')+'" target="_blank" rel="noopener" aria-label="Follow Week of Sports on Instagram"><svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5.5"></rect><circle cx="12" cy="12" r="4.2"></circle><circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none"></circle></svg></a>'+
+    '<div class="nav-social">'+
+      '<a class="nav-ig" href="'+(C.instagramUrl||'https://www.instagram.com/weekofsports')+'" target="_blank" rel="noopener" aria-label="Follow Week of Sports on Instagram"><svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5.5"></rect><circle cx="12" cy="12" r="4.2"></circle><circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none"></circle></svg></a>'+
+      (C.facebookUrl ? '<a class="nav-ig" href="'+C.facebookUrl+'" target="_blank" rel="noopener" aria-label="Follow Week of Sports on Facebook">'+FB_ICON(23)+'</a>' : '')+
+    '</div>'+
     '<button class="btn btn-primary hdr-cta" id="hdr-donate">Donate</button>'+
     '<button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="mnav"><span class="bars"></span></button></div>';
 
@@ -34,7 +38,10 @@
       links.map(function(l){return '<a class="mlink" href="'+l[1]+'">'+l[0]+'</a>';}).join('')+'</nav>'+
     '<div class="mnav-cta">'+
       '<button class="btn btn-primary" id="mnavDonate">Donate via Venmo</button>'+
-      '<a class="mnav-ig" href="'+(C.instagramUrl||'https://www.instagram.com/weekofsports')+'" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5.5"></rect><circle cx="12" cy="12" r="4.2"></circle><circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none"></circle></svg> Follow along</a>'+
+      '<div class="mnav-social">'+
+        '<a class="mnav-ig" href="'+(C.instagramUrl||'https://www.instagram.com/weekofsports')+'" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5.5"></rect><circle cx="12" cy="12" r="4.2"></circle><circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none"></circle></svg> Instagram</a>'+
+        (C.facebookUrl ? '<a class="mnav-ig" href="'+C.facebookUrl+'" target="_blank" rel="noopener">'+FB_ICON(18)+' Facebook</a>' : '')+
+      '</div>'+
     '</div>';
 
   document.body.insertBefore(header, document.body.firstChild);
