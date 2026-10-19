@@ -63,7 +63,7 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
     var b = (C.raffleBaskets||[]);
     document.getElementById('baskets').innerHTML = b.length ? b.map(function(x){
       return '<div class="basket reveal"><div class="bval">'+(x.value||'')+' value</div><h3>'+x.name+'</h3><p>'+(x.items||'')+'</p></div>';
-    }).join('') : '<p style="grid-column:1/-1;text-align:center;color:#6a7a8f;font-size:16px">This year’s raffle baskets are coming soon — check back as game day approaches!</p>';
+    }).join('') : '<p style="grid-column:1/-1;text-align:center;color:#52617a;font-size:16px">See this year’s baskets in person at Game Day. Want to donate one? Email <a href="mailto:info@weekofsports.com">info@weekofsports.com</a>.</p>';
     document.getElementById('raffle-note').textContent = C.raffleNote || '';
   };
 </script>

@@ -39,7 +39,7 @@ window.WOS = {
     { title: "Donate directly", text: "Give straight to the scholarship fund by Venmo or our donation form." },
     { title: "Come to game day", text: "Raffles, concessions, and the kickoff event all add in." },
     { title: "Buy the gear",     text: "Every shirt and hoodie sold turns profit into scholarship dollars." },
-    { title: "Spirit week",      text: "Drop spare change in your class jar during the donation challenge." }
+    { title: "Spirit week",      text: "Drop spare change in the jar outside your school's office during the donation challenge." }
   ],
 
   /* ---------- donation challenge (bump amounts during the week) ---------- */
@@ -50,7 +50,7 @@ window.WOS = {
   ],
 
   /* ---------- LIVE leaderboard (optional — turns the challenge into a live scoreboard) ----------
-     Update the class-vs-class totals from your PHONE and the website refreshes itself.
+     Update the school-vs-school totals from your PHONE and the website refreshes itself.
      One-time setup:
        1. In your Google Sheet, add a tab with two columns and a header row:
               Division      | Amount
@@ -112,7 +112,7 @@ window.WOS = {
   /* ---------- about the fundraiser (homepage "About" section) ---------- */
   aboutEvent: {
     title: "What is Week of Sports?",
-    body: "Week of Sports is a week-long, all-school celebration that turns a love of the game into real scholarship dollars. Spirit days, a class-vs-class donation challenge, gear sales, raffles, and a packed game-day finale all come together to fund the Andrew Walker Memorial Scholarship — carrying Andrew's legacy forward for the students who come next.",
+    body: "Week of Sports is a week-long, all-school celebration that turns a love of the game into real scholarship dollars. Spirit days, a school-vs-school donation challenge, gear sales, raffles, and a packed game-day finale all come together to fund the Andrew Walker Memorial Scholarship — carrying Andrew's legacy forward for the students who come next.",
     highlights: [
       { k: "1 week",     v: "spirit week dress-up themes" },
       { k: "Donation Challenge", v: "Elementary v Middle v High School" },
@@ -141,9 +141,11 @@ window.WOS = {
     { name: "Blessings & Ball Cards",               logo: "/assets/sponsor-blessings-ball-cards.jpg",      url: "", tile: "dark" }
   ],
 
-  /* ---------- raffle baskets (add this year's baskets when announced; empty = "coming soon") ---------- */
+  /* ---------- raffle baskets ----------
+     The baskets are shown in person at Game Day, not listed online, so this stays empty and the
+     raffle page says to see them at Game Day. (To ever list one: { name, value, items }.) */
   raffleBaskets: [],
-  raffleNote: "Raffle tickets are sold in person only, at Game Day on Saturday, January 9, at Liberty-Benton High School. You don't need to be present for the drawing to win.",   /* shown under the baskets on the raffle page */
+  raffleNote: "Raffle tickets are sold in person only, at Game Day on Saturday, January 9, at Liberty-Benton High School. Winners are drawn at the end of the 3rd quarter of the varsity boys game, and you don't need to be present to win.",   /* shown on the raffle page */
 
   /* ---------- volunteer ---------- */
   volunteerUrl:  "https://docs.google.com/spreadsheets/d/1GHON5g2QmFFZ7DXIFw4bid8InBzlzmE4Jw2GdTTLgUg/edit?usp=sharing",  /* real volunteer sign-up sheet */

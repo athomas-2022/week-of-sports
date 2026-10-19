@@ -19,11 +19,11 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
 }
 </script>
 <title>Week of Sports 26-27 · Andrew Walker Memorial Scholarship</title>
-<meta name="description" content="The Andrew Walker Memorial Scholarship fundraiser at Liberty-Benton. Game day is Saturday, January 9, 2027 — join the class-vs-class donation challenge, grab this year's gear, and carry Andrew's legacy forward.">
+<meta name="description" content="The Andrew Walker Memorial Scholarship fundraiser at Liberty-Benton. Game day is Saturday, January 9, 2027 — join the school-vs-school donation challenge, grab this year's gear, and carry Andrew's legacy forward.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Week of Sports">
 <meta property="og:title" content="Week of Sports 26-27 · Andrew Walker Memorial Scholarship">
-<meta property="og:description" content="Game day is Saturday, January 9, 2027. Join the class-vs-class donation challenge, grab this year's gear, and support the Andrew Walker Memorial Scholarship.">
+<meta property="og:description" content="Game day is Saturday, January 9, 2027. Join the school-vs-school donation challenge, grab this year's gear, and support the Andrew Walker Memorial Scholarship.">
 <meta property="og:url" content="https://weekofsports.com/">
 <meta property="og:image" content="https://weekofsports.com/assets/share-card.png?v=2">
 <meta property="og:image:width" content="1200">
@@ -198,7 +198,7 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
 <section class="challenge on-light" id="challenge">
   <div class="wrap">
     <div class="sec-eyebrow">The donation challenge</div>
-    <h2 class="sec-h">Which class rules the school?</h2>
+    <h2 class="sec-h">Which school takes the title?</h2>
     <p class="sec-sub">Elementary, middle, and high school go head-to-head all week — for the scholarship, and the bragging rights.</p>
     <div class="champ-wrap"><span class="champ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg> Last year's champions: <b>the High School</b></span></div>
     <div class="thermo">
@@ -566,7 +566,7 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
     function init(){
       if(!live && goal<=0){
         if(thermoWrap) thermoWrap.style.display='none';
-        boardEl.innerHTML = '<p class="board-soon">The class-vs-class donation challenge returns this winter — live totals will appear here once it kicks off.</p>';
+        boardEl.innerHTML = '<p class="board-soon">The school-vs-school donation challenge returns this winter — live totals will appear here once it kicks off.</p>';
         return;
       }
       if(live){ fetchLive(); setInterval(fetchLive, Math.max(20, +L.refreshSeconds||45)*1000); setInterval(stamp, 1000); }
