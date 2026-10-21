@@ -270,7 +270,7 @@
     if(!canOrder){
       var place = S('place'); place.disabled = true; place.textContent = 'Ordering opens soon';
       var note = document.createElement('div'); note.className = 'order-note';
-      note.innerHTML = '<b>👀 Preview —</b> ' + (G.orderingClosedMsg || 'ordering isn’t open yet. Browse this year’s gear, then check back soon to place your order.');
+      note.innerHTML = '<b>Preview —</b> ' +(G.orderingClosedMsg || 'ordering isn’t open yet. Browse this year’s gear, then check back soon to place your order.');
       var form = S('order-form'); form.parentNode.insertBefore(note, form);
     }
 
