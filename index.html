@@ -441,7 +441,13 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
   var fm = S('foot-mail'); if(fm){ fm.href = gmailCompose(C.contactEmail); fm.target = '_blank'; fm.rel = 'noopener'; }
 
   /* ---- ticker ---- */
-  var tk = (C.ticker||[]).map(function(s){return '<span>'+s+'</span>';}).join('');
+  /* a { beforeGearOpens, afterGearOpens } line shows whichever fits right now */
+  var GO = C.gearOrder || {}, opensAt = GO.opensAt ? Date.parse(GO.opensAt) : NaN;
+  var gearOpen = GO.orderingOpen !== false || opensAt <= Date.now();
+  var tk = (C.ticker||[]).map(function(s){
+    if(s && typeof s === 'object') s = gearOpen ? s.afterGearOpens : s.beforeGearOpens;
+    return s ? '<span>'+s+'</span>' : '';
+  }).join('');
   S('ticker').innerHTML = tk + tk;
 
   /* ---- game-day cards (or coming soon) ---- */

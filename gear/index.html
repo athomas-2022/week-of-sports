@@ -251,7 +251,9 @@
       return;
     }
     var products = G.products || [], items = [], uid = 0;
-    var canOrder = G.orderingOpen !== false;   /* false = browse-only preview, ordering disabled */
+    /* open unless orderingOpen is false; the opensAt time in config.js turns it on by itself */
+    var opensAt = G.opensAt ? Date.parse(G.opensAt) : NaN;
+    var canOrder = G.orderingOpen !== false || opensAt <= Date.now();
 
     function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
     function money(n){ return '$'+n.toLocaleString('en-US'); }
@@ -263,15 +265,22 @@
     var fromTxt = prices.length ? ', from '+money(Math.min.apply(null, prices)) : '';
     /* when ordering is closed the button and the preview note both already say so —
        repeating it here made "ordering opens soon" appear three times in one screen */
-    S('order-sub').textContent = canOrder
-      ? 'This year’s tees, hoodies, and more'+fromTxt+'. Order by '+G.deadline+'.'
-      : 'This year’s tees, hoodies, and more'+fromTxt+'.';
+    var subOpen = 'This year’s tees, hoodies, and more'+fromTxt+'. Order by '+G.deadline+'.';
+    S('order-sub').textContent = canOrder ? subOpen : 'This year’s tees, hoodies, and more'+fromTxt+'.';
 
     if(!canOrder){
       var place = S('place'); place.disabled = true; place.textContent = 'Ordering opens soon';
       var note = document.createElement('div'); note.className = 'order-note';
       note.innerHTML = '<b>Preview —</b> ' +(G.orderingClosedMsg || 'ordering isn’t open yet. Browse this year’s gear, then check back soon to place your order.');
       var form = S('order-form'); form.parentNode.insertBefore(note, form);
+      /* someone already on the page when ordering opens: switch it on in place, keeping what they picked */
+      var wait = opensAt - Date.now();
+      if(wait > 0 && wait < 2147483647) setTimeout(function(){
+        canOrder = true;
+        place.disabled = false; place.textContent = 'Place order';
+        note.remove();
+        S('order-sub').textContent = subOpen;
+      }, wait);
     }
 
     /* ---- one "add" tile per product ---- */

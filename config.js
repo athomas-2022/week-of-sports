@@ -183,8 +183,9 @@ window.WOS = {
     orderEndpoint: "https://script.google.com/macros/s/AKfycbwv2GFGDBbg1N4RU9CzNQyGK6316Qz7tlMjatnxHj9ctymETVc5gXAgrw12OuT9SuK-kQ/exec",
     formAction: "https://docs.google.com/forms/d/e/1FAIpQLSczCeztwhRGkF1yNF-_s5qwtswnmxbeR5XegwyNtJyx8PqkNg/formResponse",  /* legacy Google Form — no longer used */
     deadline: "November 22, 2026",          /* gear order-by date */
-    orderingOpen: false,                    /* false = people can BROWSE the gear but can't place an order yet. Set to true to open ordering. */
-    orderingClosedMsg: "ordering opens Oct 25. Browse this year's gear until then.",   /* shown after "Preview —", so start it lowercase. Update the date if opening day moves. */
+    orderingOpen: false,                    /* false = people can BROWSE the gear but can't place an order yet. Set to true to open ordering right now. */
+    opensAt: "2026-10-25T09:00:00-04:00",   /* ordering ALSO opens by itself at this moment: Sunday, Oct 25, 9:00 AM Eastern ("-04:00" = Eastern daylight time). Anyone already on the gear page sees it switch on. Blank "" = no automatic opening. */
+    orderingClosedMsg: "ordering opens Sunday, Oct 25 at 9 AM. Browse this year's gear until then.",   /* shown after "Preview —", so start it lowercase. Update the date if opening day moves. */
     maxPerType: 0,                          /* max shirts (and, separately, max hoodies) per order; 0 = no limit */
     /* HOMEPAGE "GRAB YOUR GEAR" POPUP — scrolls through these photos in this order:
        one of each item, alternating the two models, ending on the sticker on the cup.
@@ -289,7 +290,8 @@ window.WOS = {
     "Week of Sports 26-27",
     "Andrew Walker Memorial Scholarship",
     "Game Day · January 9, 2027",
-    "Gear dropping soon",
+    /* this line switches by itself when gear ordering opens (see gearOrder.opensAt) */
+    { beforeGearOpens: "Gear drops Sunday, Oct 25 · 9 AM", afterGearOpens: "Gear on sale now · order by Nov 22" },
     "Donate to the scholarship",
     "Follow @weekofsports"
   ],
