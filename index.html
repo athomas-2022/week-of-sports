@@ -399,8 +399,13 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
       return '<div class="pchip">' + esc(p.name) + ' <b>' + val + '</b></div>';
     }).join('');
   })();
+  /* gear ordering: opens at gearOrder.opensAt, closes for good at gearOrder.closesAt */
+  var GO = C.gearOrder || {}, opensAt = GO.opensAt ? Date.parse(GO.opensAt) : NaN, closesAt = GO.closesAt ? Date.parse(GO.closesAt) : NaN;
+  var gearClosed = closesAt <= Date.now();
+  var gearOpen = !gearClosed && (GO.orderingOpen !== false || opensAt <= Date.now());
   if(C.gearReady){
     S('gear-link').href = '/gear/';
+    if(gearClosed) S('gear-link').textContent = 'Orders closed';
   } else {
     S('gear-link').textContent = 'Coming soon'; S('gear-link').removeAttribute('href'); S('gear-link').style.cursor = 'default';
   }
@@ -441,11 +446,9 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
   var fm = S('foot-mail'); if(fm){ fm.href = gmailCompose(C.contactEmail); fm.target = '_blank'; fm.rel = 'noopener'; }
 
   /* ---- ticker ---- */
-  /* a { beforeGearOpens, afterGearOpens } line shows whichever fits right now */
-  var GO = C.gearOrder || {}, opensAt = GO.opensAt ? Date.parse(GO.opensAt) : NaN;
-  var gearOpen = GO.orderingOpen !== false || opensAt <= Date.now();
+  /* a { beforeGearOpens, afterGearOpens, afterGearCloses } line shows whichever fits right now */
   var tk = (C.ticker||[]).map(function(s){
-    if(s && typeof s === 'object') s = gearOpen ? s.afterGearOpens : s.beforeGearOpens;
+    if(s && typeof s === 'object') s = gearClosed ? (s.afterGearCloses || s.afterGearOpens) : gearOpen ? s.afterGearOpens : s.beforeGearOpens;
     return s ? '<span>'+s+'</span>' : '';
   }).join('');
   S('ticker').innerHTML = tk + tk;
@@ -808,7 +811,7 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
 
   /* ---- gear promo popup (shows once per browser session) ---- */
   (function(){
-    var p=S('gear-promo'); if(!p || !C.gearReady) return;
+    var p=S('gear-promo'); if(!p || !C.gearReady || gearClosed) return;   /* no "shop gear" popup once orders close */
     try{ if(sessionStorage.getItem('wos_gear_promo')) return; }catch(e){}
     /* the photo strip scrolls through gearOrder.promoPhotos, alternating the two models */
     var G=C.gearOrder||{}, list=(G.promoPhotos||[]).filter(Boolean);

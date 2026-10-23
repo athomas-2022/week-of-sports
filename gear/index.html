@@ -251,9 +251,12 @@
       return;
     }
     var products = G.products || [], items = [], uid = 0;
-    /* open unless orderingOpen is false; the opensAt time in config.js turns it on by itself */
+    /* open unless orderingOpen is false; the opensAt time in config.js turns it on by itself,
+       and once the closesAt time passes it's closed no matter what */
     var opensAt = G.opensAt ? Date.parse(G.opensAt) : NaN;
-    var canOrder = G.orderingOpen !== false || opensAt <= Date.now();
+    var closesAt = G.closesAt ? Date.parse(G.closesAt) : NaN;
+    var ended = closesAt <= Date.now();
+    var canOrder = !ended && (G.orderingOpen !== false || opensAt <= Date.now());
 
     function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
     function money(n){ return '$'+n.toLocaleString('en-US'); }
@@ -266,21 +269,37 @@
     /* when ordering is closed the button and the preview note both already say so —
        repeating it here made "ordering opens soon" appear three times in one screen */
     var subOpen = 'This year’s tees, hoodies, and more'+fromTxt+'. Order by '+G.deadline+'.';
-    S('order-sub').textContent = canOrder ? subOpen : 'This year’s tees, hoodies, and more'+fromTxt+'.';
+    var subShut = 'This year’s tees, hoodies, and more'+fromTxt+'.';
+    S('order-sub').textContent = canOrder ? subOpen : subShut;
 
-    if(!canOrder){
-      var place = S('place'); place.disabled = true; place.textContent = 'Ordering opens soon';
-      var note = document.createElement('div'); note.className = 'order-note';
-      note.innerHTML = '<b>Preview —</b> ' +(G.orderingClosedMsg || 'ordering isn’t open yet. Browse this year’s gear, then check back soon to place your order.');
-      var form = S('order-form'); form.parentNode.insertBefore(note, form);
+    var place = S('place'), form = S('order-form'), note = null;
+    var closedHTML = '<b>Orders closed —</b> ' + (G.orderingEndedMsg || 'this year’s gear orders are closed.');
+    function shut(label, html){
+      canOrder = false;
+      if(form.hidden) return;   /* they just placed an order: leave the thank-you screen alone */
+      place.disabled = true; place.textContent = label;
+      if(note) note.remove();
+      note = document.createElement('div'); note.className = 'order-note'; note.innerHTML = html;
+      form.parentNode.insertBefore(note, form);
+      S('order-sub').textContent = subShut;
+    }
+    function later(ms, fn){ if(ms > 0 && ms < 2147483647) setTimeout(fn, ms); }
+
+    if(ended){
+      shut('Orders closed', closedHTML);
+    } else if(!canOrder){
+      shut('Ordering opens soon', '<b>Preview —</b> ' + (G.orderingClosedMsg || 'ordering isn’t open yet. Browse this year’s gear, then check back soon to place your order.'));
       /* someone already on the page when ordering opens: switch it on in place, keeping what they picked */
-      var wait = opensAt - Date.now();
-      if(wait > 0 && wait < 2147483647) setTimeout(function(){
+      later(opensAt - Date.now(), function(){
         canOrder = true;
         place.disabled = false; place.textContent = 'Place order';
-        note.remove();
+        if(note){ note.remove(); note = null; }
         S('order-sub').textContent = subOpen;
-      }, wait);
+        later(closesAt - Date.now(), function(){ shut('Orders closed', closedHTML); });
+      });
+    } else {
+      /* ...and someone still on the page at closing time sees it lock */
+      later(closesAt - Date.now(), function(){ shut('Orders closed', closedHTML); });
     }
 
     /* ---- one "add" tile per product ---- */
