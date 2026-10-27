@@ -120,8 +120,6 @@
   .opt input{margin-top:3px;width:18px;height:18px;flex:none;accent-color:var(--royal)}
   .opt.sel{border-color:var(--royal);background:#f1f6fd}
   .opt .ot{font-size:15px;color:var(--ink);line-height:1.4}
-  #venmo-box{margin-top:14px;background:#f1f6fd;border:1px solid #cfe0f7;border-radius:12px;padding:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-  #venmo-box .vt{font-size:14px;color:#37506e}
   .o-bar{position:sticky;bottom:0;background:#fff;border:1px solid #e3e9f1;border-radius:14px;padding:16px 18px;margin-top:30px;display:flex;align-items:center;justify-content:space-between;gap:14px;box-shadow:0 -6px 20px rgba(10,35,66,.06)}
   .o-total{font-family:'Oswald',system-ui,sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#46566b;font-size:15px}
   .o-total b{font-family:'Oswald',system-ui,sans-serif;font-weight:700;font-size:30px;color:var(--navy);margin-left:8px;font-variant-numeric:tabular-nums}
@@ -210,7 +208,6 @@
 
         <h2 class="o-h"><span class="n">4</span> Payment</h2>
         <div class="opts" id="payment-opts"></div>
-        <div id="venmo-box" hidden><span class="vt">Pay by Venmo to <b>@AndrewThomas24</b> — put your name in the description.</span><a class="btn btn-primary" id="venmo-btn" target="_blank">Pay total on Venmo</a></div>
 
         <div class="o-bar">
           <div class="o-total">Total<b id="total">$0</b></div>
@@ -702,12 +699,10 @@
     }
 
     function updateTotal(){
-      var t = total();
-      S('total').textContent = money(t);
-      if(canOrder && selectedPayment() === G.payment[0]){ S('venmo-box').hidden = false; S('venmo-btn').href = venmoLink(t); }
-      else S('venmo-box').hidden = true;
+      S('total').textContent = money(total());
     }
 
+    /* the Venmo button only shows after the order is placed (confirmation + pop-up) */
     function venmoLink(t){
       var note = encodeURIComponent('Week of Sports gear — '+(S('f-name').value||'name'));
       return 'https://venmo.com/u/'+C.venmoHandle+'?txn=pay&amount='+t+'&note='+note;
@@ -737,15 +732,12 @@
       }).join('');
       S(host).addEventListener('change', function(){
         Array.prototype.forEach.call(S(host).querySelectorAll('.opt'), function(l){ l.classList.toggle('sel', l.querySelector('input').checked); });
-        if(group==='pay') updateTotal();
       });
     }
     optCards('delivery-opts', G.delivery, 'del');
     optCards('payment-opts', G.payment, 'pay');
 
     function selected(group){ var r=document.querySelector('input[name="'+group+'"]:checked'); return r?r.value:''; }
-    function selectedPayment(){ return selected('pay'); }
-    S('f-name').addEventListener('input', updateTotal);
 
     /* the color/size pieces of an item, skipping whichever ones this product doesn't have */
     function descParts(it){
