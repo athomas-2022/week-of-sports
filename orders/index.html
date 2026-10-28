@@ -678,23 +678,18 @@
         if(next>-1) saveNext+=a.row.costs[ti]-a.row.costs[next];
       }
     });
-    var paidUpfront=0;
+    /* only the gear in these orders counts; the upfront batch, samples and setup fees don't */
     Object.keys(c.stock).forEach(function(k){
       var st=c.stock[k], s=slot(st.name);
-      s.kind='stock'; s.bought=st.bought; s.each=st.paid; s.extra=Math.max(0,s.sold-st.bought);
-      s.cost=st.bought*st.paid+s.extra*st.reorder;          /* already bought, so the whole batch counts */
-      paidUpfront+=st.bought*st.paid;
+      s.kind='stock'; s.bought=st.bought; s.extra=Math.max(0,s.sold-st.bought);
+      s.cost=(s.sold-s.extra)*st.paid+s.extra*st.reorder;
     });
-    var other=c.other.reduce(function(a,o){ return a+o.amount; },0);
-    paidUpfront=(paidUpfront+other)*(1+tax);
     var lines=order.map(function(k){ var s=by[k]; s.costTax=s.cost*(1+tax); s.profit=s.rev-s.costTax; return s; });
-    var itemCost=lines.reduce(function(a,s){ return a+s.costTax; },0), otherTax=other*(1+tax);
     var revenue=0, collected=0;
     rows.forEach(function(r){ revenue+=r.total; if(r.paid) collected+=r.total; });
-    var totalCost=itemCost+otherTax;
-    return {lines:lines,other:otherTax,otherItems:c.other,tax:tax,apparelN:apparelN,ti:ti,next:next,tiers:c.tiers,
-      saveNext:saveNext*(1+tax),revenue:revenue,collected:collected,totalCost:totalCost,paidUpfront:paidUpfront,
-      toOrder:Math.max(0,totalCost-paidUpfront),profit:revenue-totalCost,
+    var totalCost=lines.reduce(function(a,s){ return a+s.costTax; },0);
+    return {lines:lines,tax:tax,apparelN:apparelN,ti:ti,next:next,tiers:c.tiers,
+      saveNext:saveNext*(1+tax),revenue:revenue,collected:collected,totalCost:totalCost,profit:revenue-totalCost,
       itemRevenue:lines.reduce(function(a,s){ return a+s.rev; },0)};
   }
 
@@ -719,9 +714,9 @@
     var P=computeProfit(state.rows,c), anyEst=false;
 
     var cards=[
-      {k:'Profit',v:(P.profit<0?'−':'')+money(Math.abs(P.profit)),cls:P.profit<0?'warn':'ok',sub:P.profit<0?'more sales cover the gear already bought':'if every order is paid'},
+      {k:'Profit',v:(P.profit<0?'−':'')+money(Math.abs(P.profit)),cls:P.profit<0?'warn':'ok',sub:'on the orders so far'},
       {k:'Ordered',v:money(P.revenue),sub:money(P.collected)+' collected so far'},
-      {k:'Jupmode cost',v:money(P.totalCost),sub:money(P.paidUpfront)+' paid · '+money(P.toOrder)+' still to order'},
+      {k:'Jupmode cost',v:money(P.totalCost),sub:'for the gear in these orders'},
       {k:'Margin',v:P.revenue?pct(P.profit/P.revenue):'—',cls:P.profit<0?'warn':'accent',sub:'of every dollar ordered'}
     ];
     el('p-summary').innerHTML=cards.map(function(x){
@@ -738,15 +733,14 @@
     } else {
       notes.push('You\'re at <b class="num">'+N+'</b> shirts, long sleeves and hoodies, which gets Jupmode\'s best quoted price (<b>'+cur+'</b>).');
     }
-    notes.push('Costs include Jupmode\'s '+pct(P.tax,2)+' sales tax. Hats, beanies and stickers are already bought, so their whole batch counts now and their profit grows with every one sold.');
+    notes.push('Costs include Jupmode\'s '+pct(P.tax,2)+' sales tax and count only the gear in these orders. This updates by itself as new orders come in.');
     el('p-notes').innerHTML=notes.map(function(n){ return '<div class="pnote">'+n+'</div>'; }).join('');
 
     /* profit by item */
     var body=P.lines.map(function(s){
       var sub='';
       if(s.kind==='stock'){
-        var price=sellPrice(s.name,'')||0, be=price?Math.ceil(s.costTax/price):0;
-        sub=s.sold+' of '+s.bought+' sold'+(s.extra?' · <span class="est">'+s.extra+' more than you have</span>':(s.profit<0&&be?' · breaks even at '+be:''));
+        sub=s.sold+' of '+s.bought+' sold'+(s.extra?' · <span class="est">'+s.extra+' more than you have</span>':'');
       } else if(s.kind==='apparel'){
         sub='made after orders close';
       } else sub='no Jupmode cost listed';
@@ -754,10 +748,6 @@
       return '<tr><td class="item">'+esc(s.name)+(s.est?'<span class="est">*</span>':'')+'<small>'+sub+'</small></td>'+
         '<td class="num">'+s.sold+'</td><td class="num">'+money(s.rev)+'</td><td class="num">'+money(s.costTax)+'</td><td>'+signed(s.profit)+'</td></tr>';
     }).join('');
-    if(P.other){
-      body+='<tr><td class="item">Setup fees and samples<small>'+esc(P.otherItems.map(function(o){ return o.label.replace(/\s*\(paid\)/i,''); }).join(' · '))+'</small></td>'+
-        '<td class="num">—</td><td class="num">—</td><td class="num">'+money(P.other)+'</td><td>'+signed(-P.other)+'</td></tr>';
-    }
     var itemProfit=P.itemRevenue-P.totalCost;
     el('p-items').innerHTML='<thead><tr><th>Item</th><th>Sold</th><th>Sales</th><th>Jupmode cost</th><th>Profit</th></tr></thead>'+
       '<tbody>'+body+'</tbody>'+
