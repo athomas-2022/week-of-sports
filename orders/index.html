@@ -208,6 +208,34 @@
   @media(max-width:640px){ .hd h1{font-size:18px} .stat .v{font-size:24px} .hd .status{display:none} }
   @media(prefers-reduced-motion:reduce){ *{animation-duration:.001s!important;transition-duration:.001s!important} }
 
+  /* ---- Orders / Profit tabs ---- */
+  .tabs{display:flex;gap:2px;border-bottom:2px solid var(--line-2);margin-top:22px}
+  .tab{font-family:'Oswald',system-ui,sans-serif;font-weight:600;letter-spacing:.05em;text-transform:uppercase;font-size:14px;color:var(--muted);background:none;border:0;border-bottom:3px solid transparent;margin-bottom:-2px;padding:11px 18px;border-radius:8px 8px 0 0;transition:color .15s,border-color .2s,background .15s}
+  .tab:hover{color:var(--navy);background:var(--surface-2)}
+  .tab[aria-selected=true]{color:var(--royal);border-bottom-color:var(--royal)}
+
+  /* ---- profit ---- */
+  .pnote{background:#e7f0fd;border:1px solid #cfe0f7;color:var(--ink);border-radius:12px;padding:14px 16px;font-size:14.5px;line-height:1.55;max-width:80ch}
+  .pnote b{color:var(--navy)}
+  .pnote + .pnote{margin-top:10px}
+  table.pt{border-collapse:collapse;width:100%;font-size:14.5px;min-width:640px}
+  table.pt thead th{font-family:'Oswald',system-ui,sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.04em;font-size:12px;color:var(--muted);text-align:right;padding:13px 14px;border-bottom:2px solid var(--line-2);background:var(--surface-2);white-space:nowrap}
+  table.pt td{padding:11px 14px;border-bottom:1px solid var(--line);color:var(--ink-2);text-align:right;white-space:nowrap}
+  table.pt thead th:first-child,table.pt td:first-child,table.pt thead th.l,table.pt td.l{text-align:left}
+  table.pt td.item{font-weight:600;color:var(--ink);white-space:normal}
+  table.pt td.item small{display:block;font-weight:400;font-size:12.5px;color:var(--muted);margin-top:1px}
+  table.pt tr.first td{border-top:2px solid var(--line-2)}
+  table.pt tbody tr:first-child td{border-top:0}
+  table.pt .pos{color:var(--ok);font-weight:700}
+  table.pt .neg{color:#a3201f;font-weight:700}
+  table.pt tfoot td{font-weight:700;color:var(--navy);border-top:2px solid var(--line-2);border-bottom:0}
+  .mg{display:inline-flex;align-items:center;gap:8px;justify-content:flex-end}
+  .mg .bar{width:54px;height:6px;border-radius:6px;background:var(--line);overflow:hidden}
+  .mg .bar i{display:block;height:100%;background:var(--ok);border-radius:6px}
+  .mg .bar i.low{background:#d39a2c}
+  .est{color:var(--warn);font-weight:700}
+  .p-foot{font-size:13px;color:var(--muted);margin-top:12px;max-width:90ch;line-height:1.55}
+
   /* ---- sign-in ---- */
   [hidden]{display:none !important}
   .login{max-width:420px;margin:56px auto 0;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:32px 28px 26px;text-align:center}
@@ -269,6 +297,22 @@
   </section>
 
   <main id="dash" hidden>
+    <div class="tabs" role="tablist" aria-label="Dashboard views">
+      <button class="tab" role="tab" id="tab-orders" aria-controls="ordersView" aria-selected="true" data-view="orders">Orders</button>
+      <button class="tab" role="tab" id="tab-profit" aria-controls="profitView" aria-selected="false" tabindex="-1" data-view="profit">Profit</button>
+    </div>
+
+    <section id="profitView" role="tabpanel" aria-labelledby="tab-profit" hidden>
+      <div class="summary" id="p-summary"></div>
+      <div id="p-notes"></div>
+      <div class="sec-h"><h2>Profit by item</h2><span class="c" id="p-items-c"></span></div>
+      <div class="tbl-card"><div class="tbl-scroll"><table class="pt" id="p-items"></table></div></div>
+      <div class="sec-h"><h2>Price vs Jupmode cost</h2><span class="c" id="p-prices-c"></span></div>
+      <div class="tbl-card"><div class="tbl-scroll"><table class="pt" id="p-prices"></table></div></div>
+      <p class="p-foot" id="p-foot"></p>
+    </section>
+
+    <section id="ordersView" role="tabpanel" aria-labelledby="tab-orders">
     <div class="summary" id="summary"></div>
 
     <div class="sec-h"><h2>What to order</h2><span class="c" id="wto-count"></span></div>
@@ -295,6 +339,7 @@
       </div>
       <div class="nomatch" id="nomatch" hidden></div>
     </div>
+    </section>
   </main>
 
   <footer>
@@ -320,7 +365,7 @@
   var TOKEN_KEY='wos_orders_token';   /* sign-in lasts until the tab closes (max 6 hours) */
   var SIZE_ORDER=['YXS','YS','YM','YL','YXL','XS','S','M','L','XL','2XL','3XL','4XL','5XL'];
   var el=function(id){return document.getElementById(id);};
-  var state={rows:[],headers:{},sort:{key:'date',dir:-1},q:'',filters:{},expanded:{},lastUpdated:null};
+  var state={rows:[],headers:{},sort:{key:'date',dir:-1},q:'',filters:{},expanded:{},lastUpdated:null,costs:null};
 
   function mapHeaders(head){
     var m={};
@@ -557,7 +602,213 @@
     renderSummary(computeSummary(state.rows));
     renderBreakdown(computeBreakdown(state.rows));
     renderHead(); renderFilters(); renderTable();
+    renderProfit();
   }
+
+  /* ---- profit: what Jupmode charges comes from the "Jupmode Costs" tab of the orders
+     sheet, sent by the orders script after sign-in, so no cost is in this page's code ---- */
+  var ADULT=['XS','S','M','L','XL','2XL','3XL','4XL','5XL'];
+  var GO=(window.WOS&&window.WOS.gearOrder)||{};
+  function itemKey(s){ return String(s||'').toLowerCase().replace(/[^a-z0-9]/g,''); }
+  function pct(n,dp){ var f=Math.pow(10,dp==null?1:dp), v=Math.round(Math.abs(n)*100*f)/f; return (n<0&&v?'−':'')+v+'%'; }
+  function sizeList(label){                       /* "XS-XL" -> XS,S,M,L,XL · "Youth" · "2XL" */
+    label=String(label||'').toUpperCase().replace(/\s+/g,'');
+    if(/^YOUTH/.test(label)) return ['YOUTH'];
+    var ends=label.split('-'), a=ADULT.indexOf(ends[0]), b=ADULT.indexOf(ends[ends.length-1]);
+    return (a>-1&&b>-1)?ADULT.slice(a,b+1):[label];
+  }
+  function parseCosts(matrix){
+    if(!matrix||!matrix.length) return null;
+    var c={tiers:[],apparel:{},stock:{},other:[],tax:0}, mode='';
+    matrix.forEach(function(row){
+      var a=String(row[0]==null?'':row[0]).trim(), low=a.toLowerCase();
+      if(!a) return;
+      if(low==='item'){ mode='apparel'; c.tiers=row.slice(2).map(function(h){ return parseInt(String(h),10); }).filter(function(n){ return !isNaN(n); }); return; }
+      if(low==='in stock'){ mode='stock'; return; }
+      if(low==='other cost'){ mode='other'; return; }
+      if(mode==='apparel'){
+        var costs=c.tiers.map(function(_,i){ return num(row[2+i]); });
+        if(!costs.some(Boolean)) return;
+        (c.apparel[itemKey(a)]=c.apparel[itemKey(a)]||[]).push({sizes:sizeList(row[1]),label:String(row[1]),costs:costs});
+      } else if(mode==='stock'){
+        c.stock[itemKey(a)]={name:a,bought:num(row[1]),paid:num(row[2]),reorder:num(row[3])||num(row[2])};
+      } else if(mode==='other'){
+        if(/tax/i.test(a)){ var t=num(row[1]); c.tax=t>1?t/100:t; }
+        else c.other.push({label:a,amount:num(row[1])});
+      }
+    });
+    return c.tiers.length||Object.keys(c.stock).length ? c : null;
+  }
+  function tierAt(tiers,n){ var i=0; tiers.forEach(function(t,k){ if(n>=t) i=k; }); return i; }
+  /* the cost row for one size; a size Jupmode didn't quote uses the closest size it did */
+  function apparelRow(rows,size){
+    var youth=/^Y/.test(size), want=youth?'YOUTH':size;
+    var hit=rows.filter(function(r){ return r.sizes.indexOf(want)>-1; })[0];
+    if(hit) return {row:hit,est:false};
+    var adult=rows.filter(function(r){ return r.sizes[0]!=='YOUTH'; }), idx=youth?0:ADULT.indexOf(size), best=adult[0]||rows[0], bd=99;
+    adult.forEach(function(r){ r.sizes.forEach(function(z){ var d=Math.abs(ADULT.indexOf(z)-idx); if(d<bd){ bd=d; best=r; } }); });
+    return {row:best,est:true};
+  }
+  function product(name){ return (GO.products||[]).filter(function(p){ return itemKey(p.name)===itemKey(name); })[0]; }
+  function sellPrice(name,size){
+    var p=product(name); if(!p) return null;
+    var extra=0;
+    (p.sizes||[]).forEach(function(s){ if(normSize(s)===size){ var m=s.match(/\+\s*\$?([\d.]+)/); if(m) extra=parseFloat(m[1]); } });
+    return p.price+extra;
+  }
+
+  function computeProfit(rows,c){
+    var tax=c.tax, items=[];
+    rows.forEach(function(r){ r.items.forEach(function(it){ items.push(it); }); });
+    var apparelN=items.filter(function(it){ return c.apparel[itemKey(it.type)]; }).length;
+    var ti=tierAt(c.tiers,apparelN), next=ti+1<c.tiers.length?ti+1:-1;
+    var by={}, order=[], saveNext=0;
+    function slot(name){
+      var k=itemKey(name);
+      if(!by[k]){ by[k]={name:name,sold:0,rev:0,cost:0,est:false,kind:c.apparel[k]?'apparel':(c.stock[k]?'stock':'none')}; order.push(k); }
+      return by[k];
+    }
+    (GO.products||[]).forEach(function(p){ if(c.apparel[itemKey(p.name)]||c.stock[itemKey(p.name)]) slot(p.name); });
+    items.forEach(function(it){
+      var s=slot(it.type), sp=sellPrice(it.type,it.size);
+      s.sold++; s.rev+=sp||0;
+      if(s.kind==='apparel'){
+        var a=apparelRow(c.apparel[itemKey(it.type)],it.size);
+        s.cost+=a.row.costs[ti]; if(a.est) s.est=true;
+        if(next>-1) saveNext+=a.row.costs[ti]-a.row.costs[next];
+      }
+    });
+    var paidUpfront=0;
+    Object.keys(c.stock).forEach(function(k){
+      var st=c.stock[k], s=slot(st.name);
+      s.kind='stock'; s.bought=st.bought; s.each=st.paid; s.extra=Math.max(0,s.sold-st.bought);
+      s.cost=st.bought*st.paid+s.extra*st.reorder;          /* already bought, so the whole batch counts */
+      paidUpfront+=st.bought*st.paid;
+    });
+    var other=c.other.reduce(function(a,o){ return a+o.amount; },0);
+    paidUpfront=(paidUpfront+other)*(1+tax);
+    var lines=order.map(function(k){ var s=by[k]; s.costTax=s.cost*(1+tax); s.profit=s.rev-s.costTax; return s; });
+    var itemCost=lines.reduce(function(a,s){ return a+s.costTax; },0), otherTax=other*(1+tax);
+    var revenue=0, collected=0;
+    rows.forEach(function(r){ revenue+=r.total; if(r.paid) collected+=r.total; });
+    var totalCost=itemCost+otherTax;
+    return {lines:lines,other:otherTax,otherItems:c.other,tax:tax,apparelN:apparelN,ti:ti,next:next,tiers:c.tiers,
+      saveNext:saveNext*(1+tax),revenue:revenue,collected:collected,totalCost:totalCost,paidUpfront:paidUpfront,
+      toOrder:Math.max(0,totalCost-paidUpfront),profit:revenue-totalCost,
+      itemRevenue:lines.reduce(function(a,s){ return a+s.rev; },0)};
+  }
+
+  function marginCell(profit,price){
+    if(!price) return '—';
+    var m=profit/price, w=Math.max(0,Math.min(1,m))*100;
+    return '<span class="mg"><span class="num'+(m<0?' neg':'')+'">'+pct(m)+'</span><span class="bar" aria-hidden="true"><i class="'+(m<.15?'low':'')+'" style="width:'+w+'%"></i></span></span>';
+  }
+  function signed(n){ return '<span class="num '+(n<0?'neg':'pos')+'">'+(n<0?'−'+money(-n):money(n))+'</span>'; }
+  function tierName(c,i){ return c.tiers[i]+'+'; }
+
+  function renderProfit(){
+    var c=parseCosts(state.costs), pv=el('profitView');
+    if(!pv) return;
+    if(!c){
+      el('p-summary').innerHTML='';
+      el('p-notes').innerHTML='<div class="pnote">The Jupmode costs didn\'t come through. They live in the <b>Jupmode Costs</b> tab of your orders sheet and arrive with the orders after sign-in, so try <b>Refresh</b>. If this keeps showing, the orders script needs its v3 update.</div>';
+      ['p-items','p-prices'].forEach(function(id){ el(id).innerHTML=''; });
+      el('p-items-c').textContent=''; el('p-prices-c').textContent=''; el('p-foot').textContent='';
+      return;
+    }
+    var P=computeProfit(state.rows,c), anyEst=false;
+
+    var cards=[
+      {k:'Profit',v:(P.profit<0?'−':'')+money(Math.abs(P.profit)),cls:P.profit<0?'warn':'ok',sub:P.profit<0?'more sales cover the gear already bought':'if every order is paid'},
+      {k:'Ordered',v:money(P.revenue),sub:money(P.collected)+' collected so far'},
+      {k:'Jupmode cost',v:money(P.totalCost),sub:money(P.paidUpfront)+' paid · '+money(P.toOrder)+' still to order'},
+      {k:'Margin',v:P.revenue?pct(P.profit/P.revenue):'—',cls:P.profit<0?'warn':'accent',sub:'of every dollar ordered'}
+    ];
+    el('p-summary').innerHTML=cards.map(function(x){
+      return '<div class="stat '+(x.cls||'')+'"><div class="k">'+x.k+'</div><div class="v num">'+x.v+'</div><div class="sub num">'+esc(x.sub)+'</div></div>';
+    }).join('');
+
+    /* where the shirt count sits against Jupmode's price breaks */
+    var N=P.apparelN, notes=[], cur=tierName(c,P.ti);
+    if(N<c.tiers[0]){
+      notes.push('Jupmode\'s minimum is <b>'+c.tiers[0]+'</b> shirts, long sleeves and hoodies together. You\'re at <b class="num">'+N+'</b>, so these costs use the '+cur+' price.');
+    } else if(P.next>-1){
+      var need=c.tiers[P.next]-N;
+      notes.push('You\'re at <b class="num">'+N+'</b> shirts, long sleeves and hoodies. Jupmode prices them together, so right now they cost the <b>'+cur+'</b> price. <b class="num">'+need+' more</b> reaches the <b>'+tierName(c,P.next)+'</b> price, which would take about <b class="num">'+money(Math.round(P.saveNext))+'</b> off what\'s ordered so far.');
+    } else {
+      notes.push('You\'re at <b class="num">'+N+'</b> shirts, long sleeves and hoodies, which gets Jupmode\'s best quoted price (<b>'+cur+'</b>).');
+    }
+    notes.push('Costs include Jupmode\'s '+pct(P.tax,2)+' sales tax. Hats, beanies and stickers are already bought, so their whole batch counts now and their profit grows with every one sold.');
+    el('p-notes').innerHTML=notes.map(function(n){ return '<div class="pnote">'+n+'</div>'; }).join('');
+
+    /* profit by item */
+    var body=P.lines.map(function(s){
+      var sub='';
+      if(s.kind==='stock'){
+        var price=sellPrice(s.name,'')||0, be=price?Math.ceil(s.costTax/price):0;
+        sub=s.sold+' of '+s.bought+' sold'+(s.extra?' · <span class="est">'+s.extra+' more than you have</span>':(s.profit<0&&be?' · breaks even at '+be:''));
+      } else if(s.kind==='apparel'){
+        sub='made after orders close';
+      } else sub='no Jupmode cost listed';
+      if(s.est) anyEst=true;
+      return '<tr><td class="item">'+esc(s.name)+(s.est?'<span class="est">*</span>':'')+'<small>'+sub+'</small></td>'+
+        '<td class="num">'+s.sold+'</td><td class="num">'+money(s.rev)+'</td><td class="num">'+money(s.costTax)+'</td><td>'+signed(s.profit)+'</td></tr>';
+    }).join('');
+    if(P.other){
+      body+='<tr><td class="item">Setup fees and samples<small>'+esc(P.otherItems.map(function(o){ return o.label.replace(/\s*\(paid\)/i,''); }).join(' · '))+'</small></td>'+
+        '<td class="num">—</td><td class="num">—</td><td class="num">'+money(P.other)+'</td><td>'+signed(-P.other)+'</td></tr>';
+    }
+    var itemProfit=P.itemRevenue-P.totalCost;
+    el('p-items').innerHTML='<thead><tr><th>Item</th><th>Sold</th><th>Sales</th><th>Jupmode cost</th><th>Profit</th></tr></thead>'+
+      '<tbody>'+body+'</tbody>'+
+      '<tfoot><tr><td>Total</td><td class="num">'+P.lines.reduce(function(a,s){ return a+s.sold; },0)+'</td><td class="num">'+money(P.itemRevenue)+'</td><td class="num">'+money(P.totalCost)+'</td><td>'+signed(itemProfit)+'</td></tr></tfoot>';
+    el('p-items-c').textContent='cost includes tax';
+
+    /* price vs cost for every size on sale, at today's price break */
+    var rowsHtml=[];
+    (GO.products||[]).forEach(function(p){
+      var k=itemKey(p.name), groups=[];
+      if(c.apparel[k]){
+        (p.sizes&&p.sizes.length?p.sizes:['']).forEach(function(lbl){
+          var sz=normSize(lbl), sell=sellPrice(p.name,sz), a=apparelRow(c.apparel[k],sz), cost=a.row.costs[P.ti]*(1+P.tax);
+          var name=String(lbl).replace(/\s*\(.*?\)/,''), g=groups[groups.length-1];
+          if(g&&g.sell===sell&&Math.abs(g.cost-cost)<.005&&g.est===a.est&&/^Youth/.test(g.first)===/^Youth/.test(name)) g.last=name;
+          else groups.push({first:name,last:'',sell:sell,cost:cost,est:a.est});
+        });
+      } else if(c.stock[k]){
+        groups.push({first:'One size',last:'',sell:p.price,cost:c.stock[k].paid*(1+P.tax),est:false});
+      } else return;
+      groups.forEach(function(g,i){
+        if(g.est) anyEst=true;
+        var label=g.first+(g.last?'–'+g.last.replace(/^Youth\s+/,''):''), prof=g.sell-g.cost;
+        rowsHtml.push('<tr'+(i===0?' class="first"':'')+'><td class="item">'+(i===0?esc(p.name):'')+'</td><td class="l">'+esc(label)+(g.est?'<span class="est">*</span>':'')+'</td>'+
+          '<td class="num">'+money(g.sell)+'</td><td class="num">'+money(Math.round(g.cost*100)/100)+'</td><td>'+signed(Math.round(prof*100)/100)+'</td><td>'+marginCell(prof,g.sell)+'</td></tr>');
+      });
+    });
+    el('p-prices').innerHTML='<thead><tr><th>Item</th><th class="l">Size</th><th>Sells for</th><th>Jupmode cost</th><th>Profit each</th><th>Margin</th></tr></thead><tbody>'+rowsHtml.join('')+'</tbody>';
+    el('p-prices-c').textContent='shirts, long sleeves and hoodies at the '+cur+' price · cost includes tax';
+
+    el('p-foot').innerHTML=(anyEst?'<span class="est">*</span> Jupmode didn\'t quote this size, so it uses the closest size they did. Ask Anna for the real price before the final order. ':'')+
+      'These costs come from the <b>Jupmode Costs</b> tab in your orders sheet (Anna\'s price list and invoice #49853). Change a number there and this page picks it up on the next refresh.';
+  }
+
+  /* Orders / Profit tabs */
+  var VIEW_KEY='wos_orders_view';
+  function showView(v,focus){
+    ['orders','profit'].forEach(function(name){
+      var on=name===v, t=el('tab-'+name);
+      t.setAttribute('aria-selected',on); t.tabIndex=on?0:-1;
+      el(name+'View').hidden=!on;
+      if(on&&focus) t.focus();
+    });
+    try{ sessionStorage.setItem(VIEW_KEY,v); }catch(e){}
+  }
+  document.querySelector('.tabs').addEventListener('click',function(e){ var t=e.target.closest('.tab'); if(t) showView(t.getAttribute('data-view')); });
+  document.querySelector('.tabs').addEventListener('keydown',function(e){
+    if(e.key!=='ArrowLeft'&&e.key!=='ArrowRight') return;
+    e.preventDefault(); showView(el('tab-orders').getAttribute('aria-selected')==='true'?'profit':'orders',true);
+  });
+  try{ if(sessionStorage.getItem(VIEW_KEY)==='profit') showView('profit'); }catch(e){}
 
   function setStatus(kind,txt){
     el('dot').className='dot'+(kind?(' '+kind):'');
@@ -571,6 +822,7 @@
     var paidMap = (payload&&!Array.isArray(payload)&&payload.paid)||{};
     var built=buildRows(matrix);
     built.rows.forEach(function(r){ r.paid = !!paidMap[r.key]; });
+    state.costs = (payload&&!Array.isArray(payload)&&payload.costs)||null;
     if(!built.rows.length){
       el('loading').hidden=true; el('dash').hidden=true; el('empty').hidden=false;
       state.rows=[]; setStatus('live','Live · 0 orders'); return;
@@ -608,9 +860,9 @@
   function rowByKey(k){ return state.rows.filter(function(r){return r.key===k;})[0]; }
   function markPaid(row,paid){
     row.paid=paid;
-    renderSummary(computeSummary(state.rows)); renderTable();
+    renderSummary(computeSummary(state.rows)); renderTable(); renderProfit();
     api('setPaid',{key:row.key,paid:paid}).catch(function(err){
-      row.paid=!paid; renderSummary(computeSummary(state.rows)); renderTable();
+      row.paid=!paid; renderSummary(computeSummary(state.rows)); renderTable(); renderProfit();
       if(err&&err.auth){ signOut(err.message); return; }
       banner("Couldn't save paid status ("+((err&&err.message)||err)+"). Please try again.");
     });
@@ -742,7 +994,8 @@
     if(token) api('logout').catch(function(){});
     token=null; try{ sessionStorage.removeItem(TOKEN_KEY); }catch(e){}
     clearInterval(refreshTimer);
-    state.rows=[]; el('tbody').innerHTML=''; el('summary').innerHTML=''; el('breakdown').innerHTML='';
+    state.rows=[]; state.costs=null; el('tbody').innerHTML=''; el('summary').innerHTML=''; el('breakdown').innerHTML='';
+    ['p-summary','p-notes','p-items','p-prices'].forEach(function(id){ el(id).innerHTML=''; });
     showLogin(msg);
   }
   el('loginForm').addEventListener('submit',function(e){
