@@ -55,6 +55,9 @@
   .stat .v{font-family:'Oswald',system-ui,sans-serif;font-weight:700;font-size:30px;line-height:1.1;margin-top:4px;color:var(--navy)}
   .stat.accent .v{color:var(--royal)}
   .stat .sub{font-size:12.5px;color:var(--muted);margin-top:3px}
+  .stat .note{font-size:12.5px;color:var(--ink-2);margin-top:8px;padding-top:6px;border-top:1px solid var(--line);line-height:1.6}
+  .stat .note div{display:flex;justify-content:space-between;gap:10px}
+  .stat .note b{color:var(--ok);font-weight:600}
 
   .sec-h{display:flex;align-items:baseline;gap:10px;margin:26px 0 12px}
   .sec-h h2{font-family:'Oswald',system-ui,sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.05em;font-size:16px;color:var(--navy)}
@@ -424,16 +427,20 @@
   }
 
   function computeSummary(rows){
-    var total=0,items=0,byType={},pickup=0,dropoff=0,paidTotal=0,unpaid=0;
+    var total=0,items=0,byType={},pickup=0,dropoff=0,paidTotal=0,unpaid=0,paidBy={};
     rows.forEach(function(r){
       total+=r.total;
-      if(r.paid) paidTotal+=r.total; else unpaid++;
+      if(r.paid){
+        paidTotal+=r.total;
+        var p=classifyPayment(r.payment), m=p?p.label:'Other';   /* "Venmo", "Cash · LBHS", "Cash · MS/ES", ... */
+        paidBy[m]=(paidBy[m]||0)+r.total;
+      } else unpaid++;
       r.items.forEach(function(it){ items++; byType[it.type]=(byType[it.type]||0)+1; });
       var d=classifyDelivery(r.delivery);
       if(d){ if(d.label==='Pickup') pickup++; else if(d.label==='Homeroom'||d.label==='High School') dropoff++; }
     });
     return {total:total,orders:rows.length,items:items,byType:byType,pickup:pickup,dropoff:dropoff,
-      paidTotal:paidTotal,owed:total-paidTotal,unpaid:unpaid};
+      paidTotal:paidTotal,owed:total-paidTotal,unpaid:unpaid,paidBy:paidBy};
   }
   function computeBreakdown(rows){
     var g={};
@@ -450,14 +457,18 @@
   }
 
   function renderSummary(s){
+    /* how the paid money came in, Venmo first, then the biggest */
+    var by=s.paidBy||{}, methods=Object.keys(by).sort(function(a,b){ return (b==='Venmo')-(a==='Venmo')||by[b]-by[a]; });
     var cards=[
-      {k:'Paid',v:money(s.paidTotal),cls:'ok',sub:'of '+money(s.total)+' ordered'},
+      {k:'Paid',v:money(s.paidTotal),cls:'ok',sub:'of '+money(s.total)+' ordered',
+        note:methods.map(function(m){ return '<div><span>'+esc(m.replace(/^(.+) · (.+)$/,'$1 ($2)'))+'</span><b>'+money(by[m])+'</b></div>'; }).join('')},
       {k:'Owed',v:money(s.owed),cls:(s.owed>0?'warn':''),sub:s.unpaid+' unpaid'},
       {k:'Orders',v:s.orders,sub:s.pickup+' pickup · '+s.dropoff+' drop-off'},
       {k:'Items',v:s.items,sub:Object.keys(s.byType).sort(function(a,b){return s.byType[b]-s.byType[a];}).map(function(t){return s.byType[t]+' '+t;}).join(' · ')||'across all orders'}
     ];
     el('summary').innerHTML=cards.map(function(c){
-      return '<div class="stat '+(c.cls||'')+'"><div class="k">'+c.k+'</div><div class="v num">'+c.v+'</div><div class="sub num">'+esc(c.sub)+'</div></div>';
+      return '<div class="stat '+(c.cls||'')+'"><div class="k">'+c.k+'</div><div class="v num">'+c.v+'</div><div class="sub num">'+esc(c.sub)+'</div>'+
+        (c.note?'<div class="note num">'+c.note+'</div>':'')+'</div>';
     }).join('');
   }
   function renderBreakdown(g){
