@@ -913,13 +913,14 @@
     if(!el('raisedView')) return;
     var dons=state.donations||[], c=parseCosts(state.costs), P=c?computeProfit(state.rows,c):null;
     var cats={}; dons.forEach(function(d){ var k=d.category||'Other income'; cats[k]=(cats[k]||0)+d.amount; });
-    var lines=[];
-    if(P){
-      var up=upfrontLeft(c,P);
-      lines.push({k:'Gear profit',v:P.profit,auto:true,sub:'from the Profit tab · '+money(P.revenue)+' ordered'});
-      if(up.amount) lines.push({k:'Upfront gear costs',v:-up.amount,auto:true,sub:up.parts.join(' and ')+', with tax',indent:true});
-    }
-    RCATS.forEach(function(rc){ if(cats[rc.k]!=null) lines.push({k:rc.k,v:rc.neg?-cats[rc.k]:cats[rc.k]}); });
+    /* gear shows its own profit; the upfront Jupmode costs the Profit tab skips are paid
+       out of sponsor money, so they sit under Sponsors instead of under gear */
+    var lines=[], up=P?upfrontLeft(c,P):{amount:0};
+    if(P) lines.push({k:'Gear profit',v:P.profit,sub:'from the Profit tab · '+money(P.revenue)+' ordered'});
+    RCATS.forEach(function(rc){
+      if(cats[rc.k]!=null) lines.push({k:rc.k,v:rc.neg?-cats[rc.k]:cats[rc.k]});
+      if(rc.k==='Sponsors'&&up.amount) lines.push({k:'Upfront gear costs',v:-up.amount,grp:'Sponsors',indent:true,sub:'covered by sponsors · '+up.parts.join(' and ')+', with tax'});
+    });
     Object.keys(cats).forEach(function(k){ if(!rcat(k)) lines.push({k:k,v:/^expense/i.test(k)?-cats[k]:cats[k]}); });
     var total=lines.reduce(function(a,l){ return a+l.v; },0);
 
@@ -930,8 +931,12 @@
     el('r-sub').textContent=subs.join(' · ');
 
     /* bars: each source's share of the biggest one */
-    var gearNet=lines.filter(function(l){ return l.auto; }).reduce(function(a,l){ return a+l.v; },0);
-    var bars=(P?[{k:'Gear (net)',v:gearNet}]:[]).concat(lines.filter(function(l){ return !l.auto; }));
+    var bars=[];
+    lines.forEach(function(l){
+      if(!l.grp){ bars.push({k:l.k,g:l.k,v:l.v}); return; }
+      var b=bars.filter(function(x){ return x.g===l.grp; })[0]; if(!b){ b={k:l.grp,g:l.grp,v:0}; bars.push(b); }
+      b.v+=l.v; b.k=l.grp+' (after gear costs)';
+    });
     var max=Math.max.apply(null,bars.map(function(b){ return Math.abs(b.v); }).concat([1]));
     el('r-bars').innerHTML=bars.map(function(b){
       return '<div class="rh-bar"><span>'+esc(b.k)+'</span><span class="t"><i class="'+(b.v<0?'neg':'')+'" style="width:'+Math.round(Math.abs(b.v)/max*100)+'%"></i></span><b>'+(b.v<0?'−':'')+money(Math.abs(Math.round(b.v*100)/100))+'</b></div>';
