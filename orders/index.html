@@ -239,6 +239,42 @@
   .est{color:var(--warn);font-weight:700}
   .p-foot{font-size:13px;color:var(--muted);margin-top:12px;max-width:90ch;line-height:1.55}
 
+  /* ---- total raised ---- */
+  .raised-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:22px;align-items:end;background:var(--navy);color:#fff;border-radius:var(--radius);padding:24px 26px;margin-top:22px}
+  .rh-k{font-family:'Oswald',system-ui,sans-serif;font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:13px;color:var(--sky)}
+  .rh-v{font-family:'Anton',Impact,system-ui,sans-serif;font-size:clamp(44px,7vw,76px);line-height:1;margin-top:6px}
+  .rh-sub{font-size:14px;color:#c9d7ec;margin-top:8px;line-height:1.5}
+  .rh-bars{display:grid;gap:7px}
+  .rh-bar{display:grid;grid-template-columns:minmax(0,9em) minmax(0,1fr) auto;gap:10px;align-items:center;font-size:13px;color:#dbe6f5}
+  .rh-bar .t{height:10px;border-radius:6px;background:rgba(255,255,255,.12);overflow:hidden}
+  .rh-bar .t i{display:block;height:100%;background:var(--sky);border-radius:6px;transition:width .6s cubic-bezier(.22,1,.36,1)}
+  .rh-bar .t i.neg{background:#e5675f}
+  .rh-bar b{font-weight:600;color:#fff;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .r-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(280px,1fr);gap:18px;align-items:start}
+  .r-form{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;display:grid;gap:7px;margin-top:26px}
+  .r-form h3{font-family:'Oswald',system-ui,sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.05em;font-size:16px;color:var(--navy);margin-bottom:4px}
+  .r-form label{font-family:'Oswald',system-ui,sans-serif;font-weight:600;letter-spacing:.05em;text-transform:uppercase;font-size:12px;color:var(--muted);margin-top:4px;display:block}
+  .r-form input,.r-form select{width:100%;font-family:inherit;font-size:16px;padding:10px 12px;border-radius:10px;border:1px solid var(--line-2);background:#fff;color:var(--ink);min-height:44px}
+  .r-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .r-hint{font-size:13px;color:var(--muted);min-height:0}
+  .r-seg{display:flex;gap:6px;flex-wrap:wrap}
+  .r-seg button{flex:1 1 auto;min-height:44px;border-radius:10px;border:1px solid var(--line-2);background:#fff;color:var(--ink);font-size:14.5px;font-weight:600;padding:8px 12px}
+  .r-seg button[aria-checked=true]{background:var(--royal);border-color:var(--royal);color:#fff}
+  .r-form .btn-primary{margin-top:10px;padding:12px 18px;font-size:14px}
+  .r-form .btn-primary:disabled{opacity:.6;cursor:default}
+  .r-msg{font-size:14px;min-height:20px}
+  .r-msg.ok{color:var(--ok)} .r-msg.err{color:#a3201f}
+  table.pt.narrow{min-width:0}
+  table.pt tr.sub td{color:var(--muted);font-size:13.5px}
+  table.pt tr.sub td.item{font-weight:400;color:var(--muted);padding-left:28px}
+  table.pt tr.pending td{opacity:.55}
+  table.pt td.wrap{white-space:normal;text-align:left;max-width:30ch}
+  .del{font-size:13px;border:1px solid var(--line-2);background:#fff;color:var(--muted);border-radius:8px;padding:6px 10px;min-height:34px}
+  .del:hover{color:#a3201f;border-color:#e5b1ad}
+  .del.armed{background:#a3201f;border-color:#a3201f;color:#fff}
+  .lead-pill{display:inline-block;font-size:11px;font-family:'Oswald',system-ui,sans-serif;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ok);background:var(--ok-bg);border-radius:999px;padding:1px 8px;margin-left:6px}
+  @media(max-width:860px){ .raised-hero,.r-grid{grid-template-columns:minmax(0,1fr)} .r-form{margin-top:4px} }
+
   /* ---- sign-in ---- */
   [hidden]{display:none !important}
   .login{max-width:420px;margin:56px auto 0;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:32px 28px 26px;text-align:center}
@@ -303,7 +339,54 @@
     <div class="tabs" role="tablist" aria-label="Dashboard views">
       <button class="tab" role="tab" id="tab-orders" aria-controls="ordersView" aria-selected="true" data-view="orders">Orders</button>
       <button class="tab" role="tab" id="tab-profit" aria-controls="profitView" aria-selected="false" tabindex="-1" data-view="profit">Profit</button>
+      <button class="tab" role="tab" id="tab-raised" aria-controls="raisedView" aria-selected="false" tabindex="-1" data-view="raised">Total raised</button>
     </div>
+
+    <section id="raisedView" role="tabpanel" aria-labelledby="tab-raised" hidden>
+      <div class="raised-hero">
+        <div>
+          <div class="rh-k">Raised for the Andrew Walker Memorial Scholarship</div>
+          <div class="rh-v num" id="r-total">$0</div>
+          <div class="rh-sub" id="r-sub"></div>
+        </div>
+        <div class="rh-bars" id="r-bars" aria-hidden="true"></div>
+      </div>
+      <div id="r-notes"></div>
+
+      <div class="r-grid">
+        <div>
+          <div class="sec-h"><h2>Where it came from</h2><span class="c" id="r-src-c"></span></div>
+          <div class="tbl-card"><div class="tbl-scroll"><table class="pt narrow" id="r-sources"></table></div></div>
+        </div>
+        <form class="r-form" id="r-form" novalidate>
+          <h3>Add money</h3>
+          <label for="r-cat">What is it</label>
+          <select id="r-cat" required></select>
+          <div class="r-hint" id="r-cat-hint"></div>
+          <div class="r-row">
+            <div><label for="r-date">Date</label><input type="date" id="r-date" required></div>
+            <div><label for="r-amt">Amount</label><input type="text" id="r-amt" inputmode="decimal" placeholder="$0.00" autocomplete="off" required></div>
+          </div>
+          <div id="r-school-wrap" hidden>
+            <label>Which school's jar</label>
+            <div class="r-seg" id="r-school" role="radiogroup" aria-label="Which school's jar"></div>
+          </div>
+          <label for="r-from" id="r-from-l">From</label>
+          <input type="text" id="r-from" maxlength="120" autocomplete="off" placeholder="Name or business (optional)">
+          <label for="r-note">Note</label>
+          <input type="text" id="r-note" maxlength="300" autocomplete="off" placeholder="Check #, how it was paid… (optional)">
+          <button class="btn-primary" type="submit" id="r-add">Add</button>
+          <div class="r-msg" id="r-msg" role="status" aria-live="polite"></div>
+        </form>
+      </div>
+
+      <div class="sec-h"><h2>Donation challenge by day</h2><span class="c" id="r-ch-c">these totals show on the homepage during Spirit Week</span></div>
+      <div class="tbl-card"><div class="tbl-scroll"><table class="pt" id="r-challenge"></table></div></div>
+
+      <div class="sec-h"><h2>Every entry</h2><span class="c" id="r-list-c"></span></div>
+      <div class="tbl-card"><div class="tbl-scroll"><table class="pt" id="r-list"></table></div></div>
+      <p class="p-foot">Entries are saved in the <b>Donations</b> tab of your orders sheet. You can fix a typo there too; this page picks it up on the next refresh. Gear counts its profit from the Profit tab, so it moves on its own as orders and Jupmode prices change.</p>
+    </section>
 
     <section id="profitView" role="tabpanel" aria-labelledby="tab-profit" hidden>
       <div class="summary" id="p-summary"></div>
@@ -614,6 +697,7 @@
     renderBreakdown(computeBreakdown(state.rows));
     renderHead(); renderFilters(); renderTable();
     renderProfit();
+    renderRaised();
   }
 
   /* ---- profit: what Jupmode charges comes from the "Jupmode Costs" tab of the orders
@@ -793,10 +877,172 @@
       'These costs come from the <b>Jupmode Costs</b> tab in your orders sheet (Anna\'s price list and invoice #49853). Change a number there and this page picks it up on the next refresh.';
   }
 
-  /* Orders / Profit tabs */
-  var VIEW_KEY='wos_orders_view';
+  /* ---- total raised: gear profit (from the Profit math above) plus every gift, jar and
+     ticket typed in below. Entries live in the "Donations" tab of the orders sheet. ---- */
+  var CHALLENGE='Donation challenge', SCHOOLS=['High school','Middle school','Elementary'];
+  var RCATS=[
+    {k:'Sponsors',hint:'Business sponsorships.'},
+    {k:'Direct donations',hint:'Gifts by Venmo, check or cash that aren\'t for gear.'},
+    {k:CHALLENGE,hint:'One entry per school per day: what was counted from that school\'s jar.'},
+    {k:'Raffle baskets',hint:'Raffle ticket sales.'},
+    {k:'50/50 raffle',hint:'Only the half the scholarship keeps.'},
+    {k:'Bake sale',hint:''},
+    {k:'Concessions',hint:''},
+    {k:'Other income',hint:''},
+    {k:'Expenses',hint:'Money spent that isn\'t Jupmode gear, like printing or prizes. It\'s taken off the total.',neg:true}
+  ];
+  function rcat(k){ return RCATS.filter(function(c){ return c.k===k; })[0]; }
+  function isExpense(d){ return /^expense/i.test(d.category); }
+  function todayYmd(){ var n=new Date(); return n.getFullYear()+'-'+('0'+(n.getMonth()+1)).slice(-2)+'-'+('0'+n.getDate()).slice(-2); }
+  function shortDate(ymd){ var p=String(ymd).split('-'); if(p.length<3) return ymd||'—'; var d=new Date(+p[0],p[1]-1,+p[2]); return d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}); }
+  var SPIRIT=((window.WOS&&window.WOS.spiritWeek)||[]);
+
+  /* what the Profit tab leaves out on purpose: setup fees, samples, and hats/beanies/
+     stickers bought up front that haven't sold. Counted here so the total is honest. */
+  function upfrontLeft(c,P){
+    var sum=0, parts=[];
+    c.other.forEach(function(o){ if(o.amount){ sum+=o.amount; } });
+    if(c.other.length) parts.push('setup fees and samples');
+    var unsold=0;
+    P.lines.forEach(function(s){ if(s.kind==='stock'&&s.bought){ var left=Math.max(0,s.bought-s.sold); if(left){ unsold+=left*(c.stock[itemKey(s.name)]||{}).paid; } } });
+    if(unsold) parts.push('unsold hats, beanies and stickers');
+    return {amount:(sum+unsold)*(1+c.tax),parts:parts};
+  }
+
+  function renderRaised(){
+    if(!el('raisedView')) return;
+    var dons=state.donations||[], c=parseCosts(state.costs), P=c?computeProfit(state.rows,c):null;
+    var cats={}; dons.forEach(function(d){ var k=d.category||'Other income'; cats[k]=(cats[k]||0)+d.amount; });
+    var lines=[];
+    if(P){
+      var up=upfrontLeft(c,P);
+      lines.push({k:'Gear profit',v:P.profit,auto:true,sub:'from the Profit tab · '+money(P.revenue)+' ordered'});
+      if(up.amount) lines.push({k:'Upfront gear costs',v:-up.amount,auto:true,sub:up.parts.join(' and ')+', with tax',indent:true});
+    }
+    RCATS.forEach(function(rc){ if(cats[rc.k]!=null) lines.push({k:rc.k,v:rc.neg?-cats[rc.k]:cats[rc.k]}); });
+    Object.keys(cats).forEach(function(k){ if(!rcat(k)) lines.push({k:k,v:/^expense/i.test(k)?-cats[k]:cats[k]}); });
+    var total=lines.reduce(function(a,l){ return a+l.v; },0);
+
+    el('r-total').textContent=(total<0?'−':'')+money(Math.abs(Math.round(total*100)/100));
+    var owed=P?P.revenue-P.collected:0, subs=[];
+    subs.push(dons.length?dons.length+' entr'+(dons.length===1?'y':'ies')+' plus gear':'Gear so far. Add sponsors, gifts and Game Day money on the right.');
+    if(owed>0.5) subs.push('includes '+money(owed)+' of gear orders not paid yet');
+    el('r-sub').textContent=subs.join(' · ');
+
+    /* bars: each source's share of the biggest one */
+    var gearNet=lines.filter(function(l){ return l.auto; }).reduce(function(a,l){ return a+l.v; },0);
+    var bars=(P?[{k:'Gear (net)',v:gearNet}]:[]).concat(lines.filter(function(l){ return !l.auto; }));
+    var max=Math.max.apply(null,bars.map(function(b){ return Math.abs(b.v); }).concat([1]));
+    el('r-bars').innerHTML=bars.map(function(b){
+      return '<div class="rh-bar"><span>'+esc(b.k)+'</span><span class="t"><i class="'+(b.v<0?'neg':'')+'" style="width:'+Math.round(Math.abs(b.v)/max*100)+'%"></i></span><b>'+(b.v<0?'−':'')+money(Math.abs(Math.round(b.v*100)/100))+'</b></div>';
+    }).join('');
+
+    var notes=[];
+    if(!P) notes.push('Gear profit needs the Jupmode Costs tab, which didn\'t come through. Press <b>Refresh</b>.');
+    if(state.donationsMissing) notes.push('Saving entries needs the orders script\'s <b>v4</b> update. Until then this tab shows gear only.');
+    el('r-notes').innerHTML=notes.map(function(n){ return '<div class="pnote" style="margin-top:14px">'+n+'</div>'; }).join('');
+
+    el('r-sources').innerHTML='<thead><tr><th>Source</th><th>Amount</th></tr></thead><tbody>'+
+      lines.map(function(l){
+        return '<tr'+(l.indent?' class="sub"':'')+'><td class="item">'+esc(l.k)+(l.sub?'<small>'+esc(l.sub)+'</small>':'')+'</td><td>'+signed(Math.round(l.v*100)/100)+'</td></tr>';
+      }).join('')+(lines.length?'':'<tr><td class="item">Nothing yet</td><td></td></tr>')+
+      '</tbody><tfoot><tr><td>Total raised</td><td>'+signed(Math.round(total*100)/100)+'</td></tr></tfoot>';
+    el('r-src-c').textContent='gear updates by itself';
+
+    /* challenge grid: schools down, Spirit Week days across */
+    var days=SPIRIT.map(function(s){ return s.date; }), extra=false, grid={}, schoolTot={};
+    SCHOOLS.forEach(function(s){ grid[s]={}; schoolTot[s]=0; });
+    dons.forEach(function(d){
+      if(d.category!==CHALLENGE||!grid[d.school]) return;
+      var col=days.indexOf(d.date)>-1?d.date:'other'; if(col==='other') extra=true;
+      grid[d.school][col]=(grid[d.school][col]||0)+d.amount; schoolTot[d.school]+=d.amount;
+    });
+    var cols=days.concat(extra?['other']:[]);
+    var lead=SCHOOLS.slice().sort(function(a,b){ return schoolTot[b]-schoolTot[a]; })[0];
+    var colTot=function(col){ return SCHOOLS.reduce(function(a,s){ return a+(grid[s][col]||0); },0); };
+    var allTot=SCHOOLS.reduce(function(a,s){ return a+schoolTot[s]; },0);
+    el('r-challenge').innerHTML='<thead><tr><th>School</th>'+cols.map(function(col){
+        if(col==='other') return '<th>Other days</th>';
+        var sp=SPIRIT.filter(function(s){ return s.date===col; })[0];
+        return '<th title="'+esc(sp.theme)+'">'+esc(shortDate(col))+'</th>';
+      }).join('')+'<th>Total</th></tr></thead><tbody>'+
+      SCHOOLS.map(function(s){
+        return '<tr><td class="item">'+esc(s)+(allTot>0&&s===lead?'<span class="lead-pill">Leading</span>':'')+'</td>'+
+          cols.map(function(col){ var v=grid[s][col]; return '<td class="num">'+(v?money(v):'<span style="color:var(--line-2)">—</span>')+'</td>'; }).join('')+
+          '<td class="num"><b>'+money(schoolTot[s])+'</b></td></tr>';
+      }).join('')+'</tbody><tfoot><tr><td>All schools</td>'+cols.map(function(col){ return '<td class="num">'+money(colTot(col))+'</td>'; }).join('')+'<td class="num">'+money(allTot)+'</td></tr></tfoot>';
+
+    /* every entry, newest date first */
+    var list=dons.slice().sort(function(a,b){ return a.date<b.date?1:a.date>b.date?-1:0; });
+    el('r-list').innerHTML='<thead><tr><th class="l">Date</th><th class="l">What</th><th class="l">From</th><th>Amount</th><th class="l">Note</th><th></th></tr></thead><tbody>'+
+      (list.length?list.map(function(d){
+        var who=d.category===CHALLENGE?d.school:(d.from||'—');
+        return '<tr'+(d.pending?' class="pending"':'')+'><td class="l">'+esc(shortDate(d.date))+'</td><td class="l">'+esc(d.category)+'</td><td class="wrap">'+esc(who)+'</td>'+
+          '<td>'+signed(isExpense(d)?-d.amount:d.amount)+'</td><td class="wrap">'+esc(d.note||'')+'</td>'+
+          '<td>'+(d.id&&!d.pending?'<button class="del" type="button" data-del="'+esc(d.id)+'">Delete</button>':'')+'</td></tr>';
+      }).join(''):'<tr><td class="l" colspan="6">No entries yet.</td></tr>')+'</tbody>';
+    el('r-list-c').textContent=list.length?list.length+' saved':'';
+  }
+
+  /* the add form */
+  (function(){
+    var sel=el('r-cat'); if(!sel) return;
+    sel.innerHTML=RCATS.map(function(c){ return '<option>'+esc(c.k)+'</option>'; }).join('');
+    el('r-school').innerHTML=SCHOOLS.map(function(s){ return '<button type="button" role="radio" aria-checked="false" data-school="'+esc(s)+'">'+esc(s)+'</button>'; }).join('');
+    var school='';
+    function sync(){
+      var c=rcat(sel.value)||{}, ch=sel.value===CHALLENGE;
+      el('r-cat-hint').textContent=c.hint||'';
+      el('r-school-wrap').hidden=!ch;
+      el('r-from').placeholder=c.neg?'Paid to (optional)':'Name or business (optional)';
+      el('r-from-l').textContent=c.neg?'Paid to':'From';
+      if(ch&&SPIRIT.length){ var t=todayYmd(); if(!SPIRIT.some(function(s){ return s.date===el('r-date').value; })) el('r-date').value=SPIRIT.some(function(s){ return s.date===t; })?t:SPIRIT[0].date; }
+    }
+    el('r-date').value=todayYmd();
+    sel.addEventListener('change',sync); sync();
+    el('r-school').addEventListener('click',function(e){
+      var b=e.target.closest('[data-school]'); if(!b) return;
+      school=b.getAttribute('data-school');
+      Array.prototype.forEach.call(el('r-school').children,function(x){ x.setAttribute('aria-checked',x===b); });
+    });
+    function msg(t,kind){ var m=el('r-msg'); m.textContent=t; m.className='r-msg'+(kind?' '+kind:''); }
+    el('r-form').addEventListener('submit',function(e){
+      e.preventDefault();
+      var entry={category:sel.value,date:el('r-date').value,amount:num(el('r-amt').value),from:el('r-from').value.trim(),note:el('r-note').value.trim(),school:school};
+      if(!(entry.amount>0)){ msg('Enter an amount.','err'); el('r-amt').focus(); return; }
+      if(!entry.date){ msg('Pick a date.','err'); el('r-date').focus(); return; }
+      if(entry.category===CHALLENGE&&!school){ msg('Pick which school\'s jar.','err'); return; }
+      var temp={id:'',pending:true,date:entry.date,category:entry.category,school:entry.category===CHALLENGE?school:'',from:entry.from,amount:entry.amount,note:entry.note};
+      state.donations=(state.donations||[]).concat([temp]); renderRaised();
+      var b=el('r-add'); b.disabled=true; msg('Saving…');
+      api('addDonation',{entry:entry}).then(function(j){
+        state.donations=j.donations||state.donations.filter(function(d){ return d!==temp; });
+        state.donationsMissing=false; renderRaised();
+        msg('Added '+money(entry.amount)+' to '+entry.category+(temp.school?' ('+temp.school+')':'')+'.','ok');
+        el('r-amt').value=''; el('r-from').value=''; el('r-note').value=''; el('r-amt').focus();
+      },function(err){
+        state.donations=state.donations.filter(function(d){ return d!==temp; }); renderRaised();
+        if(err&&err.auth){ signOut(err.message); return; }
+        var m=(err&&err.message)||String(err);
+        msg(/unknown request/i.test(m)?'The orders script needs its v4 update before entries can be saved.':'Couldn\'t save: '+m,'err');
+      }).then(function(){ b.disabled=false; });
+    });
+    var armed=null, armT;
+    el('r-list').addEventListener('click',function(e){
+      var b=e.target.closest('[data-del]'); if(!b) return;
+      if(armed!==b){ if(armed){ armed.classList.remove('armed'); armed.textContent='Delete'; } armed=b; b.classList.add('armed'); b.textContent='Tap again to delete'; clearTimeout(armT); armT=setTimeout(function(){ if(armed){ armed.classList.remove('armed'); armed.textContent='Delete'; armed=null; } },4000); return; }
+      armed=null; b.disabled=true; b.textContent='Deleting…';
+      api('deleteDonation',{id:b.getAttribute('data-del')}).then(function(j){ state.donations=j.donations||[]; renderRaised(); },function(err){
+        if(err&&err.auth){ signOut(err.message); return; }
+        banner('Couldn\'t delete that entry ('+((err&&err.message)||err)+'). Please try again.'); renderRaised();
+      });
+    });
+  })();
+
+  /* Orders / Profit / Total raised tabs */
+  var VIEW_KEY='wos_orders_view', VIEWS=['orders','profit','raised'];
   function showView(v,focus){
-    ['orders','profit'].forEach(function(name){
+    VIEWS.forEach(function(name){
       var on=name===v, t=el('tab-'+name);
       t.setAttribute('aria-selected',on); t.tabIndex=on?0:-1;
       el(name+'View').hidden=!on;
@@ -807,9 +1053,12 @@
   document.querySelector('.tabs').addEventListener('click',function(e){ var t=e.target.closest('.tab'); if(t) showView(t.getAttribute('data-view')); });
   document.querySelector('.tabs').addEventListener('keydown',function(e){
     if(e.key!=='ArrowLeft'&&e.key!=='ArrowRight') return;
-    e.preventDefault(); showView(el('tab-orders').getAttribute('aria-selected')==='true'?'profit':'orders',true);
+    e.preventDefault();
+    var cur=VIEWS.filter(function(n){ return el('tab-'+n).getAttribute('aria-selected')==='true'; })[0]||'orders';
+    var i=(VIEWS.indexOf(cur)+(e.key==='ArrowRight'?1:VIEWS.length-1))%VIEWS.length;
+    showView(VIEWS[i],true);
   });
-  try{ if(sessionStorage.getItem(VIEW_KEY)==='profit') showView('profit'); }catch(e){}
+  try{ var sv=sessionStorage.getItem(VIEW_KEY); if(sv&&VIEWS.indexOf(sv)>0) showView(sv); }catch(e){}
 
   function setStatus(kind,txt){
     el('dot').className='dot'+(kind?(' '+kind):'');
@@ -824,6 +1073,9 @@
     var built=buildRows(matrix);
     built.rows.forEach(function(r){ r.paid = !!paidMap[r.key]; });
     state.costs = (payload&&!Array.isArray(payload)&&payload.costs)||null;
+    var dn=payload&&!Array.isArray(payload)&&payload.donations;
+    state.donationsMissing=!Array.isArray(dn);
+    if(Array.isArray(dn)) state.donations=dn; else if(!state.donations) state.donations=[];
     if(!built.rows.length){
       el('loading').hidden=true; el('dash').hidden=true; el('empty').hidden=false;
       state.rows=[]; setStatus('live','Live · 0 orders'); return;
@@ -861,9 +1113,9 @@
   function rowByKey(k){ return state.rows.filter(function(r){return r.key===k;})[0]; }
   function markPaid(row,paid){
     row.paid=paid;
-    renderSummary(computeSummary(state.rows)); renderTable(); renderProfit();
+    renderSummary(computeSummary(state.rows)); renderTable(); renderProfit(); renderRaised();
     api('setPaid',{key:row.key,paid:paid}).catch(function(err){
-      row.paid=!paid; renderSummary(computeSummary(state.rows)); renderTable(); renderProfit();
+      row.paid=!paid; renderSummary(computeSummary(state.rows)); renderTable(); renderProfit(); renderRaised();
       if(err&&err.auth){ signOut(err.message); return; }
       banner("Couldn't save paid status ("+((err&&err.message)||err)+"). Please try again.");
     });
@@ -995,7 +1247,8 @@
     if(token) api('logout').catch(function(){});
     token=null; try{ sessionStorage.removeItem(TOKEN_KEY); }catch(e){}
     clearInterval(refreshTimer);
-    state.rows=[]; state.costs=null; el('tbody').innerHTML=''; el('summary').innerHTML=''; el('breakdown').innerHTML='';
+    state.rows=[]; state.costs=null; state.donations=[]; el('tbody').innerHTML='';
+    ['r-sources','r-challenge','r-list','r-bars'].forEach(function(id){ el(id).innerHTML=''; }); el('summary').innerHTML=''; el('breakdown').innerHTML='';
     ['p-summary','p-notes','p-items','p-prices'].forEach(function(id){ el(id).innerHTML=''; });
     showLogin(msg);
   }

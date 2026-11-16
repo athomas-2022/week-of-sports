@@ -212,6 +212,7 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
       <div class="thermo-track"><div class="thermo-fill" id="thermo"></div></div>
     </div>
     <div class="board" id="board"></div>
+    <div class="days-board" id="days-board" hidden></div>
     <div class="board-foot" id="board-foot" hidden><span class="live-dot"></span> Live totals — <span id="live-updated">updating…</span></div>
   </div>
 </section>
@@ -486,7 +487,14 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
   var Challenge = (function(){
     var L = C.leaderboard || {};
     var goal = +(L.goal || C.fundraisingGoal || 0);
-    var live = !!(L.csvUrl && String(L.csvUrl).trim());
+    /* fromAdmin: totals come from the organizers' Total Raised tab (the orders script's
+       public ?challenge=1 answer, which holds only the school-by-day jar totals). It turns
+       on by itself at startsAt; add ?challenge-preview to the URL to see it early. */
+    var api = String(C.ordersApiUrl||'').trim();
+    var preview = /challenge-preview/.test(location.search);
+    var fromAdmin = !!(L.fromAdmin && api && (preview || !L.startsAt || Date.parse(L.startsAt) <= Date.now()));
+    var live = fromAdmin || !!(L.csvUrl && String(L.csvUrl).trim());
+    var daysEl = S('days-board'), dayData = null;
     var boardEl = S('board'), foot = S('board-foot'), thermoWrap = document.querySelector('.thermo');
     var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var base = (C.divisions||[]).map(function(d){ return { name:d.name, tagline:d.tagline||'', color:d.color||'royal', amount:+d.amount||0 }; });
@@ -551,7 +559,36 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
       var s = Math.max(0, Math.round((Date.now()-updatedAt)/1000)), u = S('live-updated');
       if(u) u.textContent = s<5 ? 'updated just now' : ('updated '+(s<60 ? s+'s' : Math.round(s/60)+' min')+' ago');
     }
-    function applyData(divs){ if(!divs || !divs.length) return; data=divs; updatedAt=Date.now(); paint(true); stamp(); }
+    function applyData(divs){ if(!divs || !divs.length) return; data=divs; updatedAt=Date.now(); paint(true); stamp(); paintDays(); }
+
+    /* day-by-day table: schools down, Spirit Week days across; a day still to come shows a dash */
+    function paintDays(){
+      if(!daysEl || !dayData || !(C.spiritWeek||[]).length) return;
+      var sw = C.spiritWeek, n = new Date(), today = n.getFullYear()+'-'+('0'+(n.getMonth()+1)).slice(-2)+'-'+('0'+n.getDate()).slice(-2);
+      var any = dayData.some(function(s){ return s.amount > 0; });
+      if(!any){ daysEl.hidden = true; return; }
+      var best = {}; sw.forEach(function(d){ var m = 0; dayData.forEach(function(s){ m = Math.max(m, +(s.days||{})[d.date]||0); }); best[d.date] = m; });
+      var rows = dayData.slice().sort(function(a,b){ return b.amount-a.amount; });
+      daysEl.innerHTML = '<h3>Day by day</h3><div class="days-scroll"><table><thead><tr><th>School</th>' +
+        sw.map(function(d){ return '<th'+(d.date===today?' class="today"':'')+'>'+String(d.day||'').slice(0,3)+'<small>'+d.theme+'</small></th>'; }).join('') +
+        '<th>Total</th></tr></thead><tbody>' +
+        rows.map(function(s){
+          return '<tr><td>'+s.name+'</td>' + sw.map(function(d){
+            var v = +(s.days||{})[d.date]||0;
+            return v ? '<td'+(v===best[d.date]?' class="best"':'')+'>'+money(v)+'</td>' : '<td class="none">—</td>';
+          }).join('') + '<td class="tot">'+money(s.amount)+'</td></tr>';
+        }).join('') + '</tbody></table></div>';
+      daysEl.hidden = false;
+    }
+    function fetchAdmin(){
+      fetch(api + (api.indexOf('?')>=0?'&':'?') + 'challenge=1&_=' + Date.now(), {cache:'no-store'})
+        .then(function(r){ return r.json(); })
+        .then(function(j){
+          if(!j || !j.ok || !j.schools) throw 0;
+          dayData = j.schools;
+          applyData(j.schools.map(function(s){ var b = baseOf(s.name)||{}; return { name:s.name, amount:+s.amount||0, tagline:b.tagline||'', color:b.color||'royal' }; }));
+        }).catch(function(){ if(!data) applyData(base.map(function(b){ return { name:b.name, tagline:b.tagline, color:b.color, amount:0 }; })); });
+    }
 
     function parseLine(line){ var out=[],cur='',inq=false; for(var i=0;i<line.length;i++){ var ch=line[i]; if(inq){ if(ch=='"'){ if(line[i+1]=='"'){cur+='"';i++;} else inq=false; } else cur+=ch; } else { if(ch=='"')inq=true; else if(ch==','){ out.push(cur); cur=''; } else cur+=ch; } } out.push(cur); return out; }
     function parseCSV(text){
@@ -584,7 +621,7 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
         boardEl.innerHTML = '<p class="board-soon">The school-vs-school donation challenge returns this winter — live totals will appear here once it kicks off.</p>';
         return;
       }
-      if(live){ fetchLive(); setInterval(fetchLive, Math.max(20, +L.refreshSeconds||45)*1000); setInterval(stamp, 1000); }
+      if(live){ var get = fromAdmin ? fetchAdmin : fetchLive; get(); setInterval(get, Math.max(20, +L.refreshSeconds||45)*1000); setInterval(stamp, 1000); }
       else { applyData(base); }
     }
     return { init:init, onShown:onShown };

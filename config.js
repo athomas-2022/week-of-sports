@@ -62,8 +62,14 @@ window.WOS = {
      Then during the week just edit the Amount cells (the Google Sheets phone app works great) —
      the leaderboard updates every ~45 seconds on its own, with a live "updated just now" stamp.
      Leave csvUrl blank ("") to keep the static amounts above / the "coming soon" state. */
+  /* EASIEST WAY (set up 2026-11-16): type each day's jar count for each school into the
+     "Total raised" tab at weekofsports.com/orders (pick "Donation challenge"). The race and a
+     day-by-day table update here by themselves, starting at startsAt. Only the school totals
+     are public; nothing else from that tab is. To peek before then: weekofsports.com/?challenge-preview */
   leaderboard: {
-    csvUrl:         "",   /* paste your "Publish to web -> CSV" link here to go live */
+    fromAdmin:      true,                          /* true = read the jar totals from the Total raised tab */
+    startsAt:       "2027-01-04T00:00:00-05:00",   /* the board turns on Monday of Spirit Week (blank = on now) */
+    csvUrl:         "",   /* (older option) paste a "Publish to web -> CSV" link here instead */
     goal:           0,    /* optional $ goal; 0 = no goal bar, just the race + running total */
     refreshSeconds: 45    /* how often the page checks the sheet for new totals */
   },
