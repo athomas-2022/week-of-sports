@@ -755,9 +755,14 @@
   function computeProfit(rows,c){
     var tax=c.tax, items=[];
     rows.forEach(function(r){ r.items.forEach(function(it){ items.push(it); }); });
-    var apparelN=items.filter(function(it){ return c.apparel[itemKey(it.type)]; }).length;
-    var ti=tierAt(c.tiers,apparelN), next=ti+1<c.tiers.length?ti+1:-1;
-    var by={}, order=[], saveNext=0;
+    /* Jupmode's price breaks count each item type on its own: tees, long sleeves and
+       hoodies don't add up together. Youth sizes count with their own type. */
+    var types={};
+    items.forEach(function(it){ var k=itemKey(it.type); if(!c.apparel[k]) return; (types[k]=types[k]||{name:it.type,n:0}).n++; });
+    (GO.products||[]).forEach(function(p){ var k=itemKey(p.name); if(c.apparel[k]&&!types[k]) types[k]={name:p.name,n:0}; });
+    Object.keys(types).forEach(function(k){ var t=types[k]; t.ti=tierAt(c.tiers,t.n); t.next=t.ti+1<c.tiers.length?t.ti+1:-1; t.saveNext=0; });
+    var apparelN=Object.keys(types).reduce(function(a,k){ return a+types[k].n; },0);
+    var by={}, order=[];
     function slot(name){
       var k=itemKey(name);
       if(!by[k]){ by[k]={name:name,sold:0,rev:0,cost:0,est:false,kind:c.apparel[k]?'apparel':(c.stock[k]?'stock':'none')}; order.push(k); }
@@ -768,9 +773,9 @@
       var s=slot(it.type), sp=sellPrice(it.type,it.size);
       s.sold++; s.rev+=sp||0;
       if(s.kind==='apparel'){
-        var a=apparelRow(c.apparel[itemKey(it.type)],it.size);
-        s.cost+=a.row.costs[ti]; if(a.est) s.est=true;
-        if(next>-1) saveNext+=a.row.costs[ti]-a.row.costs[next];
+        var a=apparelRow(c.apparel[itemKey(it.type)],it.size), t=types[itemKey(it.type)];
+        s.cost+=a.row.costs[t.ti]; if(a.est) s.est=true;
+        if(t.next>-1) t.saveNext+=(a.row.costs[t.ti]-a.row.costs[t.next])*(1+tax);
       }
     });
     /* only the gear in these orders counts; the upfront batch, samples and setup fees don't */
@@ -783,8 +788,8 @@
     var revenue=0, collected=0;
     rows.forEach(function(r){ revenue+=r.total; if(r.paid) collected+=r.total; });
     var totalCost=lines.reduce(function(a,s){ return a+s.costTax; },0);
-    return {lines:lines,tax:tax,apparelN:apparelN,ti:ti,next:next,tiers:c.tiers,
-      saveNext:saveNext*(1+tax),revenue:revenue,collected:collected,totalCost:totalCost,profit:revenue-totalCost,
+    return {lines:lines,tax:tax,apparelN:apparelN,types:types,tiers:c.tiers,
+      revenue:revenue,collected:collected,totalCost:totalCost,profit:revenue-totalCost,
       itemRevenue:lines.reduce(function(a,s){ return a+s.rev; },0)};
   }
 
@@ -818,16 +823,15 @@
       return '<div class="stat '+(x.cls||'')+'"><div class="k">'+x.k+'</div><div class="v num">'+x.v+'</div><div class="sub num">'+esc(x.sub)+'</div></div>';
     }).join('');
 
-    /* where the shirt count sits against Jupmode's price breaks */
-    var N=P.apparelN, notes=[], cur=tierName(c,P.ti);
-    if(N<c.tiers[0]){
-      notes.push('Jupmode\'s minimum is <b>'+c.tiers[0]+'</b> shirts, long sleeves and hoodies together. You\'re at <b class="num">'+N+'</b>, so these costs use the '+cur+' price.');
-    } else if(P.next>-1){
-      var need=c.tiers[P.next]-N;
-      notes.push('You\'re at <b class="num">'+N+'</b> shirts, long sleeves and hoodies. Jupmode prices them together, so right now they cost the <b>'+cur+'</b> price. <b class="num">'+need+' more</b> reaches the <b>'+tierName(c,P.next)+'</b> price, which would take about <b class="num">'+money(Math.round(P.saveNext))+'</b> off what\'s ordered so far.');
-    } else {
-      notes.push('You\'re at <b class="num">'+N+'</b> shirts, long sleeves and hoodies, which gets Jupmode\'s best quoted price (<b>'+cur+'</b>).');
-    }
+    /* where each item type sits against Jupmode's price breaks (each type counts on its own) */
+    var notes=[], tl=[];
+    Object.keys(P.types).forEach(function(k){
+      var t=P.types[k], cur=tierName(c,t.ti), nm='<b>'+esc(t.name)+'</b>: <b class="num">'+t.n+'</b>';
+      if(t.n<c.tiers[0]) tl.push(nm+', under the '+c.tiers[0]+' minimum, so priced at '+cur+'.');
+      else if(t.next>-1) tl.push(nm+' at the <b>'+cur+'</b> price. <b class="num">'+(c.tiers[t.next]-t.n)+' more</b> reaches '+tierName(c,t.next)+', about <b class="num">'+money(Math.round(t.saveNext))+'</b> off.');
+      else tl.push(nm+', the best quoted price (<b>'+cur+'</b>).');
+    });
+    if(tl.length) notes.push('Jupmode\'s price breaks count each item on its own: tees, long sleeves and hoodies don\'t add together.<br>'+tl.join('<br>'));
     notes.push('Costs include Jupmode\'s '+pct(P.tax,2)+' sales tax and count only the gear in these orders. This updates by itself as new orders come in.');
     el('p-notes').innerHTML=notes.map(function(n){ return '<div class="pnote">'+n+'</div>'; }).join('');
 
@@ -855,7 +859,7 @@
       var k=itemKey(p.name), groups=[];
       if(c.apparel[k]){
         (p.sizes&&p.sizes.length?p.sizes:['']).forEach(function(lbl){
-          var sz=normSize(lbl), sell=sellPrice(p.name,sz), a=apparelRow(c.apparel[k],sz), cost=a.row.costs[P.ti]*(1+P.tax);
+          var sz=normSize(lbl), sell=sellPrice(p.name,sz), a=apparelRow(c.apparel[k],sz), cost=a.row.costs[P.types[k].ti]*(1+P.tax);
           var name=String(lbl).replace(/\s*\(.*?\)/,''), g=groups[groups.length-1];
           if(g&&g.sell===sell&&Math.abs(g.cost-cost)<.005&&g.est===a.est&&/^Youth/.test(g.first)===/^Youth/.test(name)) g.last=name;
           else groups.push({first:name,last:'',sell:sell,cost:cost,est:a.est});
@@ -871,7 +875,7 @@
       });
     });
     el('p-prices').innerHTML='<thead><tr><th>Item</th><th class="l">Size</th><th>Sells for</th><th>Jupmode cost</th><th>Profit each</th><th>Margin</th></tr></thead><tbody>'+rowsHtml.join('')+'</tbody>';
-    el('p-prices-c').textContent='shirts, long sleeves and hoodies at the '+cur+' price · cost includes tax';
+    el('p-prices-c').textContent='each item at its own price break · cost includes tax';
 
     el('p-foot').innerHTML=(anyEst?'<span class="est">*</span> Jupmode didn\'t quote this size, so it uses the closest size they did. Ask Anna for the real price before the final order. ':'')+
       'These costs come from the <b>Jupmode Costs</b> tab in your orders sheet (Anna\'s price list and invoice #49853). Change a number there and this page picks it up on the next refresh.';
