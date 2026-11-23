@@ -188,12 +188,12 @@ window.WOS = {
   gearOrder: {
     orderEndpoint: "https://script.google.com/macros/s/AKfycbwv2GFGDBbg1N4RU9CzNQyGK6316Qz7tlMjatnxHj9ctymETVc5gXAgrw12OuT9SuK-kQ/exec",
     formAction: "https://docs.google.com/forms/d/e/1FAIpQLSczCeztwhRGkF1yNF-_s5qwtswnmxbeR5XegwyNtJyx8PqkNg/formResponse",  /* legacy Google Form — no longer used */
-    deadline: "November 22, 2026",          /* gear order-by date */
+    deadline: "November 23, 2026",          /* gear order-by date */
     orderingOpen: false,                    /* false = people can BROWSE the gear but can't place an order yet. Set to true to open ordering right now. */
     opensAt: "2026-10-25T09:00:00-04:00",   /* ordering ALSO opens by itself at this moment: Sunday, Oct 25, 9:00 AM Eastern ("-04:00" = Eastern daylight time). Anyone already on the gear page sees it switch on. Blank "" = no automatic opening. */
-    closesAt: "2026-11-22T23:59:59-05:00",  /* ordering CLOSES by itself at this moment: Sunday, Nov 22, 11:59 PM Eastern ("-05:00" = Eastern standard time; clocks fall back Nov 1). This wins over everything above. To reopen later, set it to "". */
+    closesAt: "2026-11-23T23:59:59-05:00",  /* ordering CLOSES by itself at this moment: Monday, Nov 23, 11:59 PM (extended one day) Eastern ("-05:00" = Eastern standard time; clocks fall back Nov 1). This wins over everything above. To reopen later, set it to "". */
     orderingClosedMsg: "ordering opens Sunday, Oct 25 at 9 AM. Browse this year's gear until then.",   /* shown after "Preview —", so start it lowercase. Update the date if opening day moves. */
-    orderingEndedMsg: "Nov 22 was the last day to order. Gear is delivered at school Dec 21–23. Questions? Email info@weekofsports.com.",   /* shown after "Orders closed —" once closesAt passes */
+    orderingEndedMsg: "Nov 23 was the last day to order. Gear is delivered at school Dec 21–23. Questions? Email info@weekofsports.com.",   /* shown after "Orders closed —" once closesAt passes */
     maxPerType: 0,                          /* max shirts (and, separately, max hoodies) per order; 0 = no limit */
     /* HOMEPAGE "GRAB YOUR GEAR" POPUP — scrolls through these photos in this order:
        one of each item, alternating the two models, ending on the sticker on the cup.
@@ -299,7 +299,7 @@ window.WOS = {
     "Andrew Walker Memorial Scholarship",
     "Game Day · January 9, 2027",
     /* this line switches by itself when gear ordering opens and closes (see gearOrder.opensAt / closesAt) */
-    { beforeGearOpens: "Gear drops Sunday, Oct 25 · 9 AM", afterGearOpens: "Gear on sale now · order by Nov 22", afterGearCloses: "Gear arrives at school Dec 21–23" },
+    { beforeGearOpens: "Gear drops Sunday, Oct 25 · 9 AM", afterGearOpens: "Gear on sale now · order by tonight, Nov 23", afterGearCloses: "Gear arrives at school Dec 21–23" },
     "Donate to the scholarship",
     "Follow @weekofsports"
   ],
