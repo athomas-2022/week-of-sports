@@ -62,6 +62,10 @@
   .sec-h{display:flex;align-items:baseline;gap:10px;margin:26px 0 12px}
   .sec-h h2{font-family:'Oswald',system-ui,sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.05em;font-size:16px;color:var(--navy)}
   .sec-h .c{font-size:13px;color:var(--muted);font-family:'Oswald',system-ui,sans-serif;letter-spacing:.03em}
+  .sec-h .wto-actions{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;align-self:center}
+  .sec-h .wto-actions[hidden]{display:none}
+  .sec-h .wto-actions svg{width:15px;height:15px}
+  @media (max-width:640px){.sec-h{flex-wrap:wrap}.sec-h .wto-actions{margin-left:0;width:100%}}
 
   .order-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:14px}
   .ocard{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;overflow-x:auto}
@@ -401,7 +405,18 @@
     <section id="ordersView" role="tabpanel" aria-labelledby="tab-orders">
     <div class="summary" id="summary"></div>
 
-    <div class="sec-h"><h2>What to order</h2><span class="c" id="wto-count"></span></div>
+    <div class="sec-h"><h2>What to order</h2><span class="c" id="wto-count"></span>
+      <span class="wto-actions" id="wto-actions" hidden>
+        <button class="btn-sm" id="wtoCopy" type="button" aria-label="Copy the order list as text for an email to the vendor">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          <span id="wtoCopyLabel">Copy for email</span>
+        </button>
+        <button class="btn-sm" id="wtoCsv" type="button" aria-label="Download the order list as a spreadsheet">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
+          Download spreadsheet
+        </button>
+      </span>
+    </div>
     <div class="order-grid" id="breakdown"></div>
 
     <div class="sec-h"><h2>All orders</h2><span class="c" id="orders-count"></span></div>
@@ -558,6 +573,20 @@
     var types=Object.keys(g);
     var oh=onHand(), anyOh=Object.keys(oh).length>0;
     el('wto-count').textContent=types.length?(anyOh?'what to buy from Jupmode, after the gear you already have':'grouped by item & color'):'';
+    /* rows for the vendor export: only what still has to be bought */
+    var vend=[];
+    types.forEach(function(t){
+      var colors=g[t], sz0={};
+      Object.keys(colors).forEach(function(col){ Object.keys(colors[col]).forEach(function(sz){ sz0[sz]=1; }); });
+      var order=sortedSizes(sz0);
+      Object.keys(colors).sort().forEach(function(col){ order.forEach(function(sz){
+        var n=colors[col][sz]; if(!n) return;
+        var have=oh[ohKey(t,col==='—'?'':col,sz==='—'?'':sz)]||0, q=n-Math.min(n,have);
+        if(q>0) vend.push({item:t,color:col==='—'?'':col,size:sz==='—'?'':sz,qty:q});
+      }); });
+    });
+    state.vendor=vend;
+    el('wto-actions').hidden=!vend.length;
     if(!types.length){ el('breakdown').innerHTML='<div class="ocard"><p style="color:var(--muted)">No item details found in the order column.</p></div>'; return; }
     el('breakdown').innerHTML=types.map(function(t){
       var colors=g[t], allSizes={};
@@ -1251,6 +1280,43 @@
     var row=rowByKey(cb.getAttribute('data-key')); if(row) markPaid(row,cb.checked);
   });
   el('tbody').addEventListener('keydown',function(e){ if((e.key==='Enter'||e.key===' ')&&e.target.classList.contains('row')){ e.preventDefault(); rowToggle(e.target); } });
+
+  /* "What to order" export for the vendor: plain text for an email, or a spreadsheet */
+  function vendorDate(){ return new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+  function vendorText(rows){
+    var out=['Week of Sports gear order ('+vendorDate()+')',''], total=0, byItem={}, names=[];
+    rows.forEach(function(r){ if(!byItem[r.item]){ byItem[r.item]=[]; names.push(r.item); } byItem[r.item].push(r); total+=r.qty; });
+    names.forEach(function(it){
+      var list=byItem[it], sum=list.reduce(function(a,r){return a+r.qty;},0);
+      out.push(it+' ('+sum+')');
+      if(list.length===1&&!list[0].color&&!list[0].size){ out.push(''); return; }
+      var byCol={}, cols=[];
+      list.forEach(function(r){ var k=r.color||'-'; if(!byCol[k]){ byCol[k]=[]; cols.push(k); } byCol[k].push(r); });
+      cols.forEach(function(c){
+        out.push('  '+(c==='-'?'':c+': ')+byCol[c].map(function(r){ return (r.size?r.size+' x ':'')+r.qty; }).join(', '));
+      });
+      out.push('');
+    });
+    out.push('Total: '+total+' items');
+    return out.join('\n');
+  }
+  function csvCell(v){ v=String(v==null?'':v); return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v; }
+  el('wtoCopy').addEventListener('click',function(){
+    var rows=state.vendor||[]; if(!rows.length) return;
+    var txt=vendorText(rows), lbl=el('wtoCopyLabel');
+    function done(ok){ lbl.textContent=ok?'Copied':'Copy failed'; setTimeout(function(){ lbl.textContent='Copy for email'; },2000); }
+    if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(function(){done(true);},function(){done(false);});
+    else { var ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select(); var ok=false; try{ ok=document.execCommand('copy'); }catch(e){} ta.remove(); done(ok); }
+  });
+  el('wtoCsv').addEventListener('click',function(){
+    var rows=state.vendor||[]; if(!rows.length) return;
+    var lines=[['Item','Color','Size','Quantity']].concat(rows.map(function(r){ return [r.item,r.color,r.size,r.qty]; }));
+    lines.push(['Total','','',rows.reduce(function(a,r){return a+r.qty;},0)]);
+    var csv='﻿'+lines.map(function(l){ return l.map(csvCell).join(','); }).join('\r\n');
+    var a=document.createElement('a'), url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+    a.href=url; a.download='Week of Sports order '+new Date().toISOString().slice(0,10)+'.csv';
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){ URL.revokeObjectURL(url); },1000);
+  });
 
   el('printAll').addEventListener('click',function(){
     var rows=sortRows(filtered());
