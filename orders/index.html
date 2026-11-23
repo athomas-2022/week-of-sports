@@ -556,29 +556,38 @@
   }
   function renderBreakdown(g){
     var types=Object.keys(g);
-    el('wto-count').textContent=types.length?'grouped by item & color':'';
+    var oh=onHand(), anyOh=Object.keys(oh).length>0;
+    el('wto-count').textContent=types.length?(anyOh?'what to buy from Jupmode, after the gear you already have':'grouped by item & color'):'';
     if(!types.length){ el('breakdown').innerHTML='<div class="ocard"><p style="color:var(--muted)">No item details found in the order column.</p></div>'; return; }
     el('breakdown').innerHTML=types.map(function(t){
       var colors=g[t], allSizes={};
       Object.keys(colors).forEach(function(col){ Object.keys(colors[col]).forEach(function(sz){ allSizes[sz]=1; }); });
       var sizes=sortedSizes(allSizes);
       var cols=Object.keys(colors);
+      /* ordered minus what's on hand, per color and size */
+      var need={}, used=[], ordered=0, toBuy=0;
+      cols.forEach(function(col){ need[col]={}; Object.keys(colors[col]).forEach(function(sz){
+        var n=colors[col][sz], have=oh[ohKey(t,col,sz)]||0, from=Math.min(n,have);
+        need[col][sz]=n-from; ordered+=n; toBuy+=n-from;
+        if(from) used.push(from+' '+(col!=='—'?col+' ':'')+(sz!=='—'?sz:'')+(have>from?' (of '+have+')':''));
+      }); });
       if(cols.length===1&&cols[0]==='—'&&sizes.length===1&&sizes[0]==='—'){
-        var n=colors['—']['—'];
-        return '<div class="ocard"><h3>'+esc(t)+'<span class="tot num">'+n+' total</span></h3>'+
-          '<p class="solo">One size · order <b class="num">'+n+'</b></p></div>';
+        var n=colors['—']['—'], have=oh[ohKey(t,'','')]||0;
+        return '<div class="ocard"><h3>'+esc(t)+'<span class="tot num">'+toBuy+' to order</span></h3>'+
+          '<p class="solo">One size · <b class="num">'+n+'</b> ordered'+(have?' · <b class="num">'+have+'</b> on hand · order <b class="num">'+toBuy+'</b>':' · order <b class="num">'+n+'</b>')+'</p></div>';
       }
-      var body=Object.keys(colors).sort().map(function(col){
-        var cells=sizes.map(function(sz){ var n=colors[col][sz]||0; return '<td class="num '+(n?'has':'z')+'">'+(n||'·')+'</td>'; }).join('');
-        var rowTot=sizes.reduce(function(a,sz){return a+(colors[col][sz]||0);},0);
+      var body=cols.sort().map(function(col){
+        var cells=sizes.map(function(sz){ var n=need[col][sz]||0, o=colors[col][sz]||0;
+          return '<td class="num '+(n?'has':'z')+'"'+(o>n?' title="'+o+' ordered, '+(o-n)+' from on hand"':'')+'>'+(n||'·')+'</td>'; }).join('');
+        var rowTot=sizes.reduce(function(a,sz){return a+(need[col][sz]||0);},0);
         return '<tr><th scope="row">'+esc(col)+'</th>'+cells+'<td class="num" style="font-weight:700;color:var(--navy)">'+rowTot+'</td></tr>';
       }).join('');
-      var foot=sizes.map(function(sz){ var c=0; Object.keys(colors).forEach(function(k){c+=(colors[k][sz]||0);}); return '<td class="num">'+c+'</td>'; }).join('');
-      var grand=0; Object.keys(colors).forEach(function(c){Object.keys(colors[c]).forEach(function(sz){grand+=colors[c][sz];});});
-      return '<div class="ocard"><h3>'+esc(t)+'<span class="tot num">'+grand+' total</span></h3>'+
+      var foot=sizes.map(function(sz){ var c=0; cols.forEach(function(k){c+=(need[k][sz]||0);}); return '<td class="num">'+c+'</td>'; }).join('');
+      return '<div class="ocard"><h3>'+esc(t)+'<span class="tot num">'+toBuy+' to order</span></h3>'+
         '<table class="mx"><thead><tr><th>Color</th>'+sizes.map(function(s){return '<th>'+esc(s)+'</th>';}).join('')+'<th>Σ</th></tr></thead>'+
         '<tbody>'+body+'</tbody>'+
-        '<tfoot><tr><th scope="row">All</th>'+foot+'<td class="num">'+grand+'</td></tr></tfoot></table></div>';
+        '<tfoot><tr><th scope="row">All</th>'+foot+'<td class="num">'+toBuy+'</td></tr></tfoot></table>'+
+        (used.length?'<p class="solo" style="font-size:13px;margin-top:8px;color:var(--muted)">'+ordered+' ordered · '+(ordered-toBuy)+' filled from on hand: '+esc(used.join(', '))+'</p>':'')+'</div>';
     }).join('');
   }
 
@@ -714,13 +723,18 @@
   }
   function parseCosts(matrix){
     if(!matrix||!matrix.length) return null;
-    var c={tiers:[],apparel:{},stock:{},other:[],tax:0}, mode='';
+    var c={tiers:[],apparel:{},stock:{},other:[],tax:0,onhand:{}}, mode='';
     matrix.forEach(function(row){
       var a=String(row[0]==null?'':row[0]).trim(), low=a.toLowerCase();
       if(!a) return;
       if(low==='item'){ mode='apparel'; c.tiers=row.slice(2).map(function(h){ return parseInt(String(h),10); }).filter(function(n){ return !isNaN(n); }); return; }
       if(low==='in stock'){ mode='stock'; return; }
       if(low==='other cost'){ mode='other'; return; }
+      if(low==='on hand'){ mode='onhand'; return; }
+      if(mode==='onhand'){                        /* gear already in hand: Item | Color | Size | Qty */
+        var q=num(row[3]); if(q>0){ var ok=ohKey(a,row[1],row[2]); c.onhand[ok]=(c.onhand[ok]||0)+q; }
+        return;
+      }
       if(mode==='apparel'){
         var costs=c.tiers.map(function(_,i){ return num(row[2+i]); });
         if(!costs.some(Boolean)) return;
@@ -734,6 +748,13 @@
     });
     return c.tiers.length||Object.keys(c.stock).length ? c : null;
   }
+  /* one key per item/color/size for the "On hand" list; one-size items match on the item alone */
+  function ohKey(type,color,size){
+    var col=itemKey(color).replace(/^grey$/,'gray'), sz=String(size==null?'':size).trim();
+    if(!sz||sz==='—'||/^one\s*size$/i.test(sz)) sz=''; else sz=normSize(sz);
+    return itemKey(type)+'|'+(col==='heathergray'||col==='darkheathergray'?'gray':col)+'|'+sz;
+  }
+  function onHand(){ var c=parseCosts(state.costs); return (c&&c.onhand)||{}; }
   function tierAt(tiers,n){ var i=0; tiers.forEach(function(t,k){ if(n>=t) i=k; }); return i; }
   /* the cost row for one size; a size Jupmode didn't quote uses the closest size it did */
   function apparelRow(rows,size){
@@ -757,22 +778,31 @@
     rows.forEach(function(r){ r.items.forEach(function(it){ items.push(it); }); });
     /* Jupmode's price breaks count each item type on its own: tees, long sleeves and
        hoodies don't add up together. Youth sizes count with their own type. */
+    /* apparel already on hand (leftover samples) fills matching orders first: no new Jupmode
+       cost, and it doesn't count toward the price break, since it isn't bought again */
+    var left={}; Object.keys(c.onhand||{}).forEach(function(k){ left[k]=c.onhand[k]; });
+    items.forEach(function(it){
+      it.fromHand=false;
+      if(!c.apparel[itemKey(it.type)]) return;
+      var k=ohKey(it.type,it.color,it.size); if(left[k]>0){ left[k]--; it.fromHand=true; }
+    });
     var types={};
-    items.forEach(function(it){ var k=itemKey(it.type); if(!c.apparel[k]) return; (types[k]=types[k]||{name:it.type,n:0}).n++; });
+    items.forEach(function(it){ var k=itemKey(it.type); if(!c.apparel[k]) return; types[k]=types[k]||{name:it.type,n:0}; if(!it.fromHand) types[k].n++; });
     (GO.products||[]).forEach(function(p){ var k=itemKey(p.name); if(c.apparel[k]&&!types[k]) types[k]={name:p.name,n:0}; });
     Object.keys(types).forEach(function(k){ var t=types[k]; t.ti=tierAt(c.tiers,t.n); t.next=t.ti+1<c.tiers.length?t.ti+1:-1; t.saveNext=0; });
     var apparelN=Object.keys(types).reduce(function(a,k){ return a+types[k].n; },0);
     var by={}, order=[];
     function slot(name){
       var k=itemKey(name);
-      if(!by[k]){ by[k]={name:name,sold:0,rev:0,cost:0,est:false,kind:c.apparel[k]?'apparel':(c.stock[k]?'stock':'none')}; order.push(k); }
+      if(!by[k]){ by[k]={name:name,sold:0,rev:0,cost:0,est:false,fromHand:0,kind:c.apparel[k]?'apparel':(c.stock[k]?'stock':'none')}; order.push(k); }
       return by[k];
     }
     (GO.products||[]).forEach(function(p){ if(c.apparel[itemKey(p.name)]||c.stock[itemKey(p.name)]) slot(p.name); });
     items.forEach(function(it){
       var s=slot(it.type), sp=sellPrice(it.type,it.size);
       s.sold++; s.rev+=sp||0;
-      if(s.kind==='apparel'){
+      if(s.kind==='apparel'&&it.fromHand){ s.fromHand++; }
+      else if(s.kind==='apparel'){
         var a=apparelRow(c.apparel[itemKey(it.type)],it.size), t=types[itemKey(it.type)];
         s.cost+=a.row.costs[t.ti]; if(a.est) s.est=true;
         if(t.next>-1) t.saveNext+=(a.row.costs[t.ti]-a.row.costs[t.next])*(1+tax);
@@ -781,7 +811,9 @@
     /* only the gear in these orders counts; the upfront batch, samples and setup fees don't */
     Object.keys(c.stock).forEach(function(k){
       var st=c.stock[k], s=slot(st.name);
-      s.kind='stock'; s.bought=st.bought; s.extra=Math.max(0,s.sold-st.bought);
+      /* what's left to sell: the On hand count if there is one (e.g. hats the models kept are gone), else what was bought */
+      var ohq=c.onhand&&c.onhand[ohKey(st.name,'','')];
+      s.kind='stock'; s.bought=st.bought; s.avail=ohq!=null?ohq:st.bought; s.extra=Math.max(0,s.sold-s.avail);
       s.cost=(s.sold-s.extra)*st.paid+s.extra*st.reorder;
     });
     var lines=order.map(function(k){ var s=by[k]; s.costTax=s.cost*(1+tax); s.profit=s.rev-s.costTax; return s; });
@@ -839,9 +871,9 @@
     var body=P.lines.map(function(s){
       var sub='';
       if(s.kind==='stock'){
-        sub=s.sold+' of '+s.bought+' sold'+(s.extra?' · <span class="est">'+s.extra+' more than you have</span>':'');
+        sub=s.sold+' sold · '+s.avail+' on hand'+(s.avail<s.bought?' of '+s.bought+' bought':'')+(s.extra?' · <span class="est">'+s.extra+' more than you have</span>':'');
       } else if(s.kind==='apparel'){
-        sub='made after orders close';
+        sub='made after orders close'+(s.fromHand?' · '+s.fromHand+' from on hand, no new cost':'');
       } else sub='no Jupmode cost listed';
       if(s.est) anyEst=true;
       return '<tr><td class="item">'+esc(s.name)+(s.est?'<span class="est">*</span>':'')+'<small>'+sub+'</small></td>'+
@@ -908,7 +940,7 @@
     c.other.forEach(function(o){ if(o.amount){ sum+=o.amount; } });
     if(c.other.length) parts.push('setup fees and samples');
     var unsold=0;
-    P.lines.forEach(function(s){ if(s.kind==='stock'&&s.bought){ var left=Math.max(0,s.bought-s.sold); if(left){ unsold+=left*(c.stock[itemKey(s.name)]||{}).paid; } } });
+    P.lines.forEach(function(s){ if(s.kind==='stock'&&s.bought){ var left=Math.max(0,s.bought-(s.sold-(s.extra||0))); if(left){ unsold+=left*(c.stock[itemKey(s.name)]||{}).paid; } } });
     if(unsold) parts.push('unsold hats, beanies and stickers');
     return {amount:(sum+unsold)*(1+c.tax),parts:parts};
   }
