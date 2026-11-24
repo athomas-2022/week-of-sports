@@ -804,7 +804,8 @@
 
   function computeProfit(rows,c){
     var tax=c.tax, items=[];
-    rows.forEach(function(r){ r.items.forEach(function(it){ items.push(it); }); });
+    /* an "Extras" row is stock Andrew buys on top of the orders: it costs money but nobody paid for it */
+    rows.forEach(function(r){ var ex=/^extras\b/i.test(r.name); r.items.forEach(function(it){ it.extraStock=ex; items.push(it); }); });
     /* Jupmode's price breaks count each item type on its own: tees, long sleeves and
        hoodies don't add up together. Youth sizes count with their own type. */
     /* apparel already on hand (leftover samples) fills matching orders first: no new Jupmode
@@ -829,7 +830,7 @@
     (GO.products||[]).forEach(function(p){ if(c.apparel[itemKey(p.name)]||c.stock[itemKey(p.name)]) slot(p.name); });
     items.forEach(function(it){
       var s=slot(it.type), sp=sellPrice(it.type,it.size);
-      s.sold++; s.rev+=sp||0;
+      if(it.extraStock) s.extras=(s.extras||0)+1; else { s.sold++; s.rev+=sp||0; }
       if(s.kind==='apparel'&&it.fromHand){ s.fromHand++; }
       else if(s.kind==='apparel'){
         var a=apparelRow(c.apparel[itemKey(it.type)],it.size), t=types[itemKey(it.type)];
@@ -842,8 +843,8 @@
       var st=c.stock[k], s=slot(st.name);
       /* what's left to sell: the On hand count if there is one (e.g. hats the models kept are gone), else what was bought */
       var ohq=c.onhand&&c.onhand[ohKey(st.name,'','')];
-      s.kind='stock'; s.bought=st.bought; s.avail=ohq!=null?ohq:st.bought; s.extra=Math.max(0,s.sold-s.avail);
-      s.cost=(s.sold-s.extra)*st.paid+s.extra*st.reorder;
+      s.kind='stock'; s.bought=st.bought; s.avail=ohq!=null?ohq:st.bought; var used=s.sold+(s.extras||0); s.extra=Math.max(0,used-s.avail);
+      s.cost=(used-s.extra)*st.paid+s.extra*st.reorder;
     });
     var lines=order.map(function(k){ var s=by[k]; s.costTax=s.cost*(1+tax); s.profit=s.rev-s.costTax; return s; });
     var revenue=0, collected=0;
@@ -904,6 +905,7 @@
       } else if(s.kind==='apparel'){
         sub='made after orders close'+(s.fromHand?' · '+s.fromHand+' from on hand, no new cost':'');
       } else sub='no Jupmode cost listed';
+      if(s.extras) sub+=' · '+s.extras+' extra'+(s.extras>1?'s':'')+' for stock, cost only';
       if(s.est) anyEst=true;
       return '<tr><td class="item">'+esc(s.name)+(s.est?'<span class="est">*</span>':'')+'<small>'+sub+'</small></td>'+
         '<td class="num">'+s.sold+'</td><td class="num">'+money(s.rev)+'</td><td class="num">'+money(s.costTax)+'</td><td>'+signed(s.profit)+'</td></tr>';
