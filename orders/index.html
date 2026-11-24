@@ -752,7 +752,7 @@
   }
   function parseCosts(matrix){
     if(!matrix||!matrix.length) return null;
-    var c={tiers:[],apparel:{},stock:{},other:[],tax:0,onhand:{}}, mode='';
+    var c={tiers:[],apparel:{},stock:{},other:[],tax:0,discount:0,onhand:{}}, mode='';
     matrix.forEach(function(row){
       var a=String(row[0]==null?'':row[0]).trim(), low=a.toLowerCase();
       if(!a) return;
@@ -772,6 +772,7 @@
         c.stock[itemKey(a)]={name:a,bought:num(row[1]),paid:num(row[2]),reorder:num(row[3])||num(row[2])};
       } else if(mode==='other'){
         if(/tax/i.test(a)){ var t=num(row[1]); c.tax=t>1?t/100:t; }
+        else if(/discount/i.test(a)){ var d=num(row[1]); c.discount=d>1?d/100:d; }   /* % off the new shirt/long sleeve/hoodie invoice */
         else c.other.push({label:a,amount:num(row[1])});
       }
     });
@@ -803,7 +804,7 @@
   }
 
   function computeProfit(rows,c){
-    var tax=c.tax, items=[];
+    var tax=c.tax, off=1-(c.discount||0), items=[];
     /* an "Extras" row is stock Andrew buys on top of the orders: it costs money but nobody paid for it */
     rows.forEach(function(r){ var ex=/^extras\b/i.test(r.name); r.items.forEach(function(it){ it.extraStock=ex; items.push(it); }); });
     /* Jupmode's price breaks count each item type on its own: tees, long sleeves and
@@ -834,8 +835,8 @@
       if(s.kind==='apparel'&&it.fromHand){ s.fromHand++; }
       else if(s.kind==='apparel'){
         var a=apparelRow(c.apparel[itemKey(it.type)],it.size), t=types[itemKey(it.type)];
-        s.cost+=a.row.costs[t.ti]; if(a.est) s.est=true;
-        if(t.next>-1) t.saveNext+=(a.row.costs[t.ti]-a.row.costs[t.next])*(1+tax);
+        s.cost+=a.row.costs[t.ti]*off; if(a.est) s.est=true;
+        if(t.next>-1) t.saveNext+=(a.row.costs[t.ti]-a.row.costs[t.next])*off*(1+tax);
       }
     });
     /* only the gear in these orders counts; the upfront batch, samples and setup fees don't */
@@ -850,7 +851,7 @@
     var revenue=0, collected=0;
     rows.forEach(function(r){ revenue+=r.total; if(r.paid) collected+=r.total; });
     var totalCost=lines.reduce(function(a,s){ return a+s.costTax; },0);
-    return {lines:lines,tax:tax,apparelN:apparelN,types:types,tiers:c.tiers,
+    return {lines:lines,tax:tax,discount:c.discount||0,apparelN:apparelN,types:types,tiers:c.tiers,
       revenue:revenue,collected:collected,totalCost:totalCost,profit:revenue-totalCost,
       itemRevenue:lines.reduce(function(a,s){ return a+s.rev; },0)};
   }
@@ -894,7 +895,7 @@
       else tl.push(nm+', the best quoted price (<b>'+cur+'</b>).');
     });
     if(tl.length) notes.push('Jupmode\'s price breaks count each item on its own: tees, long sleeves and hoodies don\'t add together.<br>'+tl.join('<br>'));
-    notes.push('Costs include Jupmode\'s '+pct(P.tax,2)+' sales tax and count only the gear in these orders. This updates by itself as new orders come in.');
+    notes.push((P.discount?'Shirt, long sleeve and hoodie costs include Jupmode\'s <b>'+pct(P.discount)+' discount</b>. ':'')+'Costs include Jupmode\'s '+pct(P.tax,2)+' sales tax and count only the gear in these orders. This updates by itself as new orders come in.');
     el('p-notes').innerHTML=notes.map(function(n){ return '<div class="pnote">'+n+'</div>'; }).join('');
 
     /* profit by item */
@@ -922,7 +923,7 @@
       var k=itemKey(p.name), groups=[];
       if(c.apparel[k]){
         (p.sizes&&p.sizes.length?p.sizes:['']).forEach(function(lbl){
-          var sz=normSize(lbl), sell=sellPrice(p.name,sz), a=apparelRow(c.apparel[k],sz), cost=a.row.costs[P.types[k].ti]*(1+P.tax);
+          var sz=normSize(lbl), sell=sellPrice(p.name,sz), a=apparelRow(c.apparel[k],sz), cost=a.row.costs[P.types[k].ti]*(1-P.discount)*(1+P.tax);
           var name=String(lbl).replace(/\s*\(.*?\)/,''), g=groups[groups.length-1];
           if(g&&g.sell===sell&&Math.abs(g.cost-cost)<.005&&g.est===a.est&&/^Youth/.test(g.first)===/^Youth/.test(name)) g.last=name;
           else groups.push({first:name,last:'',sell:sell,cost:cost,est:a.est});
