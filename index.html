@@ -221,12 +221,12 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
   <div class="wrap gear-grid">
     <div class="reveal"><img id="shirt-img" alt="This year's Week of Sports gear design — the LB word-cloud" /></div>
     <div class="gear-copy reveal">
-      <div class="eyebrow">This year's gear</div>
-      <h2>Wear the legacy</h2>
-      <p>Every purchase puts money straight toward the scholarship — and turns the whole community into a walking billboard for game day.</p>
+      <div class="eyebrow" id="gear-eyebrow">This year's gear</div>
+      <h2 id="gear-h">Wear the legacy</h2>
+      <p id="gear-p">Every purchase puts money straight toward the scholarship — and turns the whole community into a walking billboard for game day.</p>
       <!-- built from gearOrder.products so this can never drift from the order page -->
       <div class="price-chips" id="price-chips"></div>
-      <div class="cta">
+      <div class="cta" id="gear-cta">
         <a class="btn btn-white" id="gear-link" target="_blank">Order gear</a>
         <a class="btn btn-ghost" href="/gear/">See the collection</a>
       </div>
@@ -406,7 +406,14 @@ if(window.IntersectionObserver&&!(window.matchMedia&&window.matchMedia('(prefers
   var gearOpen = !gearClosed && (GO.orderingOpen !== false || opensAt <= Date.now());
   if(C.gearReady){
     S('gear-link').href = '/gear/';
-    if(gearClosed) S('gear-link').textContent = 'Orders closed';
+    if(gearClosed){
+      /* the season's orders are done: the section says so plainly instead of selling */
+      S('gear-eyebrow').textContent = (C.year ? C.year + ' gear' : "This year's gear") + ' · Orders closed';
+      S('gear-h').textContent = 'Gear orders are closed';
+      S('gear-p').textContent = 'Thank you to everyone who ordered! ' + (GO.orderingEndedMsg || '');
+      S('price-chips').hidden = true;
+      S('gear-cta').innerHTML = '<span class="btn btn-white" aria-disabled="true" style="cursor:default;opacity:.85">Orders are done for this year</span>';
+    }
   } else {
     S('gear-link').textContent = 'Coming soon'; S('gear-link').removeAttribute('href'); S('gear-link').style.cursor = 'default';
   }
