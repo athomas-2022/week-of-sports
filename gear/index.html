@@ -270,7 +270,6 @@
     S('order-sub').textContent = canOrder ? subOpen : subShut;
 
     var place = S('place'), form = S('order-form'), note = null;
-    var closedHTML = '<b>Orders closed —</b> ' + (G.orderingEndedMsg || 'this year’s gear orders are closed.');
     function shut(label, html){
       canOrder = false;
       if(form.hidden) return;   /* they just placed an order: leave the thank-you screen alone */
@@ -282,8 +281,29 @@
     }
     function later(ms, fn){ if(ms > 0 && ms < 2147483647) setTimeout(fn, ms); }
 
+    /* the season is over: say so in the header and swap the whole form for one clear panel */
+    function endSeason(){
+      canOrder = false;
+      if(form.hidden) return;   /* they just placed an order: leave the thank-you screen alone */
+      document.title = 'Gear orders closed · Week of Sports';
+      document.querySelector('.page-head h1').textContent = 'Gear orders are closed';
+      S('order-sub').textContent = 'Thank you to everyone who ordered this year.';
+      var msg = G.orderingEndedMsg || 'This year’s gear orders are closed.';
+      var mail = C.contactEmail || 'info@weekofsports.com';
+      msg = esc(msg).replace(esc(mail), '<a href="mailto:'+esc(mail)+'">'+esc(mail)+'</a>');
+      if(note){ note.remove(); note = null; }
+      form.hidden = true;
+      var panel = document.createElement('div');
+      panel.className = 'season-over'; panel.style.cssText = 'text-align:center;padding:40px 0';
+      panel.innerHTML = '<div class="sec-eyebrow" style="color:var(--royal)">'+esc(C.year ? C.year+' gear' : 'This year')+'</div>'+
+        '<h2 class="sec-h" style="color:var(--navy)">Orders are done for this year</h2>'+
+        '<p class="lede">'+msg+'</p>'+
+        '<div class="center-cta" style="margin-top:8px"><a class="btn btn-primary" href="/">Back to home</a></div>';
+      form.parentNode.insertBefore(panel, form);
+    }
+
     if(ended){
-      shut('Orders closed', closedHTML);
+      endSeason();
     } else if(!canOrder){
       shut('Ordering opens soon', '<b>Preview —</b> ' + (G.orderingClosedMsg || 'ordering isn’t open yet. Browse this year’s gear, then check back soon to place your order.'));
       /* someone already on the page when ordering opens: switch it on in place, keeping what they picked */
@@ -292,11 +312,11 @@
         place.disabled = false; place.textContent = 'Place order';
         if(note){ note.remove(); note = null; }
         S('order-sub').textContent = subOpen;
-        later(closesAt - Date.now(), function(){ shut('Orders closed', closedHTML); });
+        later(closesAt - Date.now(), endSeason);
       });
     } else {
       /* ...and someone still on the page at closing time sees it lock */
-      later(closesAt - Date.now(), function(){ shut('Orders closed', closedHTML); });
+      later(closesAt - Date.now(), endSeason);
     }
 
     /* ---- one "add" tile per product ---- */
